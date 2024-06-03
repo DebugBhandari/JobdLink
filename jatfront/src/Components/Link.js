@@ -7,10 +7,21 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Car from "../assets/car_feature.jpg";
+import axios from "axios";
 
 export default function Link({ job }) {
   const created_at = new Date(job.created_at);
   const locale_date = created_at.toLocaleDateString();
+  const handleLikeClick = (e) => {
+    axios
+      .post("http://localhost:3001/jobLike", {
+        job_id: job.id,
+        user_id: JSON.parse(localStorage.getItem("user_id")),
+      })
+      .then((response) => {
+        console.log(response.data, "Liked");
+      });
+  };
   return (
     <Paper elevation={3} sx={{ minWidth: 345, margin: 3, minHeight: 300 }}>
       <CardContent
@@ -62,7 +73,9 @@ export default function Link({ job }) {
         </Typography>
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center" }}>
-        <Button size="small">Like</Button>
+        <Button size="small" onClick={handleLikeClick}>
+          Like
+        </Button>
       </CardActions>
     </Paper>
   );

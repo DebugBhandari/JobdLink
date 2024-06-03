@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 
 const Links = () => {
   const [jobs, setJobs] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = JSON.parse(localStorage.getItem("token"));
   const linkedJobs = jobs.filter((job) => job.private === 0);
 
   useEffect(() => {

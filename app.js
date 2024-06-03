@@ -8,7 +8,7 @@ import cors from "cors";
 
 const app = express();
 import dotenv from "dotenv";
-dotenv.config({ path: ".env" });
+dotenv.config({ path: ".env.local" });
 import jobsRouter from "./router/jobs.js";
 import jobLikeRouter from "./router/jobLike.js";
 import { login, register } from "./services/auth.js";
@@ -28,61 +28,6 @@ app.use(function (req, res, next) {
   next();
 });
 app.use(cors());
-
-// // Register route
-// app.post("/register", async (req, res) => {
-//   const { username, password, email } = req.body;
-//   if (!username || !password || !email) {
-//     return res.status(400).send("Missing required fields");
-//   }
-//   const salt = await bcrypt.genSaltSync(10);
-//   const hashedPassword = await bcrypt.hashSync(password, salt);
-
-//   try {
-//     const connection = await mysql.createConnection(dbConfig);
-//     await connection.query(
-//       "INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
-//       [username, hashedPassword, email]
-//     );
-//     await connection.end();
-//     res.status(201).send({
-//       message:
-//         "User registered successfully. New User " + username + " created.",
-//     });
-//   } catch (error) {
-//     res.status(500).send("Error on the server.");
-//     console.log(error.response.data);
-//   }
-// });
-
-// // Login route
-// app.post("/login", async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     const connection = await mysql.createConnection(dbConfig);
-//     const [results] = await connection.query(
-//       "SELECT * FROM users WHERE email = ?",
-//       [email]
-//     );
-//     await connection.end();
-
-//     if (results.length === 0) return res.status(404).send("No user found.");
-
-//     const user = results[0];
-//     console.log("User found:", user);
-//     const passwordIsValid = bcrypt.compareSync(password, user.password);
-//     if (!passwordIsValid) return res.status(401).send("Password is invalid.");
-//     const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
-//       expiresIn: 86400,
-//     });
-//     res.status(200).send({ user, token });
-//     console.log("User logged in successfully");
-//   } catch (error) {
-//     res.status(500).send("Error on the server.");
-//     console.log(error);
-//   }
-// });
 
 // Get user profile route (protected)
 app.get("/me", verifyToken, async (req, res) => {

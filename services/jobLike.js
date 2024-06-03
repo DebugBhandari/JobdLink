@@ -2,9 +2,8 @@ import { dbConfig } from "../server.js";
 import mysql from "mysql2/promise";
 async function create(jobLike) {
   return new Promise(async (resolve, reject) => {
-    const query =
-      "INSERT INTO JobLikes (job_id, user_id, likedAt) VALUES (?, ?, ?)";
-    const values = [jobLike.job_id, jobLike.user_id, jobLike.likedAt];
+    const query = "INSERT INTO JobLikes (job_id, user_id) VALUES (?, ?)";
+    const values = [jobLike.job_id, jobLike.user_id];
 
     const connection = await mysql.createConnection(dbConfig);
     try {
