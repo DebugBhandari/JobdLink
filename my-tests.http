@@ -1,0 +1,42 @@
+POST http://localhost:3001/register
+Content-Type: application/json
+
+{
+    "username": "deepakr",
+    "password": "123456789",
+    "email": "deep@gmail.com"
+}
+
+###
+
+POST http://localhost:3001/login
+Content-Type: application/json
+
+{
+    "email": "bhandarideepakdev@gmail.com2",
+    "password": "12345678"
+}
+
+###
+
+POST http://localhost:3001/jobs/
+Content-Type: application/json
+
+{
+    "jobTitle": "Frontend Developer",
+    "jobUrl": "https://www.google.com",
+    "company": "Google",
+    "status": "Applied",
+    "user_id": 1,
+    "location": "NewYork",
+    "username": "deepakr",
+    "private": false,
+    "description": "ömflsmdlkfm",
+    "caption": "hgkadjgadgs"
+}
+
+###
+
+GET http://localhost:3001/jobs/
+# Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjEsImlhdCI6MTcxNzQzOTE3MCwiZXhwIjoxNzE3NTI1NTcwfQ.8FQIr4j4iLlAWfdWrEkBdQSgKtdrUYUiXBBP6Imbm_8
