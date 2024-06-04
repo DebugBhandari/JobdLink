@@ -119,10 +119,28 @@ async function deleteJob(jobId) {
   });
 }
 
+async function findJobOwner(jobId) {
+  return new Promise(async (resolve, reject) => {
+    const query =
+      "SELECT users.username FROM jobs JOIN users ON jobs.user_id = users.id WHERE jobs.id = ?";
+
+    const connection = await mysql.createConnection(dbConfig);
+    try {
+      const [results] = await connection.execute(query, [jobId]);
+      resolve(results[0]);
+    } catch (error) {
+      reject(error);
+    } finally {
+      await connection.end();
+    }
+  });
+}
+
 export default {
   create,
   findById,
   findAll,
   update,
   deleteJob,
+  findJobOwner,
 };

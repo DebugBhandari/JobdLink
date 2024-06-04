@@ -11,7 +11,7 @@ export default function Link({ job }) {
   const user_id_JSON = JSON.parse(localStorage.getItem("user_id"));
   const created_at = new Date(job.created_at);
   const [likesRefresh, setLikesRefresh] = React.useState(false);
-
+  const [jobOwner, setJobOwner] = React.useState();
   const [userLiked, setUserLiked] = React.useState();
   const locale_date = created_at.toLocaleDateString();
 
@@ -47,7 +47,6 @@ export default function Link({ job }) {
         console.error("Error fetching likes:", error);
       }
     };
-    hasUserLiked();
 
     const fetchUsernames = async () => {
       try {
@@ -60,7 +59,20 @@ export default function Link({ job }) {
       }
     };
 
+    const fetchJobOwner = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/jobs/${job.id}/user`
+        );
+        setJobOwner(response.data);
+      } catch (error) {
+        console.error("Error fetching job owner:", error);
+      }
+    };
+
     fetchUsernames();
+    hasUserLiked();
+    fetchJobOwner();
   }, [job.id, user_id_JSON, likesRefresh]);
 
   return (
@@ -99,6 +111,9 @@ export default function Link({ job }) {
           alignItems: "left",
         }}
       >
+        <Typography gutterBottom variant="h5" component="div">
+          {jobOwner && jobOwner.username}
+        </Typography>
         <Typography gutterBottom variant="h5">
           {job.jobTitle}
         </Typography>

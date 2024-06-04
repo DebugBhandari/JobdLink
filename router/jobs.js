@@ -7,6 +7,7 @@ import {
   deleteJob,
   findAll,
   updateJob,
+  findJobOwner,
 } from "../controllers/job.js";
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get("/:jobId", findById);
 router.put("/:jobId", updateJob);
 router.delete("/:jobId", deleteJob);
 router.post("/", createJob);
+router.get("/:jobId/user", findJobOwner);
 
 export default router;

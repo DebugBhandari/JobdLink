@@ -14,15 +14,14 @@ export default function Job({ job, setJobsRefresh }) {
   const locale_date = created_at.toLocaleDateString();
 
   const [isEditing, setIsEditing] = useState(false);
-  console.log(isEditing);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
   const handleDeleteClick = () => {
     axios.delete(`http://localhost:3001/jobs/${job.id}`).then((response) => {
-      console.log(response.data);
       setJobsRefresh((prevState) => !prevState);
+      console.log("Job deleted successfully");
     });
   };
 

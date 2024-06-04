@@ -11,6 +11,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Paper from "@mui/material/Paper";
+import FormControl from "@mui/material/FormControl";
 import axios from "axios";
 import { Select, MenuItem, Box } from "@mui/material";
 
@@ -45,7 +46,7 @@ const PostJob = ({ setJobsRefresh }) => {
         caption: data.get("caption"),
       })
       .then((response) => {
-        console.log(response.data.message);
+        console.log(response.data);
         console.log("Job added successfully");
       })
       .catch((error) => {
@@ -62,8 +63,8 @@ const PostJob = ({ setJobsRefresh }) => {
       elevation={3}
       sx={{ maxWidth: 350, margin: 3, minHeight: 400, padding: 2 }}
       component="form"
-      noValidate
       onSubmit={handleSubmit}
+      required
     >
       <CardContentStyled>
         <TextFieldStyled
@@ -89,7 +90,6 @@ const PostJob = ({ setJobsRefresh }) => {
         />
         <TextFieldStyled
           margin="normal"
-          required
           fullWidth
           id="jobUrl"
           label="Job URL"
@@ -174,7 +174,6 @@ const PostJob = ({ setJobsRefresh }) => {
           />
           <TextFieldStyled
             margin="normal"
-            required
             width="50%"
             id="username"
             label="Username"
