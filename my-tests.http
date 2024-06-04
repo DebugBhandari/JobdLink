@@ -40,3 +40,14 @@ Content-Type: application/json
 GET http://localhost:3001/jobs/
 # Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjEsImlhdCI6MTcxNzQzOTE3MCwiZXhwIjoxNzE3NTI1NTcwfQ.8FQIr4j4iLlAWfdWrEkBdQSgKtdrUYUiXBBP6Imbm_8
+
+
+###
+
+POST http://localhost:3001/jobLike/
+Content-Type: application/json
+
+{
+    "job_id": 9,
+    "user_id": 4
+}

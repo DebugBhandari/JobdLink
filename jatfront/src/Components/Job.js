@@ -35,7 +35,7 @@ export default function Job({ job, setJobsRefresh }) {
           setJobsRefresh={setJobsRefresh}
         />
       ) : (
-         <Paper elevation={3} sx={{ width: 400, margin: 3, maxHeight: 500 }}>
+        <Paper elevation={3} sx={{ width: 400, margin: 3, maxHeight: 500 }}>
           <CardContent
             sx={{
               height: 80,
@@ -94,6 +94,9 @@ export default function Job({ job, setJobsRefresh }) {
             <Typography variant="body2" color="text.secondary">
               {job.description}
             </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {job.user_id}
+            </Typography>
           </CardContent>
           <CardActions sx={{ display: "flex", justifyContent: "center" }}>
             <Button size="small" onClick={handleEditClick}>
@@ -103,10 +106,8 @@ export default function Job({ job, setJobsRefresh }) {
               Delete
             </Button>
           </CardActions>
-        
-      
-    </Paper>
-    )}</>
+        </Paper>
+      )}
+    </>
   );
-  
 }

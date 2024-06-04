@@ -6,7 +6,7 @@ import PostJob from "./PostJob.js";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = localStorage.getItem("token");
   const [jobsRefresh, setJobsRefresh] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const Jobs = () => {
         setJobs(response.data);
       } catch (error) {
         console.error("Error fetching jobs:", error);
-        console.log(jobsRefresh);
+        
       }
     };
     fetchJobs();
@@ -35,9 +35,12 @@ const Jobs = () => {
       }}
     >
       <PostJob setJobsRefresh={setJobsRefresh} />
-      {jobs.map((job) => (
-        <Job key={job.id} job={job} setJobsRefresh={setJobsRefresh} />
-      ))}
+      {jobs.map(
+        (job?) =>
+          job.user_id === JSON.parse(localStorage.getItem("user_id")) && (
+            <Job key={job.id} job={job} setJobsRefresh={setJobsRefresh} />
+          )
+      )}
     </Box>
   );
 };
