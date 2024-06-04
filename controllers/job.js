@@ -59,3 +59,12 @@ export const findAll = async (req, res, next) => {
     next(console.log("Jobs not found", error));
   }
 };
+
+//Get JobOwner
+export const findJobOwner = async (req, res, next) => {
+  try {
+    res.json(await JobService.findJobOwner(req.params.jobId));
+  } catch (error) {
+    next(console.log("User not found", error));
+  }
+};

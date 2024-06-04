@@ -53,6 +53,7 @@ const EditJob = ({ job, setIsEditing, setJobsRefresh }) => {
         caption: data.get("caption"),
       })
       .then((response) => {
+        console.log(`Job ${jobId} updated successfully`);
         console.log(response.data);
       })
       .catch((error) => {
