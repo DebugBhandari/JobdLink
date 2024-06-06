@@ -16,7 +16,6 @@ import axios from "axios";
 import { Select, MenuItem, Box } from "@mui/material";
 
 const PostJob = ({ setJobsRefresh }) => {
-  const [radioBoolean, setRadioBoolean] = useState(true);
   const CardActionsStyled = styled(CardActions)({
     display: "flex",
     justifyContent: "center",
@@ -75,7 +74,6 @@ const PostJob = ({ setJobsRefresh }) => {
           label="Job Title"
           name="jobTitle"
           autoComplete="jobTitle"
-          autoFocus
           size="small"
         />
         <TextFieldStyled
