@@ -1,19 +1,53 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
+import LinkModal from "./Modals/LinkModal";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 export default function Link({ job }) {
-  const [userNames, setUserNames] = React.useState([]);
+  const [userNames, setUserNames] = useState([]);
   const user_id_JSON = JSON.parse(localStorage.getItem("user_id"));
   const created_at = new Date(job.created_at);
-  const [likesRefresh, setLikesRefresh] = React.useState(false);
-  const [jobOwner, setJobOwner] = React.useState();
-  const [userLiked, setUserLiked] = React.useState();
+  const [likesRefresh, setLikesRefresh] = useState(false);
+  const [jobOwner, setJobOwner] = useState();
+  const [userLiked, setUserLiked] = useState();
   const locale_date = created_at.toLocaleDateString();
+
+  const buttonHover = {
+    "&:hover": {
+      bgcolor: "success.main",
+      ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+      ...(job.status === "Not Applied" && {
+        bgcolor: "primary.main",
+      }),
+      color: "white",
+    },
+  };
+
+  //For modal
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = (e) => {
+    e.stopPropagation();
+    setOpen(false);
+  };
+
+  //For Menu
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openMenu = Boolean(anchorEl);
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleLikeClick = (e) => {
     axios
@@ -36,7 +70,7 @@ export default function Link({ job }) {
         setLikesRefresh((prevState) => !prevState);
       });
   };
-  React.useEffect(() => {
+  useEffect(() => {
     const hasUserLiked = async () => {
       try {
         const response = await axios.get(
@@ -84,11 +118,11 @@ export default function Link({ job }) {
           ...(job.status === "Rejected" && { bgcolor: "error.main" }),
           ...(job.status === "Not Applied" && { bgcolor: "primary.main" }), // Conditional styling
           color: "white",
-          fontSize: 40,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
+          borderRadius: 4,
         }}
       >
         <Typography
@@ -109,42 +143,97 @@ export default function Link({ job }) {
           flexDirection: "column",
           justifyContent: "left",
           alignItems: "left",
+          height: 150,
         }}
       >
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography gutterBottom variant="h6" component="div">
           {jobOwner && jobOwner.username}
         </Typography>
-        <Typography gutterBottom variant="h5">
+        <Typography gutterBottom variant="h8">
           {job.jobTitle}
         </Typography>
 
-        <Typography variant="h5" color="primary.">
-          {job.status}
-        </Typography>
-        <Typography variant="h5" color="text.secondary">
-          {job.jobUrl}
-        </Typography>
-        <Typography variant="h5" color="text.secondary">
+        <Typography variant="h6">{job.status}</Typography>
+
+        <Typography variant="h8" color="text.secondary">
           {job.caption}
         </Typography>
-        <Typography variant="h5" color="text.secondary">
-          {userNames.length} Likes
-        </Typography>
-        <Typography variant="h5" color="text.secondary">
-          {userNames.map((user) => user.username).join(", ")}
-        </Typography>
+        <CardContent
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Button onClick={handleOpen} sx={{ ...buttonHover }}>
+            Comments
+          </Button>
+
+          <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
+            {userNames.length} Likes
+          </Button>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={openMenu}
+            onClose={handleMenuClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            {userNames.map((user) => (
+              <MenuItem key={user.username + "like"} onClick={handleMenuClose}>
+                {user.username}
+              </MenuItem>
+            ))}
+          </Menu>
+        </CardContent>
       </CardContent>
-      <CardActions sx={{ display: "flex", justifyContent: "center" }}>
+      <CardActions
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          height: 30,
+          marginBottom: 4,
+          marginTop: 0,
+        }}
+      >
         {userLiked === "false" ? (
-          <Button size="small" onClick={handleLikeClick}>
+          <Button
+            size="small"
+            onClick={handleLikeClick}
+            sx={{
+              ...buttonHover,
+            }}
+          >
             Like
           </Button>
         ) : (
-          <Button size="small" onClick={handleUnlikeClick}>
+          <Button
+            size="small"
+            onClick={handleUnlikeClick}
+            sx={{
+              ...buttonHover,
+            }}
+          >
             Unlike
           </Button>
         )}
       </CardActions>
+      <LinkModal
+        job={job}
+        open={open}
+        handleClose={handleClose}
+        handleLikeClick={handleLikeClick}
+        handleUnlikeClick={handleUnlikeClick}
+        userLiked={userLiked}
+        userNames={userNames}
+        jobOwner={jobOwner}
+        locale_date={locale_date}
+        likesRefresh={likesRefresh}
+        user_id_JSON={user_id_JSON}
+      />
     </Paper>
   );
 }
