@@ -3,11 +3,13 @@ import axios from "axios";
 import Job from "./Job.js";
 import Box from "@mui/material/Box";
 import PostJob from "./PostJob.js";
+import { useSearchStore } from "../useStore.js";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
-  const token = localStorage.getItem("token");
   const [jobsRefresh, setJobsRefresh] = useState(false);
+  const jobSearchQuery = useSearchStore((state) => state.jobSearchQuery);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -19,11 +21,11 @@ const Jobs = () => {
         setJobs(response.data);
       } catch (error) {
         console.error("Error fetching jobs:", error);
-        
       }
     };
     fetchJobs();
-  }, [jobsRefresh]);
+  }, [jobsRefresh, token]);
+
   return (
     <Box
       sx={{
@@ -35,12 +37,18 @@ const Jobs = () => {
       }}
     >
       <PostJob setJobsRefresh={setJobsRefresh} />
-      {jobs.map(
-        (job?) =>
-          job.user_id === JSON.parse(localStorage.getItem("user_id")) && (
-            <Job key={job.id} job={job} setJobsRefresh={setJobsRefresh} />
-          )
-      )}
+      {jobs
+        .filter(
+          (jobToFilter) =>
+            !jobToFilter.jobTitle.search(new RegExp(jobSearchQuery, "i")) ||
+            !jobToFilter.company.search(new RegExp(jobSearchQuery, "i"))
+        )
+        .map(
+          (job) =>
+            job.user_id === JSON.parse(localStorage.getItem("user_id")) && (
+              <Job key={job.id} job={job} setJobsRefresh={setJobsRefresh} />
+            )
+        )}
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -6,10 +6,12 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
+import InputAdornment from "@mui/material/InputAdornment";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 import Link from "@mui/material/Link";
-import Arrows from "../assets/jobdlink.png";
+import { useSearchStore } from "../useStore";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -54,7 +56,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const DEBOUNCE = 500;
 export default function SearchAppBar() {
+  const jobSearchQuery = useSearchStore((state) => state.jobSearchQuery);
+  const updateJobSearchQuery = useSearchStore(
+    (state) => state.updateJobSearchQuery
+  );
+  const [query, setQuery] = useState(jobSearchQuery);
+
+  useEffect(() => {
+    setQuery(jobSearchQuery);
+  }, [jobSearchQuery]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      updateJobSearchQuery(query);
+    }, DEBOUNCE);
+    return () => clearTimeout(timeout);
+  }, [query, updateJobSearchQuery]);
+
   return (
     <Box
       sx={{
@@ -133,20 +153,6 @@ export default function SearchAppBar() {
               <MenuIcon />
             </Link>
           </IconButton>
-          {/* <img
-            src={Arrows}
-            alt="Arrows"
-            loading="lazy"
-            className="imgArrows"
-            style={{
-              height: 130,
-              width: 220,
-              position: "absolute",
-              top: -20.2,
-              left: "28.7vw",
-              zIndex: 1,
-            }}
-          /> */}
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -154,6 +160,25 @@ export default function SearchAppBar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
+              onChange={(e) => {
+                e.stopPropagation();
+                setQuery(e.target.value);
+              }}
+              value={query}
+              endAdornment={
+                !!jobSearchQuery && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="clear search query"
+                      onClick={() => updateJobSearchQuery("")}
+                      edge="end"
+                      sx={{ mr: 0, color: "white" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }
             />
           </Search>
         </Toolbar>
