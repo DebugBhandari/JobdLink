@@ -12,14 +12,18 @@ export const verifyToken = (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1];
   console.log(token);
   if (token && process.env.SECRET_KEY) {
-    jwt.verify(token, process.env.SECRET_KEY, (err, decodedToken) => {
-      if (err) {
-        return res.status(401).send({ message: "Innvalid Token" });
+    jwt.verify(
+      JSON.parse(token),
+      process.env.SECRET_KEY,
+      (err, decodedToken) => {
+        if (err) {
+          return res.status(401).send({ message: "Innvalid Token" });
+        }
+        req.user = decodedToken;
+        console.log("User verified:", decodedToken);
+        next();
       }
-      req.user = decodedToken;
-      console.log("User verified:", decodedToken);
-      next();
-    });
+    );
   } else {
     return res.status(401).send({ message: "Invalid Token" });
   }

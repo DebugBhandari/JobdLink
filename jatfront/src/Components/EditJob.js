@@ -1,10 +1,7 @@
 import React, { useState } from "react";
-import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Radio from "@mui/material/Radio";
@@ -15,7 +12,6 @@ import axios from "axios";
 import { Select, MenuItem, Box } from "@mui/material";
 
 const EditJob = ({ job, setIsEditing, setJobsRefresh }) => {
-  const [radioBoolean, setRadioBoolean] = useState(true);
   const jobId = job.id;
   const CardActionsStyled = styled(CardActions)({
     display: "flex",
