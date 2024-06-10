@@ -9,6 +9,11 @@ export const dbConfig = {
   password: process.env.MYSQL_PASSWORD, // Replace with your MySQL password
   database: "jatDb",
   port: 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10,
+  idleTimeout: 60000,
+  queueLimit: 0,
 };
 
 const initializeDb = async () => {
@@ -43,6 +48,30 @@ const initializeDb = async () => {
       `);
     await connection.query(`
     CREATE TABLE IF NOT EXISTS JobLikes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        job_id INT NOT NULL,
+        user_id INT NOT NULL,
+        likedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (job_id) REFERENCES Jobs(id),
+        FOREIGN KEY (user_id) REFERENCES Users(id),
+        UNIQUE (job_id, user_id)
+    )
+    `);
+
+    await connection.query(`
+    CREATE TABLE IF NOT EXISTS JobComments (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        job_id INT NOT NULL,
+        user_id INT NOT NULL,
+        commentedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        comment TEXT,
+        FOREIGN KEY (job_id) REFERENCES Jobs(id),
+        FOREIGN KEY (user_id) REFERENCES Users(id)
+    )
+    `);
+
+    await connection.query(`
+    CREATE TABLE IF NOT EXISTS CommentLikes (
         id INT AUTO_INCREMENT PRIMARY KEY,
         job_id INT NOT NULL,
         user_id INT NOT NULL,

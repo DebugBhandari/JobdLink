@@ -8,6 +8,7 @@ import Paper from "@mui/material/Paper";
 import axios from "axios";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 const style = {
   position: "absolute",
@@ -15,7 +16,8 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 600,
-  minHeight: "60%",
+  minHeight: "70%",
+  maxHeight: "70%",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -34,9 +36,9 @@ export default function LinkModal({
   userNames,
   jobOwner,
   local_date,
-  likesRefresh,
-  setLikesRefresh,
+
   user_id_JSON,
+
   ...props
 }) {
   // //For Like Modal
@@ -51,12 +53,47 @@ export default function LinkModal({
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
+  const [comments, setComments] = useState([]);
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    axios
+      .post(`http://localhost:3001/jobComment/`, {
+        comment: data.get("commentInput"),
+        job_id: job.id,
+        user_id: user_id_JSON,
+      })
+      .then((response) => {
+        console.log(response.data);
+        console.log("Commented successfully");
+        data.set("commentInput", "");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobComment/${job.id}`
+      );
+      setComments(response.data);
+    } catch (error) {
+      console.log("Error fetching comments:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  });
 
   const buttonHover = {
     "&:hover": {
@@ -182,15 +219,36 @@ export default function LinkModal({
           </Menu>
         </CardActions>
         <CardContent
+          component="form"
+          onSubmit={handleCommentSubmit}
           sx={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "left",
             alignItems: "left",
-            minHeight: 200,
+            maxHeight: 300,
             border: "2px solid #000",
+            overflow: "auto",
           }}
-        ></CardContent>
+        >
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="commentInput"
+            label="Comment"
+            name="commentInput"
+            autoComplete="Comment"
+            autoFocus
+            size="small"
+          />
+          {comments &&
+            comments.map((comment) => (
+              <Typography key={comment.id} variant="h5" color="text.secondary">
+                {comment.comment}
+              </Typography>
+            ))}
+        </CardContent>
       </Paper>
     </Modal>
   );

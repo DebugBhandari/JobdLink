@@ -51,7 +51,11 @@ async function findById(jobId) {
 
 async function findAll() {
   return new Promise(async (resolve, reject) => {
-    const query = "SELECT * FROM Jobs ORDER BY private ASC";
+    const query = `select Jobs.id, jobs.jobTitle, jobs.description, jobs.user_id, jobs.company, jobs.jobUrl, jobs.status, jobs.location, jobs.username, jobs.private, jobs.caption, COUNT(DISTINCT joblikes.id) AS count_likes, COUNT(DISTINCT jobcomments.id) AS count_comments from Jobs 
+    left join JobLikes on Joblikes.job_id = jobs.id
+    left join JobComments on JobComments.job_id = jobs.id
+    GROUP BY jobs.id
+    order by private desc`;
 
     const connection = await mysql.createConnection(dbConfig);
     try {

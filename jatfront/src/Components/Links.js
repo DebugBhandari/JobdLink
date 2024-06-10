@@ -19,6 +19,9 @@ const Links = () => {
           headers: { Authorization: "Bearer " + token },
         });
         setJobs(response.data);
+
+        console.log("Raw:", response.data);
+        console.log("Jobs:", jobs);
       } catch (error) {
         console.error("Error fetching jobs:", error);
         console.error("Token:", token);

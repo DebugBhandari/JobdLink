@@ -13,10 +13,11 @@ export default function Link({ job }) {
   const [userNames, setUserNames] = useState([]);
   const user_id_JSON = JSON.parse(localStorage.getItem("user_id"));
   const created_at = new Date(job.created_at);
-  const [likesRefresh, setLikesRefresh] = useState(false);
   const [jobOwner, setJobOwner] = useState();
   const [userLiked, setUserLiked] = useState();
   const locale_date = created_at.toLocaleDateString();
+  const [liveLikes, setLiveLikes] = useState(job.count_likes);
+  const [liveComments, setLiveComments] = useState(job.count_comments);
 
   const buttonHover = {
     "&:hover": {
@@ -31,6 +32,7 @@ export default function Link({ job }) {
 
   //For modal
   const [open, setOpen] = useState(false);
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -49,65 +51,66 @@ export default function Link({ job }) {
     setAnchorEl(null);
   };
 
-  const handleLikeClick = (e) => {
+  const handleLikeClick = async (e) => {
     axios
       .post("http://localhost:3001/jobLike", {
         job_id: job.id,
-        user_id: JSON.parse(localStorage.getItem("user_id")),
+        user_id: user_id_JSON,
       })
       .then((response) => {
         console.log(response.data, "Liked");
         setUserLiked(true);
-        setLikesRefresh((prevState) => !prevState);
+        setLiveLikes(liveLikes + 1);
       });
   };
-  const handleUnlikeClick = (e) => {
+  const handleUnlikeClick = async (e) => {
     axios
       .delete(`http://localhost:3001/jobLike/${job.id}/${user_id_JSON}`)
       .then((response) => {
         console.log(response.data, "Unliked");
         setUserLiked(false);
-        setLikesRefresh((prevState) => !prevState);
+        setLiveLikes(liveLikes - 1);
       });
   };
-  useEffect(() => {
-    const hasUserLiked = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/jobLike/${job.id}/${user_id_JSON}/bool`
-        );
-        setUserLiked(response.data);
-      } catch (error) {
-        console.error("Error fetching likes:", error);
-      }
-    };
 
-    const fetchUsernames = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/jobLike/${job.id}/usernames`
-        );
-        setUserNames(response.data);
-      } catch (error) {
-        console.error("Error fetching usernames:", error);
-      }
-    };
+  const hasUserLiked = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobLike/${job.id}/${user_id_JSON}/bool`
+      );
+      setUserLiked(response.data);
+    } catch (error) {
+      console.error("Error fetching likes:", error);
+    }
+  };
 
-    const fetchJobOwner = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/jobs/${job.id}/user`
-        );
-        setJobOwner(response.data);
-      } catch (error) {
-        console.error("Error fetching job owner:", error);
-      }
-    };
+  const fetchUsernames = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobLike/${job.id}/usernames`
+      );
+      setUserNames(response.data);
+    } catch (error) {
+      console.error("Error fetching usernames:", error);
+    }
+  };
 
-    fetchUsernames();
-    hasUserLiked();
-    fetchJobOwner();
-  }, [job.id, user_id_JSON, likesRefresh]);
+  const fetchJobOwner = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobs/${job.id}/user`
+      );
+      setJobOwner(response.data);
+    } catch (error) {
+      console.error("Error fetching job owner:", error);
+    }
+  };
+
+  //   useEffect(() => {
+  //     fetchUsernames();
+  //     hasUserLiked();
+  //     fetchJobOwner();
+  //   }, []);
 
   return (
     <Paper elevation={3} sx={{ minWidth: 345, margin: 3, minHeight: 300 }}>
@@ -167,11 +170,11 @@ export default function Link({ job }) {
           }}
         >
           <Button onClick={handleOpen} sx={{ ...buttonHover }}>
-            Comments
+            {liveComments} Comments
           </Button>
 
           <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-            {userNames.length} Likes
+            {liveLikes} Likes
           </Button>
           <Menu
             id="basic-menu"
@@ -231,7 +234,6 @@ export default function Link({ job }) {
         userNames={userNames}
         jobOwner={jobOwner}
         locale_date={locale_date}
-        likesRefresh={likesRefresh}
         user_id_JSON={user_id_JSON}
       />
     </Paper>

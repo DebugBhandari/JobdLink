@@ -13,7 +13,7 @@ import {
 const router = express.Router();
 
 // Every path we define here will get /api/v1/movies prefix
-router.get("/", verifyToken, findAll);
+router.get("/", findAll);
 router.get("/:jobId", findById);
 router.put("/:jobId", updateJob);
 router.delete("/:jobId", deleteJob);
