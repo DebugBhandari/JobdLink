@@ -39,8 +39,8 @@ export const updateJobComment = async (req, res, next) => {
 export const deleteJobComment = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const jobId = req.params.jobId;
-    await JobCommentService.deleteJobComment(jobId, userId);
+    const commentId = req.params.jobCommentId;
+    await JobCommentService.deleteJobComment(commentId, userId);
     res.status(204).end();
   } catch (error) {
     next(console.log("Comment not found", error));
@@ -70,5 +70,13 @@ export const findAll = async (req, res, next) => {
     res.json(await JobCommentService.findAll());
   } catch (error) {
     next(console.log("Comment not found", error));
+  }
+};
+
+export const findCommentOwner = async (req, res, next) => {
+  try {
+    res.json(await JobCommentService.findCommentOwner(req.params.jobCommentId));
+  } catch (error) {
+    next(console.log("User isnt authorised.", error));
   }
 };

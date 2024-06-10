@@ -22,17 +22,14 @@ async function create(jobComment) {
 //Find by Job ID
 async function findByJobId(jobId) {
   return new Promise(async (resolve, reject) => {
-    const query =
-      "SELECT * FROM JobComments WHERE job_id = ? ORDER BY commentedAt ASC";
+    const query = `SELECT JobComments.comment, users.username, users.email, jobComments.id, jobComments.commentedAt FROM JobComments
+    JOIN users ON JobComments.user_id = users.id
+    WHERE job_id = ? ORDER BY commentedAt DESC`;
 
     const connection = await mysql.createConnection(dbConfig);
     try {
       const [results] = await connection.execute(query, [jobId]);
-      if (results.length === 0) {
-        reject(new Error(`Comments for ${jobId} not found`));
-      } else {
-        resolve(results);
-      }
+      resolve(results);
     } catch (error) {
       reject(error);
     } finally {
@@ -78,10 +75,10 @@ async function update(jobCommentId, update) {
   });
 }
 
-async function deleteJobComment(jobId, userId) {
+async function deleteJobComment(commentId, userId) {
   return new Promise(async (resolve, reject) => {
-    const query = "DELETE FROM JobComments WHERE job_id = ? AND user_id = ?";
-    const values = [jobId, userId];
+    const query = "DELETE FROM JobComments WHERE id = ? AND user_id = ?";
+    const values = [commentId, userId];
     console.log;
     const connection = await mysql.createConnection(dbConfig);
     try {

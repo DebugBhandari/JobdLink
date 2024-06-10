@@ -15,7 +15,7 @@ const router = express.Router();
 // Every path we define here will get /api/v1/movies prefix
 router.get("/", findAll);
 router.put("/:jobCommentId", updateJobComment);
-router.delete("/:jobId/:userId", deleteJobComment);
+router.delete("/:jobCommentId/:userId", deleteJobComment);
 router.post("/", createJobComment);
 //joblikes By JobID
 router.get("/:jobId", findByJobId);

@@ -187,6 +187,9 @@ const PostJob = ({ setJobsRefresh }) => {
           justify="center"
           type="submit"
           onClick={handleRefresh}
+          sx={{
+            "&:hover": { backgroundColor: "primary.main", color: "white" },
+          }}
         >
           Add Job
         </Button>

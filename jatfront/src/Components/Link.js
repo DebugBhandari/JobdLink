@@ -9,15 +9,17 @@ import LinkModal from "./Modals/LinkModal";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-export default function Link({ job }) {
+export default function Link({
+  job,
+  setLikeCommentRefresh,
+  likeCommentRefresh,
+}) {
   const [userNames, setUserNames] = useState([]);
   const user_id_JSON = JSON.parse(localStorage.getItem("user_id"));
   const created_at = new Date(job.created_at);
   const [jobOwner, setJobOwner] = useState();
   const [userLiked, setUserLiked] = useState();
   const locale_date = created_at.toLocaleDateString();
-  const [liveLikes, setLiveLikes] = useState(job.count_likes);
-  const [liveComments, setLiveComments] = useState(job.count_comments);
 
   const buttonHover = {
     "&:hover": {
@@ -58,18 +60,18 @@ export default function Link({ job }) {
         user_id: user_id_JSON,
       })
       .then((response) => {
-        console.log(response.data, "Liked");
+        console.log("Liked", response.data);
         setUserLiked(true);
-        setLiveLikes(liveLikes + 1);
+        setLikeCommentRefresh((prevState) => !prevState);
       });
   };
   const handleUnlikeClick = async (e) => {
     axios
       .delete(`http://localhost:3001/jobLike/${job.id}/${user_id_JSON}`)
       .then((response) => {
-        console.log(response.data, "Unliked");
+        console.log("Unliked");
         setUserLiked(false);
-        setLiveLikes(liveLikes - 1);
+        setLikeCommentRefresh((prevState) => !prevState);
       });
   };
 
@@ -106,14 +108,17 @@ export default function Link({ job }) {
     }
   };
 
-  //   useEffect(() => {
-  //     fetchUsernames();
-  //     hasUserLiked();
-  //     fetchJobOwner();
-  //   }, []);
+  useEffect(() => {
+    hasUserLiked();
+    fetchUsernames();
+    fetchJobOwner();
+  }, [likeCommentRefresh]);
 
   return (
-    <Paper elevation={3} sx={{ minWidth: 345, margin: 3, minHeight: 300 }}>
+    <Paper
+      elevation={3}
+      sx={{ minWidth: 345, margin: 3, minHeight: 300, borderRadius: 4 }}
+    >
       <CardContent
         sx={{
           height: 80,
@@ -170,11 +175,11 @@ export default function Link({ job }) {
           }}
         >
           <Button onClick={handleOpen} sx={{ ...buttonHover }}>
-            {liveComments} Comments
+            {job.count_comments} Comments
           </Button>
 
           <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-            {liveLikes} Likes
+            {job.count_likes} Likes
           </Button>
           <Menu
             id="basic-menu"
@@ -235,6 +240,8 @@ export default function Link({ job }) {
         jobOwner={jobOwner}
         locale_date={locale_date}
         user_id_JSON={user_id_JSON}
+        setLikeCommentRefresh={setLikeCommentRefresh}
+        likeCommentRefresh={likeCommentRefresh}
       />
     </Paper>
   );
