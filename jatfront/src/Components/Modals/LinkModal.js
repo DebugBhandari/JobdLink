@@ -80,20 +80,21 @@ export default function LinkModal({
       });
   };
 
-  const fetchComments = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3001/jobComment/${job.id}`
-      );
-      setComments(response.data);
-    } catch (error) {
-      console.log("Error fetching comments:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchComments();
-  });
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/jobComment/${job.id}`
+        );
+        setComments(response.data);
+      } catch (error) {
+        console.log("Error fetching comments:", error);
+      }
+    };
+    if (open) {
+      fetchComments();
+    }
+  }, [job.id, open]);
 
   const buttonHover = {
     "&:hover": {
