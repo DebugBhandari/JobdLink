@@ -29,6 +29,16 @@ export default function Job({ job, setJobsRefresh }) {
       console.log("Job deleted successfully");
     });
   };
+  const buttonHover = {
+    "&:hover": {
+      bgcolor: "success.main",
+      ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+      ...(job.status === "Not Applied" && {
+        bgcolor: "primary.main",
+      }),
+      color: "white",
+    },
+  };
 
   return (
     <>
@@ -38,7 +48,10 @@ export default function Job({ job, setJobsRefresh }) {
         open={open}
         handleClose={handleClose}
       />
-      <Paper elevation={3} sx={{ width: 400, margin: 3, maxHeight: 500 }}>
+      <Paper
+        elevation={3}
+        sx={{ width: 400, margin: 3, maxHeight: 500, borderRadius: 4 }}
+      >
         <CardContent
           sx={{
             height: 80,
@@ -103,10 +116,14 @@ export default function Job({ job, setJobsRefresh }) {
           </Typography>
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "center" }}>
-          <Button size="small" onClick={handleOpen}>
+          <Button size="small" onClick={handleOpen} sx={{ ...buttonHover }}>
             Edit
           </Button>
-          <Button size="small" onClick={handleDeleteClick}>
+          <Button
+            size="small"
+            onClick={handleDeleteClick}
+            sx={{ ...buttonHover }}
+          >
             Delete
           </Button>
         </CardActions>

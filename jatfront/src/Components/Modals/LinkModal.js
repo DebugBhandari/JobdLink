@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import CardActions from "@mui/material/CardActions";
@@ -8,6 +8,8 @@ import Paper from "@mui/material/Paper";
 import axios from "axios";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Comment from "../Comment";
 
 const style = {
   position: "absolute",
@@ -15,9 +17,9 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 600,
-  minHeight: "60%",
+  minHeight: "70%",
+  maxHeight: "70%",
   bgcolor: "background.paper",
-  border: "2px solid #000",
   boxShadow: 24,
   pt: 2,
   px: 4,
@@ -34,29 +36,61 @@ export default function LinkModal({
   userNames,
   jobOwner,
   local_date,
-  likesRefresh,
-  setLikesRefresh,
+  setLikeCommentRefresh,
+  likeCommentRefresh,
   user_id_JSON,
+
   ...props
 }) {
-  // //For Like Modal
-  // const [openLike, setOpenLike] = useState(false);
-  // const handleOpenLike = () => {
-  //   setOpenLike(true);
-  // };
-  // const handleCloseLike = () => {
-  //   setOpenLike(false);
-  // };
-  // console.log("userNames", userNames);
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const [comments, setComments] = useState([]);
+  //Likes Menu
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  //Empty Comments after submit
+  const [newComment, setNewComment] = useState("");
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    axios
+      .post(`http://localhost:3001/jobComment/`, {
+        comment: data.get("commentInput"),
+        job_id: job.id,
+        user_id: user_id_JSON,
+      })
+      .then((response) => {
+        console.log(response.data);
+        console.log("Commented successfully");
+        setNewComment("");
+        setLikeCommentRefresh((prevState) => !prevState);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/jobComment/${job.id}`
+        );
+        setComments(response.data);
+      } catch (error) {
+        console.log("Error fetching comments:", error);
+      }
+    };
+    if (open) {
+      fetchComments();
+    }
+  }, [job.id, open, likeCommentRefresh]);
 
   const buttonHover = {
     "&:hover": {
@@ -81,16 +115,10 @@ export default function LinkModal({
         sx={{
           minWidth: 345,
           margin: 3,
-          border: "2px solid #000",
           minHeight: 300,
           ...style,
         }}
       >
-        {/* <LikeModal
-          usernames={userNames}
-          openLike={openLike}
-          handleCloseLike={handleCloseLike}
-        /> */}
         <CardContent
           sx={{
             height: 80,
@@ -123,17 +151,19 @@ export default function LinkModal({
             flexDirection: "column",
             justifyContent: "left",
             alignItems: "left",
-
-            border: "2px solid #000",
           }}
         >
-          <Typography gutterBottom variant="h5" component="div">
-            {jobOwner && jobOwner.username}
-          </Typography>
           <Typography gutterBottom variant="h5">
             {job.jobTitle}
           </Typography>
-
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            sx={{ textAlign: "right" }}
+          >
+            {jobOwner && jobOwner.username}
+          </Typography>
           <Typography variant="h5" color="primary.">
             {job.status}
           </Typography>
@@ -163,7 +193,7 @@ export default function LinkModal({
             </Button>
           )}
           <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-            {userNames.length} Likes
+            {job.count_likes} Likes
           </Button>
           <Menu
             id="basic-menu"
@@ -182,15 +212,39 @@ export default function LinkModal({
           </Menu>
         </CardActions>
         <CardContent
+          component="form"
+          onSubmit={handleCommentSubmit}
           sx={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "left",
             alignItems: "left",
-            minHeight: 200,
-            border: "2px solid #000",
+            maxHeight: 300,
+            overflow: "auto",
           }}
-        ></CardContent>
+        >
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="commentInput"
+            label="Comment"
+            name="commentInput"
+            autoComplete="Comment"
+            autoFocus
+            size="small"
+            onChange={(e) => setNewComment(e.target.value)}
+            value={newComment}
+          />
+          {comments &&
+            comments.map((comment) => (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                setLikeCommentRefresh={setLikeCommentRefresh}
+              />
+            ))}
+        </CardContent>
       </Paper>
     </Modal>
   );

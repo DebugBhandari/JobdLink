@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import jobsRouter from "./router/jobs.js";
 import jobLikeRouter from "./router/jobLike.js";
+import jobCommentRouter from "./router/jobComments.js";
 import { login, register } from "./services/auth.js";
 import { dbConfig } from "./server.js";
 
@@ -49,5 +50,6 @@ app.use("/login", login);
 app.use("/register", register);
 app.use("/jobs", jobsRouter);
 app.use("/jobLike", jobLikeRouter);
+app.use("/jobComment", jobCommentRouter);
 
 export default app;

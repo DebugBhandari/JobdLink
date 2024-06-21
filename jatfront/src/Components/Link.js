@@ -9,11 +9,14 @@ import LinkModal from "./Modals/LinkModal";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-export default function Link({ job }) {
+export default function Link({
+  job,
+  setLikeCommentRefresh,
+  likeCommentRefresh,
+}) {
   const [userNames, setUserNames] = useState([]);
   const user_id_JSON = JSON.parse(localStorage.getItem("user_id"));
   const created_at = new Date(job.created_at);
-  const [likesRefresh, setLikesRefresh] = useState(false);
   const [jobOwner, setJobOwner] = useState();
   const [userLiked, setUserLiked] = useState();
   const locale_date = created_at.toLocaleDateString();
@@ -31,6 +34,7 @@ export default function Link({ job }) {
 
   //For modal
   const [open, setOpen] = useState(false);
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -49,68 +53,72 @@ export default function Link({ job }) {
     setAnchorEl(null);
   };
 
-  const handleLikeClick = (e) => {
+  const handleLikeClick = async (e) => {
     axios
       .post("http://localhost:3001/jobLike", {
         job_id: job.id,
-        user_id: JSON.parse(localStorage.getItem("user_id")),
+        user_id: user_id_JSON,
       })
       .then((response) => {
-        console.log(response.data, "Liked");
+        console.log("Liked", response.data);
         setUserLiked(true);
-        setLikesRefresh((prevState) => !prevState);
+        setLikeCommentRefresh((prevState) => !prevState);
       });
   };
-  const handleUnlikeClick = (e) => {
+  const handleUnlikeClick = async (e) => {
     axios
       .delete(`http://localhost:3001/jobLike/${job.id}/${user_id_JSON}`)
       .then((response) => {
-        console.log(response.data, "Unliked");
+        console.log("Unliked");
         setUserLiked(false);
-        setLikesRefresh((prevState) => !prevState);
+        setLikeCommentRefresh((prevState) => !prevState);
       });
   };
+
+  const hasUserLiked = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobLike/${job.id}/${user_id_JSON}/bool`
+      );
+      setUserLiked(response.data);
+    } catch (error) {
+      console.error("Error fetching likes:", error);
+    }
+  };
+
+  const fetchUsernames = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobLike/${job.id}/usernames`
+      );
+      setUserNames(response.data);
+    } catch (error) {
+      console.error("Error fetching usernames:", error);
+    }
+  };
+
+  const fetchJobOwner = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobs/${job.id}/user`
+      );
+      setJobOwner(response.data);
+    } catch (error) {
+      console.error("Error fetching job owner:", error);
+    }
+  };
+
   useEffect(() => {
-    const hasUserLiked = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/jobLike/${job.id}/${user_id_JSON}/bool`
-        );
-        setUserLiked(response.data);
-      } catch (error) {
-        console.error("Error fetching likes:", error);
-      }
-    };
-
-    const fetchUsernames = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/jobLike/${job.id}/usernames`
-        );
-        setUserNames(response.data);
-      } catch (error) {
-        console.error("Error fetching usernames:", error);
-      }
-    };
-
-    const fetchJobOwner = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/jobs/${job.id}/user`
-        );
-        setJobOwner(response.data);
-      } catch (error) {
-        console.error("Error fetching job owner:", error);
-      }
-    };
-
-    fetchUsernames();
     hasUserLiked();
+    fetchUsernames();
     fetchJobOwner();
-  }, [job.id, user_id_JSON, likesRefresh]);
+  }, [likeCommentRefresh]);
 
   return (
-    <Paper elevation={3} sx={{ minWidth: 345, margin: 3, minHeight: 300 }}>
+    <Paper
+      elevation={3}
+      sx={{ minWidth: 345, margin: 3, minHeight: 300, borderRadius: 4 }}
+    >
       <CardContent
         sx={{
           height: 80,
@@ -167,11 +175,11 @@ export default function Link({ job }) {
           }}
         >
           <Button onClick={handleOpen} sx={{ ...buttonHover }}>
-            Comments
+            {job.count_comments} Comments
           </Button>
 
           <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-            {userNames.length} Likes
+            {job.count_likes} Likes
           </Button>
           <Menu
             id="basic-menu"
@@ -231,8 +239,9 @@ export default function Link({ job }) {
         userNames={userNames}
         jobOwner={jobOwner}
         locale_date={locale_date}
-        likesRefresh={likesRefresh}
         user_id_JSON={user_id_JSON}
+        setLikeCommentRefresh={setLikeCommentRefresh}
+        likeCommentRefresh={likeCommentRefresh}
       />
     </Paper>
   );

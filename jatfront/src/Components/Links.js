@@ -11,6 +11,8 @@ const Links = () => {
   const token = localStorage.getItem("token");
   const linkedJobs = jobs.filter((job) => job.private === 0);
 
+  const [likeCommentRefresh, setLikeCommentRefresh] = useState(false);
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -26,7 +28,7 @@ const Links = () => {
     };
 
     fetchJobs();
-  }, [token]);
+  }, [likeCommentRefresh]);
 
   React.useEffect(() => {}, []);
   return (
@@ -46,7 +48,12 @@ const Links = () => {
             !jobToFilter.company.search(new RegExp(jobSearchQuery, "i"))
         )
         .map((job) => (
-          <Link key={job.id} job={job} />
+          <Link
+            key={job.id}
+            job={job}
+            setLikeCommentRefresh={setLikeCommentRefresh}
+            likeCommentRefresh={likeCommentRefresh}
+          />
         ))}
     </Box>
   );
