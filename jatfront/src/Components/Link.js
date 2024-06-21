@@ -15,7 +15,7 @@ export default function Link({
   likeCommentRefresh,
 }) {
   const [userNames, setUserNames] = useState([]);
-  const user_id_JSON = JSON.parse(localStorage.getItem("user_id"));
+  const user_id_JSON = JSON.parse(localStorage.getItem("idJL"));
   const created_at = new Date(job.created_at);
   const [jobOwner, setJobOwner] = useState();
   const [userLiked, setUserLiked] = useState();
@@ -97,21 +97,21 @@ export default function Link({
     }
   };
 
-  const fetchJobOwner = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3001/jobs/${job.id}/user`
-      );
-      setJobOwner(response.data);
-    } catch (error) {
-      console.error("Error fetching job owner:", error);
-    }
-  };
+  // const fetchJobOwner = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:3001/jobs/${job.id}/user`
+  //     );
+  //     setJobOwner(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching job owner:", error);
+  //   }
+  // };
 
   useEffect(() => {
     hasUserLiked();
     fetchUsernames();
-    fetchJobOwner();
+    // fetchJobOwner();
   }, [likeCommentRefresh]);
 
   return (
@@ -155,7 +155,7 @@ export default function Link({
         }}
       >
         <Typography gutterBottom variant="h6" component="div">
-          {jobOwner && jobOwner.username}
+          {job.username}
         </Typography>
         <Typography gutterBottom variant="h8">
           {job.jobTitle}

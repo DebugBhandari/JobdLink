@@ -11,19 +11,18 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Comment from "../Comment";
 
-const style = {
+export const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600,
-  minHeight: "70%",
-  maxHeight: "70%",
+  width: "90%",
+  "@media (min-width: 780px)": {
+    width: "40%",
+  },
+  margin: "auto",
   bgcolor: "background.paper",
   boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
 };
 
 export default function LinkModal({
@@ -113,7 +112,7 @@ export default function LinkModal({
       <Paper
         elevation={3}
         sx={{
-          minWidth: 345,
+          width: 200,
           margin: 3,
           minHeight: 300,
           ...style,
@@ -131,6 +130,9 @@ export default function LinkModal({
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
+            pt: 2,
+            px: 4,
+            pb: 3,
           }}
         >
           <Typography

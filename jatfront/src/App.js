@@ -5,7 +5,6 @@ import Register from "./Components/Register"; // Import the 'Register' component
 import DashBoard from "./Components/DashBoard"; // Import the 'DashBoard' component
 import Jobs from "./Components/Jobs";
 import Navbar from "./Components/Navbar";
-import PostJob from "./Components/PostJob";
 import { Container } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Login from "./Components/Login";
@@ -39,7 +38,7 @@ function App() {
   const value = { authData, setAuthData };
   return (
     <ThemeProvider theme={theme}>
-      <Container sx={{ minWidth: "100vw" }}>
+      <Container disableGutters maxWidth={false}>
         <AuthContext.Provider value={value}>
           <Navbar />
           <BrowserRouter>

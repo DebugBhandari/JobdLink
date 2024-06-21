@@ -2,18 +2,24 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
-import { verifyToken } from "./services/auth.js";
+import { generateToken } from "./services/auth.js";
 import mysql from "mysql2/promise";
 import cors from "cors";
 
 const app = express();
+app.use(express.json());
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import jobsRouter from "./router/jobs.js";
 import jobLikeRouter from "./router/jobLike.js";
 import jobCommentRouter from "./router/jobComments.js";
-import { login, register } from "./services/auth.js";
 import { dbConfig } from "./server.js";
+
+import passport from "passport";
+//import session from "express-session";
+import { v4 as uuidv4 } from "uuid";
+// import passport.js
+import "./utils/passport.js";
 
 app.use(bodyParser.json());
 app.use(express.json());
@@ -30,24 +36,58 @@ app.use(function (req, res, next) {
 });
 app.use(cors());
 
-// Get user profile route (protected)
-app.get("/me", verifyToken, async (req, res) => {
-  try {
-    const connection = await mysql.createConnection(dbConfig);
-    const [results] = await connection.query(
-      "SELECT * FROM users WHERE id = ?",
-      [req.userId]
-    );
-    await connection.end();
+// //use the session middleware
+// var sess = {
+//   genid: function (req) {
+//     return uuidv4(); // use UUIDs for session IDs
+//   },
+//   secret: process.env.SESSION_SECRET,
+//   cookie: {
+//     maxAge: 24 * 60 * 60 * 1000,
+//   },
+// };
 
-    if (results.length === 0) return res.status(404).send("No user found.");
-    res.status(200).send(results[0]);
-  } catch (error) {
-    res.status(500).send("Error on the server.");
+// if (app.get("env") === "production") {
+//   app.set("trust proxy", 1); // trust first proxy
+//   sess.cookie.secure = true; // serve secure cookies
+// }
+
+//app.use(session(sess));
+
+// initialize passport and session
+
+app.use(passport.initialize());
+//app.use(passport.session(sess));
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res, next) => {
+    const { id, name, email, imageUrl } = req.user;
+    const token = generateToken(req.user);
+    console.log("Do we have a user??", req.user);
+    res.redirect(
+      `http://localhost:3000?token=${token}&name=${encodeURIComponent(
+        name
+      )}&email=${encodeURIComponent(email)}&imageUrl=${encodeURIComponent(
+        imageUrl
+      )}&id=${id}`
+    );
+    // Redirect to React frontend
   }
-});
-app.use("/login", login);
-app.use("/register", register);
+);
+// app.use("/profile", (req, res) => {
+//   if (req.session.isAuthenticated) {
+//     res.send(req.session.user);
+//   } else {
+//     res.status(401).send("Unauthorized");
+//   }
+// });
 app.use("/jobs", jobsRouter);
 app.use("/jobLike", jobLikeRouter);
 app.use("/jobComment", jobCommentRouter);

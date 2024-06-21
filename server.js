@@ -22,10 +22,10 @@ const initializeDb = async () => {
     await connection.query(`CREATE DATABASE IF NOT EXISTS jatDb`);
     await connection.query(`
         CREATE TABLE IF NOT EXISTS Users (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          username VARCHAR(255) NOT NULL UNIQUE,
-          password VARCHAR(255) NOT NULL,
-          email VARCHAR(255) NOT NULL
+          id INT AUTO_INCREMENT PRIMARY KEY UNIQUE,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL UNIQUE,
+          imageUrl VARCHAR(255)
         )
       `);
     await connection.query(`

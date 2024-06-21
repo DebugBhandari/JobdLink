@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import axios from "axios";
 
 export default function Comment({ comment, setLikeCommentRefresh }) {
-  const user_id_JSON = JSON.parse(localStorage.getItem("user"));
+  const emailJL = localStorage.getItem("emailJL");
   const timeAgo = (date) => {
     const now = new Date();
     const seconds = Math.floor((now - date) / 1000);
@@ -40,7 +40,7 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
     axios
       .delete(
         `http://localhost:3001/jobComment/${comment.id}/${localStorage.getItem(
-          "user_id"
+          "idJL"
         )}`
       )
       .then((response) => {
@@ -55,7 +55,7 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
   };
 
   return (
-    <Paper elevation={3} sx={{ borderRadius: 4, margin: 1 }}>
+    <Paper elevation={3} sx={{ borderRadius: 4, margin: 1, minheight: 130 }}>
       <CardContent
         sx={{
           display: "flex",
@@ -85,7 +85,7 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
         >
           {timeAgo(new Date(comment.commentedAt))}
         </Typography>
-        {comment.email === user_id_JSON ? (
+        {comment.email === emailJL ? (
           <CardActions sx={{ justifyContent: "center" }}>
             <Button
               size="small"

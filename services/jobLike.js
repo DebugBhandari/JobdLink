@@ -126,7 +126,7 @@ async function deleteJobLike(jobId, userId) {
 async function findByUserJLJoin(job_id) {
   return new Promise(async (resolve, reject) => {
     const query =
-      "SELECT users.username FROM users INNER JOIN JobLikes ON joblikes.user_id = users.id where joblikes.job_id = ?";
+      "SELECT users.name FROM users INNER JOIN JobLikes ON joblikes.user_id = users.id where joblikes.job_id = ?";
     const connection = await mysql.createConnection(dbConfig);
     try {
       const [results] = await connection.execute(query, [job_id]);

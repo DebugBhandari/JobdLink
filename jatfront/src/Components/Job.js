@@ -13,7 +13,6 @@ import EditJobModal from "./Modals/EditJobModal";
 export default function Job({ job, setJobsRefresh }) {
   const created_at = new Date(job.created_at);
   const locale_date = created_at.toLocaleDateString();
-
   //For modal
   const [open, setOpen] = useState(false);
   const handleOpen = () => {

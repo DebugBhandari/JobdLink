@@ -20,8 +20,8 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginLeft: 0,
-  width: "100%",
+  marginLeft: 10,
+  width: "40%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(1),
     width: "auto",
@@ -78,8 +78,6 @@ export default function SearchAppBar() {
   return (
     <Box
       sx={{
-        flexGrow: 1,
-        minWidth: "100%",
         color: "secondary.main",
         alignItems: "center",
       }}
