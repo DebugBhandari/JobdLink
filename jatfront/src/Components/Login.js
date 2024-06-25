@@ -15,6 +15,8 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { AuthContext } from "../App";
+import JobdLanding from "../assets/JobdLanding.png";
+import CardMedia from "@mui/material/CardMedia";
 function Copyright(props) {
   return (
     <Typography
@@ -49,91 +51,70 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
+      <Box
+        sx={{
+          width: "100vw",
+          height: "80vh",
+          display: "flex",
+          flexDirection: "row",
+          justifyContents: "center",
+        }}
+      >
+        <Box
           sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            width: "30%",
+            height: "80vh",
+            display: "flex",
+            justifyContents: "right",
+            alignItems: "center",
+            margin: 10,
           }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
+        >
+          <img
+            src={JobdLanding}
+            alt="landingImage"
+            style={{ width: "360px", height: "360px" }}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContents: "center",
+            marginTop: 30,
+            marginRight: 10,
+            width: "40%",
+            padding: 4,
+            height: "100vh",
+          }}
+        >
+          <Typography
+            component="h1"
+            sx={{ fontWeight: "bold", fontSize: "36px" }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box noValidate sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                onClick={handleLogin}
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="/register" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-              <Copyright sx={{ mt: 5 }} />
-            </Box>
+            Job Application Tracker
+          </Typography>
+          <br></br>
+          <br></br>
+          <Typography component="h1" variant="h5">
+            For Jobseekers, By Jobseekers
+          </Typography>
+
+          <Box noValidate sx={{ mt: 1 }}>
+            <Button
+              onClick={handleLogin}
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, bgcolor: "success.main" }}
+            >
+              Sign In With Google
+            </Button>
+            <Grid container></Grid>
+            <Copyright sx={{ mt: 5 }} />
           </Box>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 }

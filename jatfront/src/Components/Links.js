@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Link from "./Link.js";
 import { useSearchStore } from "../useStore.js";
 import { AuthContext } from "../App";
+import Profile from "./Profile.js";
 
 const Links = () => {
   const [jobs, setJobs] = useState([]);
@@ -65,7 +66,6 @@ const Links = () => {
         },
         flexWrap: "wrap",
         justifyContent: "center",
-        alignItems: "center",
       }}
     >
       <Box
@@ -77,14 +77,13 @@ const Links = () => {
           alignItems: "center",
           minHeight: "20vh",
           "@media (min-width: 780px)": {
-            minHeight: "100vh",
+            height: "80vh",
           },
           width: "30%",
+          marginTop: 8,
         }}
       >
-        <img src={localStorage.getItem("imageUrlJL")} alt="profile" />
-        <h1>{localStorage.getItem("nameJL")}</h1>
-        <h2>{localStorage.getItem("emailJL")}</h2>
+        <Profile handleOpen={null} />
       </Box>
       <Box
         sx={{
@@ -93,10 +92,10 @@ const Links = () => {
           flexWrap: "wrap",
           justifyContent: "center",
           alignItems: "center",
-          width: "70%",
+          width: "68%",
+          marginTop: 16,
         }}
       >
-        <h1>{localStorage.getItem("name")}</h1>
         {linkedJobs
           .filter(
             (jobToFilter) =>

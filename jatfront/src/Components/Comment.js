@@ -64,17 +64,17 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
       >
         <Typography
           sx={{
-            fontSize: 20,
+            fontSize: 18,
             textAlign: "left",
           }}
-          title={comment.username}
+          title={comment.name}
         >
-          {comment.username}
+          {comment.name}
         </Typography>
         <Typography
           variant="body2"
           color="primary.mains"
-          sx={{ textAlign: "left", fontSize: 16 }}
+          sx={{ textAlign: "left", fontSize: 16, wordWrap: "break-word" }}
         >
           {comment.comment}
         </Typography>

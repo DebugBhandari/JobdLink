@@ -80,9 +80,12 @@ export default function SearchAppBar() {
       sx={{
         color: "secondary.main",
         alignItems: "center",
+        position: "fixed",
+        width: "100%",
+        zIndex: 100,
       }}
     >
-      <AppBar position="static" sx={{ minHeight: 80 }}>
+      <AppBar position="static" sx={{ minHeight: 40 }}>
         <Toolbar>
           <Typography
             variant="h6"
@@ -106,7 +109,7 @@ export default function SearchAppBar() {
               variant="body"
               style={{
                 textDecoration: "none",
-                fontSize: 40,
+                fontSize: 24,
                 zIndex: 5,
                 fontWeight: "bolder",
                 backgroundColor: "#ff00009b",
@@ -124,9 +127,9 @@ export default function SearchAppBar() {
               variant="body"
               style={{
                 textDecoration: "none",
-                fontSize: 40,
+                fontSize: 24,
                 fontWeight: "bolder",
-                backgroundColor: "#00ff159b",
+                backgroundColor: "#388e3c",
                 borderRadius: 10,
                 maxHeight: 50,
                 padding: 5,

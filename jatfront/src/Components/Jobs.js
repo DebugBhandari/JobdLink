@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import { useSearchStore } from "../useStore.js";
 import PostJobModal from "./Modals/PostJobModal.js";
 import Button from "@mui/material/Button";
+import Profile from "./Profile.js";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -23,7 +24,6 @@ const Jobs = () => {
     e.stopPropagation();
     setOpen(false);
   };
-  console.log("open", open);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -50,7 +50,6 @@ const Jobs = () => {
         },
         flexWrap: "wrap",
         justifyContent: "center",
-        alignItems: "center",
       }}
     >
       <Box
@@ -62,21 +61,19 @@ const Jobs = () => {
           alignItems: "center",
           minHeight: "20vh",
           "@media (min-width: 780px)": {
-            minHeight: "100vh",
+            height: "80vh",
           },
           width: "30%",
+          marginTop: 8,
         }}
       >
-        <img src={localStorage.getItem("imageUrlJL")} alt="profile" />
-        <h1>{localStorage.getItem("nameJL")}</h1>
-        <h2>{localStorage.getItem("emailJL")}</h2>
-        <Button
-          onClick={handleOpen}
-          sx={{ bgcolor: "primary.main", color: "white" }}
-        >
-          Add Job
-        </Button>
+        <Profile handleOpen={handleOpen} />
       </Box>
+      <PostJobModal
+        setJobsRefresh={setJobsRefresh}
+        handleClose={handleClose}
+        open={open}
+      />
       <Box
         sx={{
           display: "flex",
@@ -84,14 +81,10 @@ const Jobs = () => {
           flexWrap: "wrap",
           justifyContent: "center",
           alignItems: "center",
-          width: "70%",
+          width: "68%",
+          marginTop: 16,
         }}
       >
-        <PostJobModal
-          setJobsRefresh={setJobsRefresh}
-          handleClose={handleClose}
-          open={open}
-        />
         {jobs
           .filter(
             (jobToFilter) =>

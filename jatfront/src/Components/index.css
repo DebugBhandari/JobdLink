@@ -65,3 +65,41 @@
   width: 120px;
   background-color: red;
 } */
+
+.profileMainDiv {
+  display: flex;
+  min-height: 80vh;
+  background-color: #ffffff;
+  flex-direction: column;
+  min-width: 28%;
+  margin-top: 64px;
+  margin-left: 10px;
+  border-radius: 4px;
+  position: fixed;
+}
+.profileCard {
+  display: flex;
+  min-height: 80vh;
+  background-color: #ffffff;
+  flex-direction: column;
+  border-radius: 4px;
+  box-shadow: 5px 2px 5px 2px rgb(68, 68, 68);
+  text-align: left;
+  padding: 16px;
+}
+.profileAvatar {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  width: 90%;
+  color: white;
+  background-color: #388e3c;
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 0px;
+}
+.profileButton {
+  display: flex;
+  justify-content: center;
+}

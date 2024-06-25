@@ -10,15 +10,15 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Comment from "../Comment";
-
 export const style = {
   position: "absolute",
-  top: "50%",
+  top: "40%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "90%",
   "@media (min-width: 780px)": {
-    width: "40%",
+    width: "50%",
+    top: "50%",
   },
   margin: "auto",
   bgcolor: "background.paper",
@@ -114,7 +114,9 @@ export default function LinkModal({
         sx={{
           width: 200,
           margin: 3,
-          minHeight: 300,
+          maxHeight: "90%",
+          padding: 2,
+          borderRadius: 4,
           ...style,
         }}
       >
@@ -133,6 +135,8 @@ export default function LinkModal({
             pt: 2,
             px: 4,
             pb: 3,
+
+            borderRadius: 4,
           }}
         >
           <Typography
@@ -155,24 +159,23 @@ export default function LinkModal({
             alignItems: "left",
           }}
         >
-          <Typography gutterBottom variant="h5">
+          <Typography gutterBottom sx={{ fontSize: "20px" }}>
             {job.jobTitle}
           </Typography>
           <Typography
             gutterBottom
-            variant="h5"
             component="div"
-            sx={{ textAlign: "right" }}
+            sx={{ textAlign: "right", fontSize: "20px" }}
           >
-            {jobOwner && jobOwner.username}
+            {job.name}
           </Typography>
-          <Typography variant="h5" color="primary.">
+          <Typography sx={{ fontSize: "20px" }} color="primary.">
             {job.status}
           </Typography>
-          <Typography variant="h5" color="text.secondary">
+          <Typography sx={{ fontSize: "20px" }} color="text.secondary">
             {job.jobUrl}
           </Typography>
-          <Typography variant="h5" color="text.secondary">
+          <Typography sx={{ fontSize: "20px" }} color="text.secondary">
             {job.caption}
           </Typography>
         </CardContent>
@@ -207,8 +210,8 @@ export default function LinkModal({
             }}
           >
             {userNames.map((user) => (
-              <MenuItem key={user.username + "modal"} onClick={handleMenuClose}>
-                {user.username}
+              <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
+                {user.name}
               </MenuItem>
             ))}
           </Menu>
