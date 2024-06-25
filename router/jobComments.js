@@ -1,5 +1,4 @@
 import express from "express";
-import { verifyToken } from "../services/auth.js";
 
 import {
   createJobComment,

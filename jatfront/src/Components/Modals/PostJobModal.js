@@ -1,67 +1,41 @@
-import React, { useState, useEffect } from "react";
-import Modal from "@mui/material/Modal";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
+import React, { useState } from "react";
+import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Paper from "@mui/material/Paper";
+import FormControl from "@mui/material/FormControl";
 import axios from "axios";
 import { Select, MenuItem, Box } from "@mui/material";
+import { style } from "./LinkModal";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  minWidth: 350,
-  margin: "auto",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  flexDirection: "column",
-};
+import Modal from "@mui/material/Modal";
 
-export default function EditJobModal({
-  job,
-  setJobsRefresh,
-  open,
-  handleClose,
-  ...props
-}) {
+const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
   const CardActionsStyled = styled(CardActions)({
     display: "flex",
     justifyContent: "center",
   });
   const CardContentStyled = styled(CardContent)({
-    padding: 20,
+    padding: 0,
     wrap: "wrap",
-    marginTop: 10,
   });
   const TextFieldStyled = styled(TextField)({
     margin: 4,
   });
 
-  const handleEditClick = () => {
-    setTimeout(() => {
-      handleClose();
-      setJobsRefresh((prevState) => !prevState);
-    }, 500);
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     axios
-      .put(`http://localhost:3001/jobs/${job.id}`, {
+      .post("http://localhost:3001/jobs", {
         jobTitle: data.get("jobTitle"),
         company: data.get("company"),
         jobUrl: data.get("jobUrl"),
@@ -69,17 +43,22 @@ export default function EditJobModal({
         location: data.get("location"),
         username: data.get("username"),
         private: data.get("row-radio-buttons-group") === "true" ? true : false,
-        user_id: localStorage.getItem("user_id"),
+        user_id: localStorage.getItem("idJL"),
         description: data.get("description"),
         caption: data.get("caption"),
       })
       .then((response) => {
-        console.log(`Job ${job.id} updated successfully`);
         console.log(response.data);
+        console.log("Job added successfully");
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+  const handleRefresh = () => {
+    setTimeout(() => {
+      setJobsRefresh((prevState) => !prevState);
+    }, 500);
   };
   return (
     <Modal
@@ -90,92 +69,59 @@ export default function EditJobModal({
     >
       <Paper
         elevation={3}
-        sx={{
-          ...style,
-        }}
+        sx={{ maxWidth: 350, margin: 3, minHeight: 400, padding: 2, ...style }}
         component="form"
         onSubmit={handleSubmit}
+        required
       >
-        <CardContent
-          sx={{
-            height: 60,
-            width: "90%",
-            borderRadius: 4,
-            bgcolor: "success.main",
-            ...(job.status === "Rejected" && { bgcolor: "error.main" }),
-            ...(job.status === "Not Applied" && {
-              bgcolor: "primary.main",
-            }), // Conditional styling
-            color: "white",
-            fontSize: 40,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            marginTop: 0,
-
-            border: "2px solid #000",
-          }}
-        ></CardContent>
         <CardContentStyled>
           <TextFieldStyled
             margin="normal"
             required
             fullWidth
-            id="jobTitleEdit"
+            id="jobTitle"
             label="Job Title"
             name="jobTitle"
-            defaultValue={job.jobTitle}
             autoComplete="jobTitle"
-            autoFocus
             size="small"
           />
           <TextFieldStyled
             margin="normal"
             required
             fullWidth
-            id="companyEdit"
+            id="company"
             label="Company"
             name="company"
-            defaultValue={job.company}
             autoComplete="company"
-            autoFocus
             size="small"
           />
           <TextFieldStyled
             margin="normal"
-            required
             fullWidth
-            id="jobUrlEdit"
+            id="jobUrl"
             label="Job URL"
             name="jobUrl"
-            defaultValue={job.jobUrl}
             autoComplete="jobUrl"
-            autoFocus
             size="small"
           />
           <TextFieldStyled
             margin="normal"
             required
             fullWidth
-            id="descriptionEdit"
+            id="description"
             label="Description"
             name="description"
-            defaultValue={job.description}
             autoComplete="description"
-            autoFocus
             size="small"
           />
           <TextFieldStyled
             margin="normal"
             required
             fullWidth
-            id="captionEdit"
+            id="caption"
             label="Caption"
             name="caption"
-            defaultValue={job.caption}
             autoComplete="caption"
-            autoFocus
             size="small"
           />
           <Box
@@ -190,7 +136,7 @@ export default function EditJobModal({
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
-              defaultValue={job.private ? "true" : "false"}
+              defaultValue={true}
             >
               <FormControlLabel
                 value={true}
@@ -205,7 +151,7 @@ export default function EditJobModal({
             </RadioGroup>
             <Select
               name="status"
-              defaultValue={job.status}
+              defaultValue="Not Applied"
               label="Status"
               size="small"
               width="50%"
@@ -231,24 +177,19 @@ export default function EditJobModal({
               margin="normal"
               required
               width="50%"
-              id="locationEdit"
+              id="location"
               label="Location"
               name="location"
-              defaultValue={job.location}
               autoComplete="location"
-              autoFocus
               size="small"
             />
             <TextFieldStyled
               margin="normal"
-              required
               width="50%"
-              id="usernameEdit"
+              id="username"
               label="Username"
               name="username"
-              defaultValue={job.username}
               autoComplete="username"
-              autoFocus
               size="small"
             />
           </Box>
@@ -258,22 +199,17 @@ export default function EditJobModal({
             size="small"
             justify="center"
             type="submit"
-            onClick={handleEditClick}
+            onClick={handleRefresh}
             sx={{
-              "&:hover": {
-                bgcolor: "success.main",
-                ...(job.status === "Rejected" && { bgcolor: "error.main" }),
-                ...(job.status === "Not Applied" && {
-                  bgcolor: "primary.main",
-                }),
-                color: "white",
-              },
+              "&:hover": { backgroundColor: "primary.main", color: "white" },
             }}
           >
-            Update Job
+            Add Job
           </Button>
         </CardActionsStyled>
       </Paper>
     </Modal>
   );
-}
+};
+
+export default PostJobModal;

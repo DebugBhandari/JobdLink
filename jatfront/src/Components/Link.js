@@ -15,11 +15,11 @@ export default function Link({
   likeCommentRefresh,
 }) {
   const [userNames, setUserNames] = useState([]);
-  const user_id_JSON = JSON.parse(localStorage.getItem("user_id"));
+  const user_id_JSON = JSON.parse(localStorage.getItem("idJL"));
   const created_at = new Date(job.created_at);
-  const [jobOwner, setJobOwner] = useState();
   const [userLiked, setUserLiked] = useState();
   const locale_date = created_at.toLocaleDateString();
+  const nameJL = localStorage.getItem("nameJL");
 
   const buttonHover = {
     "&:hover": {
@@ -97,31 +97,31 @@ export default function Link({
     }
   };
 
-  const fetchJobOwner = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3001/jobs/${job.id}/user`
-      );
-      setJobOwner(response.data);
-    } catch (error) {
-      console.error("Error fetching job owner:", error);
-    }
-  };
+  // const fetchJobOwner = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:3001/jobs/${job.id}/user`
+  //     );
+  //     setJobOwner(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching job owner:", error);
+  //   }
+  // };
 
   useEffect(() => {
     hasUserLiked();
     fetchUsernames();
-    fetchJobOwner();
+    // fetchJobOwner();
   }, [likeCommentRefresh]);
-
+  console.log("usernames", userNames);
   return (
     <Paper
       elevation={3}
-      sx={{ minWidth: 345, margin: 3, minHeight: 300, borderRadius: 4 }}
+      sx={{ minWidth: 340, margin: 3, minHeight: 260, borderRadius: 4 }}
     >
       <CardContent
         sx={{
-          height: 80,
+          height: 60,
           bgcolor: "success.main",
           ...(job.status === "Rejected" && { bgcolor: "error.main" }),
           ...(job.status === "Not Applied" && { bgcolor: "primary.main" }), // Conditional styling
@@ -135,7 +135,7 @@ export default function Link({
       >
         <Typography
           sx={{
-            fontSize: 40,
+            fontSize: 32,
           }}
           title={job.company}
         >
@@ -151,19 +151,19 @@ export default function Link({
           flexDirection: "column",
           justifyContent: "left",
           alignItems: "left",
-          height: 150,
+          height: 140,
         }}
       >
-        <Typography gutterBottom variant="h6" component="div">
-          {jobOwner && jobOwner.username}
+        <Typography gutterBottom sx={{ fontSize: "16px", fontWeight: "bold" }}>
+          {job.name}
         </Typography>
-        <Typography gutterBottom variant="h8">
+        <Typography gutterBottom sx={{ fontSize: "16px" }}>
           {job.jobTitle}
         </Typography>
 
-        <Typography variant="h6">{job.status}</Typography>
+        <Typography sx={{ fontSize: "16px" }}>{job.status}</Typography>
 
-        <Typography variant="h8" color="text.secondary">
+        <Typography sx={{ fontSize: "16px" }} color="text.secondary">
           {job.caption}
         </Typography>
         <CardContent
@@ -172,6 +172,7 @@ export default function Link({
             justifyContent: "space-between",
             alignItems: "center",
             flexDirection: "row",
+            fontSize: "16px",
           }}
         >
           <Button onClick={handleOpen} sx={{ ...buttonHover }}>
@@ -181,21 +182,26 @@ export default function Link({
           <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
             {job.count_likes} Likes
           </Button>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={openMenu}
-            onClose={handleMenuClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            {userNames.map((user) => (
-              <MenuItem key={user.username + "like"} onClick={handleMenuClose}>
-                {user.username}
-              </MenuItem>
-            ))}
-          </Menu>
+          {userNames[0] ? (
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={openMenu}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {userNames.map((user) => (
+                <MenuItem
+                  key={user.username + "like"}
+                  onClick={handleMenuClose}
+                >
+                  {user.name}
+                </MenuItem>
+              ))}
+            </Menu>
+          ) : null}
         </CardContent>
       </CardContent>
       <CardActions
@@ -203,8 +209,8 @@ export default function Link({
           display: "flex",
           justifyContent: "center",
           height: 30,
-          marginBottom: 4,
           marginTop: 0,
+          fontSize: "16px",
         }}
       >
         {userLiked === "false" ? (
@@ -212,6 +218,7 @@ export default function Link({
             size="small"
             onClick={handleLikeClick}
             sx={{
+              fontSize: "16px",
               ...buttonHover,
             }}
           >
@@ -222,6 +229,7 @@ export default function Link({
             size="small"
             onClick={handleUnlikeClick}
             sx={{
+              fontSize: "16px",
               ...buttonHover,
             }}
           >
@@ -237,7 +245,7 @@ export default function Link({
         handleUnlikeClick={handleUnlikeClick}
         userLiked={userLiked}
         userNames={userNames}
-        jobOwner={jobOwner}
+        jobOwner={nameJL}
         locale_date={locale_date}
         user_id_JSON={user_id_JSON}
         setLikeCommentRefresh={setLikeCommentRefresh}

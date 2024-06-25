@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
@@ -13,7 +13,6 @@ import EditJobModal from "./Modals/EditJobModal";
 export default function Job({ job, setJobsRefresh }) {
   const created_at = new Date(job.created_at);
   const locale_date = created_at.toLocaleDateString();
-
   //For modal
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -50,11 +49,11 @@ export default function Job({ job, setJobsRefresh }) {
       />
       <Paper
         elevation={3}
-        sx={{ width: 400, margin: 3, maxHeight: 500, borderRadius: 4 }}
+        sx={{ width: 340, margin: 3, minHeight: 300, borderRadius: 4 }}
       >
         <CardContent
           sx={{
-            height: 80,
+            height: 60,
             bgcolor: "success.main",
             ...(job.status === "Rejected" && { bgcolor: "error.main" }),
             ...(job.status === "Not Applied" && {
@@ -71,7 +70,7 @@ export default function Job({ job, setJobsRefresh }) {
         >
           <Typography
             sx={{
-              fontSize: 40,
+              fontSize: 32,
             }}
             title={job.company}
           >
@@ -87,6 +86,7 @@ export default function Job({ job, setJobsRefresh }) {
             flexDirection: "column",
             justifyContent: "left",
             alignItems: "left",
+            height: 140,
           }}
         >
           <Typography gutterBottom variant="h5" component="div">
