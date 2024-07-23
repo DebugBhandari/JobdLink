@@ -10,6 +10,10 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Comment from "../Comment";
+import Avatar from "@mui/material/Avatar";
+
+import { baseUrl } from "../../App";
+
 export const style = {
   position: "absolute",
   top: "40%",
@@ -59,7 +63,7 @@ export default function LinkModal({
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     axios
-      .post(`http://localhost:3001/jobComment/`, {
+      .post(`${baseUrl}/jobComment/`, {
         comment: data.get("commentInput"),
         job_id: job.id,
         user_id: user_id_JSON,
@@ -78,9 +82,7 @@ export default function LinkModal({
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3001/jobComment/${job.id}`
-        );
+        const response = await axios.get(`${baseUrl}/jobComment/${job.id}`);
         setComments(response.data);
       } catch (error) {
         console.log("Error fetching comments:", error);
@@ -117,105 +119,115 @@ export default function LinkModal({
           maxHeight: "90%",
           padding: 2,
           borderRadius: 4,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
           ...style,
         }}
       >
         <CardContent
           sx={{
-            height: 80,
-            bgcolor: "success.main",
-            ...(job.status === "Rejected" && { bgcolor: "error.main" }),
-            ...(job.status === "Not Applied" && { bgcolor: "primary.main" }), // Conditional styling
-            color: "white",
-            fontSize: 40,
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             flexDirection: "column",
-            pt: 2,
-            px: 4,
-            pb: 3,
-
+            justifyContent: "center",
+            alignItems: "left",
+            border: "2px solid #e0e0e0",
+            width: 340,
             borderRadius: 4,
           }}
         >
-          <Typography
+          <CardContent
             sx={{
+              height: 60,
+              bgcolor: "success.main",
+              ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+              ...(job.status === "Not Applied" && { bgcolor: "primary.main" }), // Conditional styling
+              color: "white",
               fontSize: 40,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              borderRadius: 4,
             }}
-            title={job.company}
           >
-            {job.company.slice(0, 9)}
-          </Typography>
-          <Typography variant="body2" color="primary.mains">
-            {job.location}
-          </Typography>
-        </CardContent>
-        <CardContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "left",
-            alignItems: "left",
-          }}
-        >
-          <Typography gutterBottom sx={{ fontSize: "20px" }}>
-            {job.jobTitle}
-          </Typography>
-          <Typography
-            gutterBottom
-            component="div"
-            sx={{ textAlign: "right", fontSize: "20px" }}
-          >
-            {job.name}
-          </Typography>
-          <Typography sx={{ fontSize: "20px" }} color="primary.">
-            {job.status}
-          </Typography>
-          <Typography sx={{ fontSize: "20px" }} color="text.secondary">
-            {job.jobUrl}
-          </Typography>
-          <Typography sx={{ fontSize: "20px" }} color="text.secondary">
+            <Typography
+              sx={{
+                fontSize: 40,
+              }}
+              title={job.company}
+            >
+              {job.company.slice(0, 9)}
+            </Typography>
+            <Typography variant="body2" color="primary.mains">
+              {job.location}
+            </Typography>
+          </CardContent>
+          <div className="commentAvatar">
+            <Avatar
+              alt={job.imageUrl}
+              src={job.imageUrl}
+              sx={{ width: 36, height: 36 }}
+            />
+            <Typography
+              sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}
+            >
+              {job.name}
+            </Typography>
+          </div>
+          <div className="rowDiv">
+            <Typography gutterBottom sx={{ fontSize: "16px" }}>
+              {job.jobTitle}
+            </Typography>
+
+            <Typography sx={{ fontSize: "16px" }}>{job.status}</Typography>
+          </div>
+
+          <Typography sx={{ fontSize: "16px" }} color="text.secondary">
             {job.caption}
           </Typography>
-        </CardContent>
-        <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
-          {userLiked === "false" ? (
-            <Button
-              size="small"
-              onClick={handleLikeClick}
-              sx={{ ...buttonHover }}
-            >
-              Like
-            </Button>
-          ) : (
-            <Button
-              size="small"
-              onClick={handleUnlikeClick}
-              sx={{ ...buttonHover }}
-            >
-              Unlike
-            </Button>
-          )}
-          <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-            {job.count_likes} Likes
-          </Button>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={openMenu}
-            onClose={handleMenuClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
+          <CardActions
+            sx={{ display: "flex", justifyContent: "space-between" }}
           >
-            {userNames.map((user) => (
-              <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
-                {user.name}
-              </MenuItem>
-            ))}
-          </Menu>
-        </CardActions>
+            {userLiked === "false" ? (
+              <Button
+                size="small"
+                onClick={handleLikeClick}
+                sx={{ ...buttonHover }}
+              >
+                Like
+              </Button>
+            ) : (
+              <Button
+                size="small"
+                onClick={handleUnlikeClick}
+                sx={{ ...buttonHover }}
+              >
+                Unlike
+              </Button>
+            )}
+            <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
+              {job.count_likes} Likes
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={openMenu}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {userNames.map((user) => (
+                <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
+                  {user.name}
+                </MenuItem>
+              ))}
+            </Menu>
+          </CardActions>
+        </CardContent>
+
         <CardContent
           component="form"
           onSubmit={handleCommentSubmit}
@@ -226,6 +238,7 @@ export default function LinkModal({
             alignItems: "left",
             maxHeight: 300,
             overflow: "auto",
+            width: "90%",
           }}
         >
           <TextField

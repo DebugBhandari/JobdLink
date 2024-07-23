@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React from "react";
+import React, { createContext, useState } from "react";
 import "./App.css";
+import "./index.css";
 import Register from "./Components/Register"; // Import the 'Register' component
 import DashBoard from "./Components/DashBoard"; // Import the 'DashBoard' component
 import Jobs from "./Components/Jobs";
@@ -9,11 +10,11 @@ import { Container } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Login from "./Components/Login";
 import Links from "./Components/Links";
-
-export const AuthContext = React.createContext({
-  authData: {},
-  setAuthData: () => {},
-});
+import LinkView from "./Components/LinkView";
+export const baseUrl =
+  process.env.NODE_ENV === "production"
+    ? ""
+    : "http://localhost:3001";
 
 const theme = createTheme({
   palette: {
@@ -33,28 +34,43 @@ const theme = createTheme({
   },
 });
 
+// export const JLStoreContext = createContext({
+//   contextData: {},
+//   setContextData: () => {},
+// });
+
 function App() {
-  const [authData, setAuthData] = React.useState();
-  const value = { authData, setAuthData };
+  // const [contextData, setContextData] = useState({
+  //   zUser: {},
+
+  //   zJobs: [],
+
+  //   zJobComments: [],
+
+  //   zJobLikes: [],
+  // });
+  // const value = { contextData, setContextData };
+  // console.log("contextData", contextData);
+
   return (
     <ThemeProvider theme={theme}>
-      <Container disableGutters maxWidth={false}>
-        <AuthContext.Provider value={value}>
-          <Navbar />
+      <div className="mainAppDiv">
+        <Container disableGutters maxWidth={false}>
           <BrowserRouter>
+            <Navbar />
             <Routes>
               <Route path="/" element={<Links />} />
               <Route
                 path="/login"
-                setAuthData={setAuthData}
                 element={<Login render={(params) => ({ ...params })} />}
               />
               <Route path="/register" element={<Register />} />
-              <Route path="/jobs" element={<Jobs />} />
+              <Route path="/JAT" element={<Jobs />} />
+              <Route path="/links/:id" element={<LinkView />} />
             </Routes>
           </BrowserRouter>
-        </AuthContext.Provider>
-      </Container>
+        </Container>
+      </div>
     </ThemeProvider>
   );
 }

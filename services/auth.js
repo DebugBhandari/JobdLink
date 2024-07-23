@@ -6,24 +6,25 @@ import { dbConfig } from "../server.js";
 import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
 
-export const generateToken = (user) => {
-  return JWT.sign(
-    {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      imageUrl: user.picture,
-    },
-    process.env.SECRET_KEY
-  );
-};
-export const createUser = async (name, email, imageUrl) => {
+// export const generateToken = (user) => {
+//   return JWT.sign(
+//     {
+//       id: user._id,
+//       name: user.name,
+//       email: user.email,
+//       imageUrl: user.picture,
+//     },
+//     process.env.SECRET_KEY
+//   );
+// };
+export const createUser = async (name, email, imageUrl, linkedinId) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const query = `INSERT INTO users (name, email, imageUrl) VALUES (?, ?, ?)`;
-    const values = [name, email, imageUrl];
-    await connection.query(query, values);
+    const query = `INSERT INTO users (name, email, imageUrl, linkedinId) VALUES (?, ?, ?, ?)`;
+    const values = [name, email, imageUrl, linkedinId];
+    const [result] = await connection.query(query, values);
     connection.end();
+    return result.insertId;
   } catch (error) {
     console.log(error);
   }
@@ -48,11 +49,19 @@ export const findOrCreate = async (parsedToken) => {
       return userExisting;
     } else {
       console.log("Creating new user");
-      const newUser = await createUser(
-        parsedToken.payload.name,
-        parsedToken.payload.email,
-        parsedToken.payload.picture
+      const newUser = {
+        name: parsedToken.payload.name,
+        email: parsedToken.payload.email,
+        imageUrl: parsedToken.payload.imageUrl,
+        linkedinId: parsedToken.payload.linkedinId,
+      };
+      const newUserId = await createUser(
+        newUser.name,
+        newUser.email,
+        newUser.imageUrl,
+        newUser.linkedinId
       );
+      newUser.id = newUserId;
       return newUser;
     }
   } catch (error) {

@@ -1,14 +1,20 @@
 import app from "./app.js";
 import mysql from "mysql2/promise";
+import { baseUrl } from "./app.js";
 
-const baseUrl = process.env.BASE_URL || "http//localhost:";
 // MySQL connection
 export const dbConfig = {
-  host: "127.0.0.1",
-  user: "root", // Replace with your MySQL username
-  password: process.env.MYSQL_PASSWORD, // Replace with your MySQL password
-  database: "jatDb",
-  port: 3306,
+  host:
+    process.env.NODE_ENV === "production"
+      ? process.env.MYSQL_HOST
+      : "localhost",
+  user: process.env.MYSQL_USER, // Replace with your MySQL username
+  password:
+    process.env.NODE_ENV === "production"
+      ? process.env.MYSQL_PASSWORD
+      : "kirk8242", // Replace with your MySQL password
+  database: process.env.MYSQL_DATABASE,
+  port: process.env.MYSQL_PORT,
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10,
@@ -25,7 +31,8 @@ const initializeDb = async () => {
           id INT AUTO_INCREMENT PRIMARY KEY UNIQUE,
           name VARCHAR(255) NOT NULL,
           email VARCHAR(255) NOT NULL UNIQUE,
-          imageUrl VARCHAR(255)
+          imageUrl VARCHAR(255),
+          linkedinId VARCHAR(255)
         )
       `);
     await connection.query(`
@@ -43,7 +50,7 @@ const initializeDb = async () => {
           caption TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-          FOREIGN KEY (user_id) REFERENCES users(id)
+          FOREIGN KEY (user_id) REFERENCES Users(id)
         )
       `);
     await connection.query(`
@@ -85,7 +92,7 @@ const initializeDb = async () => {
     await connection.end();
     console.log("Database initialized");
     app.listen(app.get("port"), () => {
-      console.log("  App is running at %s%d", baseUrl, app.get("port"));
+      console.log("  App is running at %s", baseUrl);
       console.log("  Press CTRL-C to stop\n");
     });
   } catch (error) {

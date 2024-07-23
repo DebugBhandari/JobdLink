@@ -14,6 +14,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { baseUrl } from "../App";
 
 function Copyright(props) {
   return (
@@ -42,7 +43,7 @@ export default function Register() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     axios
-      .post("http://localhost:3001/register", {
+      .post(`${baseUrl}/register`, {
         email: data.get("email"),
         password: data.get("password"),
         username: data.get("username"),

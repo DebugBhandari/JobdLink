@@ -5,9 +5,21 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
+import Avatar from "@mui/material/Avatar";
+import useJLStore from "../useStore";
+import TextField from "@mui/material/TextField";
+
+import { baseUrl } from "../App";
 
 export default function Comment({ comment, setLikeCommentRefresh }) {
-  const emailJL = localStorage.getItem("emailJL");
+  const emailJL = useJLStore((state) => state.zUser.email);
+  const idJL = useJLStore((state) => state.zUser.id);
+  const removeZJobComment = useJLStore((state) => state.removeZJobComment);
+  const updateZJobComment = useJLStore((state) => state.updateZJobComment);
+  const zJobComments = useJLStore((state) => state.zJobComments);
+  const [editComment, setEditComment] = useState(false);
+  const [updatedComment, setUpdatedComment] = useState(comment.comment);
+
   const timeAgo = (date) => {
     const now = new Date();
     const seconds = Math.floor((now - date) / 1000);
@@ -37,47 +49,87 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
   };
 
   const handleCommentDelete = () => {
+    setLikeCommentRefresh((prevState) => !prevState);
     axios
-      .delete(
-        `http://localhost:3001/jobComment/${comment.id}/${localStorage.getItem(
-          "idJL"
-        )}`
-      )
+      .delete(`${baseUrl}/jobComment/${comment.id}/${idJL}`)
       .then((response) => {
         console.log("Comment deleted successfully");
         console.log(response);
-        setLikeCommentRefresh((prevState) => !prevState);
+        removeZJobComment(comment.id);
       });
   };
 
-  const handleCommentEdit = () => {
-    console.log("Edit comment");
+  const handleCommentEdit = (comment) => {
+    axios
+      .put(`${baseUrl}/jobComment/${comment.id}`, {
+        comment: updatedComment,
+      })
+      .then((response) => {
+        console.log("Comment updated successfully");
+        console.log(response);
+        setEditComment((prevState) => !prevState);
+        updateZJobComment({ id: comment.id, comment: updatedComment });
+        setLikeCommentRefresh((prevState) => !prevState);
+        if (updatedComment === "") {
+          handleCommentDelete();
+        }
+      });
   };
+  // const handleCommentEdit = () => {
+  //   setEditComment((prevState) => !prevState);
+  // };
+  useEffect(() => {
+    setLikeCommentRefresh((prevState) => !prevState);
+  }, []);
 
   return (
-    <Paper elevation={3} sx={{ borderRadius: 4, margin: 1, minheight: 130 }}>
+    <Paper elevation={3} sx={{ borderRadius: 4, margin: 1, minheight: 100 }}>
       <CardContent
         sx={{
           display: "flex",
           flexDirection: "column",
         }}
       >
-        <Typography
-          sx={{
-            fontSize: 18,
-            textAlign: "left",
-          }}
-          title={comment.name}
-        >
-          {comment.name}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="primary.mains"
-          sx={{ textAlign: "left", fontSize: 16, wordWrap: "break-word" }}
-        >
-          {comment.comment}
-        </Typography>
+        <div className="commentAvatar">
+          <Avatar
+            alt={comment.imageUrl}
+            src={comment.imageUrl}
+            sx={{ width: 36, height: 36 }}
+          />
+          <Typography sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}>
+            {comment.name}
+          </Typography>
+        </div>
+        {editComment ? (
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="commentInput"
+            label="Comment"
+            name="commentInput"
+            autoComplete="Comment"
+            autoFocus
+            size="small"
+            onSubmit={handleCommentEdit}
+            onChange={(e) => setUpdatedComment(e.target.value)}
+            value={updatedComment}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleCommentEdit(comment);
+              }
+            }}
+          />
+        ) : (
+          <Typography
+            variant="body2"
+            color="primary.mains"
+            sx={{ textAlign: "left", fontSize: 16, wordWrap: "break-word" }}
+          >
+            {comment.comment}
+          </Typography>
+        )}
+
         <Typography
           variant="body2"
           color="text.secondary"
@@ -86,7 +138,7 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
           {timeAgo(new Date(comment.commentedAt))}
         </Typography>
         {comment.email === emailJL ? (
-          <CardActions sx={{ justifyContent: "center" }}>
+          <CardActions sx={{ justifyContent: "center", padding: 0 }}>
             <Button
               size="small"
               onClick={handleCommentDelete}
@@ -96,15 +148,33 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
             >
               Delete{" "}
             </Button>
-            <Button
-              size="small"
-              onClick={handleCommentEdit}
-              sx={{
-                "&:hover": { backgroundColor: "primary.main", color: "white" },
-              }}
-            >
-              Edit
-            </Button>
+            {!editComment ? (
+              <Button
+                size="small"
+                onClick={() => setEditComment((prevState) => !prevState)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                  },
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                size="small"
+                onClick={() => handleCommentEdit(comment)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                  },
+                }}
+              >
+                Confirm
+              </Button>
+            )}
           </CardActions>
         ) : null}
       </CardContent>

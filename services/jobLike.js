@@ -58,13 +58,13 @@ async function findByJobId(jobId) {
   });
 }
 
-async function findAll() {
+async function findAll(userId) {
   return new Promise(async (resolve, reject) => {
-    const query = "SELECT * FROM JobLikes ORDER BY likedAt ASC";
+    const query = "SELECT * FROM JobLikes WHERE user_id = ?";
 
     const connection = await mysql.createConnection(dbConfig);
     try {
-      const [results] = await connection.execute(query);
+      const [results] = await connection.execute(query, [userId]);
       resolve(results);
     } catch (error) {
       reject(error);

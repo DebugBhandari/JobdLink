@@ -7,6 +7,7 @@ import {
   findAll,
   updateJob,
   findJobOwner,
+  toggleJobdLink,
 } from "../controllers/job.js";
 import { isAuth } from "../services/auth.js";
 
@@ -19,5 +20,6 @@ router.put("/:jobId", updateJob);
 router.delete("/:jobId", deleteJob);
 router.post("/", createJob);
 router.get("/:jobId/user", findJobOwner);
+router.put("/toggle/:jobId", toggleJobdLink);
 
 export default router;

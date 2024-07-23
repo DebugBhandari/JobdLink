@@ -10,6 +10,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 import { Select, MenuItem, Box } from "@mui/material";
+import { baseUrl } from "../App";
 
 const EditJob = ({ job, setIsEditing, setJobsRefresh }) => {
   const jobId = job.id;
@@ -36,7 +37,7 @@ const EditJob = ({ job, setIsEditing, setJobsRefresh }) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     axios
-      .put(`http://localhost:3001/jobs/${jobId}`, {
+      .put(`${baseUrl}/jobs/${jobId}`, {
         jobTitle: data.get("jobTitle"),
         company: data.get("company"),
         jobUrl: data.get("jobUrl"),

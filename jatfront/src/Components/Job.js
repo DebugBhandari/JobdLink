@@ -9,10 +9,20 @@ import Paper from "@mui/material/Paper";
 import EditJob from "./EditJob";
 import axios from "axios";
 import EditJobModal from "./Modals/EditJobModal";
+import useJLStore from "../useStore";
+import { baseUrl } from "../App";
+
+export const loadLocal = async (key) => {
+  return await localStorage.getItem(key);
+};
 
 export default function Job({ job, setJobsRefresh }) {
   const created_at = new Date(job.created_at);
   const locale_date = created_at.toLocaleDateString();
+
+  const [content, setContent] = useState("This is a test post from JobdLink.");
+  const setZJobs = useJLStore((state) => state.setZJobs);
+  const toggleJobdLink = useJLStore((state) => state.toggleJobdLink);
   //For modal
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -20,10 +30,11 @@ export default function Job({ job, setJobsRefresh }) {
   };
   const handleClose = (e) => {
     setOpen(false);
+    setJobsRefresh((prevState) => !prevState);
   };
 
   const handleDeleteClick = () => {
-    axios.delete(`http://localhost:3001/jobs/${job.id}`).then((response) => {
+    axios.delete(`${baseUrl}/jobs/${job.id}`).then((response) => {
       setJobsRefresh((prevState) => !prevState);
       console.log("Job deleted successfully");
     });
@@ -39,6 +50,30 @@ export default function Job({ job, setJobsRefresh }) {
     },
   };
 
+  const handlePost = async () => {
+    const token = await loadLocal("tokenJL");
+    const linkedinId = await loadLocal("linkedinIdJL");
+
+    if (!token || !content) return;
+
+    try {
+      const response = await axios.post(`${baseUrl}/share`, {
+        token,
+        content,
+        linkedinId,
+      });
+
+      if (response.data.success) {
+        alert("Post successful!");
+      } else {
+        alert("Failed to post!");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error posting to LinkedIn");
+    }
+  };
+
   return (
     <>
       <EditJobModal
@@ -49,11 +84,22 @@ export default function Job({ job, setJobsRefresh }) {
       />
       <Paper
         elevation={3}
-        sx={{ width: 340, margin: 3, minHeight: 300, borderRadius: 4 }}
+        sx={{
+          margin: 4,
+          minHeight: 360,
+          width: 360,
+
+          borderRadius: 4,
+
+          // "@media (max-width: 1000px)": {
+          //   minWidth: "70dvw",
+          //   margin: 4,
+          // },
+        }}
       >
         <CardContent
           sx={{
-            height: 60,
+            height: 70,
             bgcolor: "success.main",
             ...(job.status === "Rejected" && { bgcolor: "error.main" }),
             ...(job.status === "Not Applied" && {
@@ -70,14 +116,14 @@ export default function Job({ job, setJobsRefresh }) {
         >
           <Typography
             sx={{
-              fontSize: 32,
+              fontSize: 28,
             }}
             title={job.company}
           >
-            {job.company.slice(0, 9)}
+            {job.company.slice(0, 10) + "," + job.location}
           </Typography>
-          <Typography variant="body2" color="primary.mains">
-            {job.location}
+          <Typography gutterBottom sx={{ fontSize: "16px" }}>
+            {job.jobTitle}
           </Typography>
         </CardContent>
         <CardContent
@@ -86,33 +132,33 @@ export default function Job({ job, setJobsRefresh }) {
             flexDirection: "column",
             justifyContent: "left",
             alignItems: "left",
-            height: 140,
+            minHeight: 160,
+            pb: 0,
           }}
         >
-          <Typography gutterBottom variant="h5" component="div">
-            {job.jobTitle}
-          </Typography>
+          <div className="rowDiv">
+            {" "}
+            <Typography variant="h8">
+              {job.private ? "Private" : "Linkd"}
+            </Typography>
+            <Typography variant="h8" color="primary.">
+              {job.status}
+            </Typography>
+          </div>
 
-          <Typography variant="h8" color="primary.">
-            {job.status}
-          </Typography>
+          <div className="rowDiv">
+            <Typography variant="h8" color="text.secondary">
+              {job.username}
+            </Typography>
+          </div>
           <Typography variant="h8" color="text.secondary">
             {job.jobUrl}
-          </Typography>
-          <Typography variant="h8" color="text.secondary">
-            {job.username}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {job.private ? "Private" : "Link"}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {job.caption}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {job.description}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {job.user_id}
           </Typography>
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "center" }}>
@@ -125,6 +171,16 @@ export default function Job({ job, setJobsRefresh }) {
             sx={{ ...buttonHover }}
           >
             Delete
+          </Button>
+
+          <Button
+            onClick={() => {
+              toggleJobdLink(job.id);
+              setZJobs();
+            }}
+            sx={{ color: "#388e3c", fontWeight: 800, ...buttonHover }}
+          >
+            Link
           </Button>
         </CardActions>
       </Paper>

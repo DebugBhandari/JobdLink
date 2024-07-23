@@ -84,3 +84,22 @@ GET http://localhost:3001/jobComment/2
 ###
 
 DELETE http://localhost:3001/jobComment/61/21
+
+
+###
+PUT http://localhost:3001/jobs/3
+Content-Type: application/json
+
+{
+    "jobTitle": "Frontend Developer",
+    "jobUrl": "https://www.google.com",
+    "company": "Google",
+    "status": "Applied",
+    "user_id": 1,
+    "location": "NewYork",
+    "username": "deepakr",
+    "description": "ömflsmdlkfm",
+    "caption": "hgkadjgadgs",
+    "id": 3,
+    "private": false
+}

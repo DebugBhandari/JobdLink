@@ -63,7 +63,8 @@ export const findByJobId = async (req, res, next) => {
 // GET /jobLikes
 export const findAll = async (req, res, next) => {
   try {
-    res.json(await JobLikeService.findAll());
+    const userId = req.params.userId;
+    res.json(await JobLikeService.findAll(userId));
   } catch (error) {
     next(console.log("JobLike not found", error));
   }

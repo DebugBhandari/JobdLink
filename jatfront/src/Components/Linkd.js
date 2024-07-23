@@ -5,11 +5,11 @@ import OneLink from "./OneLink.js";
 import useJLStore from "../useStore.js";
 //import { JLStoreContext } from "../App";
 import Profile from "./Profile.js";
-import LinkView from "./LinkView.js";
 import { loadLocal } from "./Job.js";
+import { useLocation } from "react-router-dom";
 import { baseUrl } from "../App";
 
-const Links = () => {
+const Linkd = ({ zPJobs }) => {
   //const [jobs, setJobs] = useState([]);
   const jobSearchQuery = useJLStore((state) => state.jobSearchQuery);
 
@@ -34,81 +34,37 @@ const Links = () => {
     zUser: state.zUser,
     setZUser: state.setZUser,
   }));
+
+  const location = useLocation();
+  const params = location.pathname;
   //const [user, setUser] = useState(zUser);
   //console.log("user", user);
   const [linkView, setLinkView] = useState(false);
 
   const token = zUser.token;
-  console.log("baseUrl", baseUrl);
 
-  const user_id_JSON = parseInt(zUser.id);
+  const local_user_id = parseInt(zUser.id);
 
   const [likeCommentRefresh, setLikeCommentRefresh] = useState(false);
   const getUsersLikes = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/jobLike/${user_id_JSON}`);
+      const response = await axios.get(`${baseUrl}/jobLike/${local_user_id}`);
       setZJobLikes(response.data);
     } catch (error) {
       console.error("Error fetching likes:", error);
     }
   };
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-
-    const name = urlParams.get("name");
-    const email = urlParams.get("email");
-    const imageUrl = urlParams.get("imageUrl");
-    const id = urlParams.get("id");
-    const linkedinId = urlParams.get("linkedinId");
-    const loggedUser = { id, name, email, imageUrl, linkedinId, token };
-
-    console.log("loggedUser", loggedUser);
-    if (token) {
-      // localStorage.setItem("tokenJL", token);
-      // localStorage.setItem("nameJL", name);
-      // localStorage.setItem("emailJL", email);
-      // localStorage.setItem("imageUrlJL", imageUrl);
-      // localStorage.setItem("idJL", id);
-      // localStorage.setItem("linkedinIdJL", linkedinId);
-
-      setZUser(loggedUser);
-
-      window.location.href = "/";
-    }
-
-    setZJobs();
-    getUsersLikes();
-  }, [token, likeCommentRefresh]);
-
-  const linkedJobs = zJobs.filter((job) => job.private === 0);
+  const linkedJobs = zJobs.filter(
+    (job) => job.private === 0 && job.user_id === local_user_id
+  );
 
   //console.log("linkedJobs", linkedJobs);
   //setZJobs(jobs);
   // console.log("zJobs", JSON.parse(zJobs || []));
 
   return (
-    <div className="linksRouteDiv">
-      <div
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "20vh",
-          margin: "auto",
-          "@media (max-width: 1000px)": {
-            height: "80vh",
-          },
-          width: "30%",
-          marginTop: 160,
-        }}
-      >
-        <Profile handleOpen={null} />
-      </div>
-      <div className="linkdLinkd">
+    <div className="linkdJobd">
+      <div className="sideLinks">
         {linkedJobs
           .filter(
             (jobToFilter) =>
@@ -121,7 +77,7 @@ const Links = () => {
               job={job}
               likeCommentRefresh={likeCommentRefresh}
               setLikeCommentRefresh={setLikeCommentRefresh}
-              fromJobd={false}
+              fromJobd={true}
             />
           ))}
       </div>
@@ -129,4 +85,4 @@ const Links = () => {
   );
 };
 
-export default Links;
+export default Linkd;
