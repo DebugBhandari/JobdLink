@@ -68,3 +68,11 @@ export const findJobOwner = async (req, res, next) => {
     next(console.log("User not found", error));
   }
 };
+
+export const toggleJobdLink = async (req, res, next) => {
+  try {
+    res.json(await JobService.toggleJobdLink(req.params.jobId));
+  } catch (error) {
+    next(console.log("Job not found", error));
+  }
+};

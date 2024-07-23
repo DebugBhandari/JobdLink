@@ -15,10 +15,20 @@ import FormControl from "@mui/material/FormControl";
 import axios from "axios";
 import { Select, MenuItem, Box } from "@mui/material";
 import { style } from "./LinkModal";
+import useJLStore from "../../useStore";
+import { baseUrl } from "../../App";
 
 import Modal from "@mui/material/Modal";
 
 const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
+  const zUser = useJLStore((state) => state.zUser) || {
+    id: 99999,
+    email: "guest@PostJobModal.link",
+    imageUrl: "https://www.gravatar.com/avatar/",
+    linkedinId: "fakeid",
+  };
+  const setZJobs = useJLStore((state) => state.setZJobs);
+  const local_user_id = zUser.id;
   const CardActionsStyled = styled(CardActions)({
     display: "flex",
     justifyContent: "center",
@@ -35,7 +45,7 @@ const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     axios
-      .post("http://localhost:3001/jobs", {
+      .post(`${baseUrl}/jobs`, {
         jobTitle: data.get("jobTitle"),
         company: data.get("company"),
         jobUrl: data.get("jobUrl"),
@@ -43,13 +53,14 @@ const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
         location: data.get("location"),
         username: data.get("username"),
         private: data.get("row-radio-buttons-group") === "true" ? true : false,
-        user_id: localStorage.getItem("idJL"),
+        user_id: local_user_id || 99999,
         description: data.get("description"),
         caption: data.get("caption"),
       })
       .then((response) => {
         console.log(response.data);
         console.log("Job added successfully");
+        setZJobs();
       })
       .catch((error) => {
         console.log(error);

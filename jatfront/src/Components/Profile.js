@@ -4,27 +4,27 @@ import "./index.css";
 import Button from "@mui/material/Button";
 
 import Typography from "@mui/material/Typography";
+import useJLStore from "../useStore";
+import { baseUrl } from "../App";
 
 const Profile = ({ handleOpen }) => {
-  const userName = localStorage.getItem("nameJL");
-  const userEmail = localStorage.getItem("emailJL");
-  const userImage = localStorage.getItem("imageUrlJL");
+  const zUser = useJLStore((state) => state.zUser);
   const urlValue = window.location.href;
   return (
     <div className="profileMainDiv">
       <div className="profileCard">
         <div className="profileAvatar">
           <Avatar
-            alt={userName}
-            src={userImage}
+            alt={zUser.name}
+            src={zUser.imageUrl}
             sx={{ width: 56, height: 56 }}
           />
           <Typography sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}>
-            {userName}
+            {zUser.name}
           </Typography>
         </div>
         <br></br>
-        <Typography sx={{ fontSize: "16px" }}>{userEmail}</Typography>
+        <Typography sx={{ fontSize: "16px" }}>{zUser.email}</Typography>
         <br></br>
         <br></br>
         <br></br>
@@ -46,7 +46,7 @@ const Profile = ({ handleOpen }) => {
         <br></br>
         <br></br>
         <div className="profileButton">
-          {urlValue === "http://localhost:3000/jobs" ? (
+          {urlValue === `${baseUrl}/jobs` ? (
             <Button
               onClick={handleOpen}
               sx={{

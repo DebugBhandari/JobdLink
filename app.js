@@ -2,9 +2,11 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
-import { generateToken } from "./services/auth.js";
+//import { generateToken } from "./services/auth.js";
 import mysql from "mysql2/promise";
 import cors from "cors";
+import axios from "axios";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -20,6 +22,9 @@ import passport from "passport";
 import { v4 as uuidv4 } from "uuid";
 // import passport.js
 import "./utils/passport.js";
+
+export const baseUrl =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:3001";
 
 app.use(bodyParser.json());
 app.use(express.json());
@@ -59,28 +64,92 @@ app.use(cors());
 app.use(passport.initialize());
 //app.use(passport.session(sess));
 
+// app.get(
+//   "/auth/google",
+//   passport.authenticate("google", { scope: ["profile", "email"] })
+// );
+
+// app.get(
+//   "/auth/google/callback",
+//   passport.authenticate("google", { session: false }),
+//   (req, res, next) => {
+//     const { id, name, email, imageUrl } = req.user;
+//     const token = generateToken(req.user);
+//     console.log("Do we have a user??", req.user);
+//     res.redirect(
+//       `http://localhost:3000?token=${token}&name=${encodeURIComponent(
+//         name
+//       )}&email=${encodeURIComponent(email)}&imageUrl=${encodeURIComponent(
+//         imageUrl
+//       )}&id=${id}`
+//     );
+
 app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  "/auth/linkedin",
+  passport.authenticate("linkedin", { state: "SOME STATE" })
 );
 
 app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { session: false }),
+  "/auth/linkedin/callback",
+  passport.authenticate("linkedin", { session: false }),
   (req, res, next) => {
-    const { id, name, email, imageUrl } = req.user;
-    const token = generateToken(req.user);
-    console.log("Do we have a user??", req.user);
+    const { id, name, email, imageUrl, linkedinId } = req.user.createdFoundUser;
+    console.log("req.user", req.user.createdFoundUser);
+    const { accessToken } = req.user;
+    // const token = generateToken(req.user);
+    // console.log("token", token);
+    //console.log("Do we have a user??", req.user);
     res.redirect(
-      `http://localhost:3000?token=${token}&name=${encodeURIComponent(
-        name
-      )}&email=${encodeURIComponent(email)}&imageUrl=${encodeURIComponent(
+      `${baseUrl}?token=${encodeURIComponent(
+        accessToken
+      )}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(
+        email
+      )}&imageUrl=${encodeURIComponent(
         imageUrl
-      )}&id=${id}`
+      )}&id=${id}&linkedinId=${linkedinId}`
     );
+
     // Redirect to React frontend
   }
 );
+
+app.post("/share", async (req, res) => {
+  const { token, content, linkedinId } = req.body;
+  console.log(linkedinId);
+
+  try {
+    const response = await axios.post(
+      "https://api.linkedin.com/v2/ugcPosts",
+      {
+        author: `urn:li:person:${linkedinId}`,
+        lifecycleState: "PUBLISHED",
+        specificContent: {
+          "com.linkedin.ugc.ShareContent": {
+            shareCommentary: {
+              text: content,
+            },
+            shareMediaCategory: "NONE",
+          },
+        },
+        visibility: {
+          "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-Restli-Protocol-Version": "2.0.0",
+        },
+      }
+    );
+
+    res.json({ success: true, data: response.data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // app.use("/profile", (req, res) => {
 //   if (req.session.isAuthenticated) {
 //     res.send(req.session.user);
@@ -88,8 +157,16 @@ app.get(
 //     res.status(401).send("Unauthorized");
 //   }
 // });
+console.log("baseUrl", baseUrl);
 app.use("/jobs", jobsRouter);
 app.use("/jobLike", jobLikeRouter);
 app.use("/jobComment", jobCommentRouter);
+
+if (process.env.NODE_ENV || "development") {
+  app.use(express.static("jatfront/build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve("jatfront", "build", "index.html"));
+  });
+}
 
 export default app;

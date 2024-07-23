@@ -51,7 +51,7 @@ async function findById(jobId) {
 
 async function findAll() {
   return new Promise(async (resolve, reject) => {
-    const query = `select Jobs.id, jobs.jobTitle, jobs.description, jobs.user_id, jobs.company, jobs.jobUrl, jobs.status, jobs.location, jobs.username, jobs.private, jobs.caption, COUNT(DISTINCT joblikes.id) AS count_likes, COUNT(DISTINCT jobcomments.id) AS count_comments, users.name from Jobs
+    const query = `select Jobs.id, jobs.jobTitle, jobs.description, jobs.user_id, jobs.company, jobs.jobUrl, jobs.status, jobs.location, jobs.username, jobs.private, jobs.caption, COUNT(DISTINCT joblikes.id) AS count_likes, COUNT(DISTINCT jobcomments.id) AS count_comments, users.name, users.imageUrl from Jobs
     left join JobLikes on Joblikes.job_id = jobs.id
     left join JobComments on JobComments.job_id = jobs.id
     left join users on users.id=jobs.user_id
@@ -141,6 +141,21 @@ async function findJobOwner(jobId) {
   });
 }
 
+async function toggleJobdLink(jobId) {
+  return new Promise(async (resolve, reject) => {
+    const query = "UPDATE Jobs SET private = 1 - private WHERE id = ?";
+    const connection = await mysql.createConnection(dbConfig);
+    try {
+      const [results] = await connection.execute(query, [jobId]);
+      resolve(results);
+    } catch (error) {
+      reject(error);
+    } finally {
+      await connection.end();
+    }
+  });
+}
+
 export default {
   create,
   findById,
@@ -148,4 +163,5 @@ export default {
   update,
   deleteJob,
   findJobOwner,
+  toggleJobdLink,
 };
