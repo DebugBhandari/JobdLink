@@ -18,24 +18,18 @@ jobs:
         with:
           node-version: 20
 
-      - name: Build React App
-        working-directory: ./jatfront
-        run: |
-          npm install
-          npm run build
-
-      - name: Build Docker Images
+      - name: Build Docker Image
         run: |
           # Build Express Docker Image
-          docker build -t jobdlinkdocker:latest ./express
+          docker build -t jobdlinkdocker:latest ./JobdLink
          
 
-      - name: Save Docker Images
+      - name: Save Docker Image
         run: |
           docker save jobdlinkdocker:latest -o jobdlinkdocker.tar
          
 
-      - name: Change permissions for Docker Image files
+      - name: Change permissions for Docker Image file
         run: |
           chmod 755 jobdlinkdocker.tar
          
