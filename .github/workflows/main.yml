@@ -21,7 +21,7 @@ jobs:
       - name: Build Docker Image
         run: |
           # Build Express Docker Image
-          docker build -t jobdlinkdocker:latest ./JobdLink
+          docker build -t jobdlinkdocker:latest ./
          
 
       - name: Save Docker Image
