@@ -176,7 +176,7 @@ if (process.env.NODE_ENV || "development") {
 
   // Serve the React app for all non-API routes
   app.get("*", (req, res) => {
-    res.sendFile("jatfront/build", "index.html");
+    res.sendFile(path.resolve("jatfront", "build", "index.html"));
   });
 }
 
