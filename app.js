@@ -7,9 +7,6 @@ import mysql from "mysql2/promise";
 import cors from "cors";
 import axios from "axios";
 import path from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
-const __dirname = path.dirname(__filename); // get the name of the directory
 
 const app = express();
 app.use(express.json());
@@ -168,7 +165,7 @@ app.use("/jobComment", jobCommentRouter);
 if (process.env.NODE_ENV || "development") {
   // Serve static files from the React app
   app.use(
-    express.static(path.join(__dirname, "jatfront/build"), {
+    express.static("jatfront/build", {
       etag: false,
       lastModified: false,
       setHeaders: (res, path) => {
@@ -179,7 +176,7 @@ if (process.env.NODE_ENV || "development") {
 
   // Serve the React app for all non-API routes
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "jatfront/build", "index.html"));
+    res.sendFile("jatfront/build", "index.html");
   });
 }
 

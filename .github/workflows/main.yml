@@ -67,4 +67,4 @@ jobs:
             docker load -i /var/www/jobd.link/jobdlinkdocker.tar
 
             # Start new containers with the updated images
-            docker-compose up -d
+            docker-compose up -d --force-recreate
