@@ -51,11 +51,11 @@ async function findById(jobId) {
 
 async function findAll() {
   return new Promise(async (resolve, reject) => {
-    const query = `select Jobs.id, jobs.jobTitle, jobs.description, jobs.user_id, jobs.company, jobs.jobUrl, jobs.status, jobs.location, jobs.username, jobs.private, jobs.caption, COUNT(DISTINCT joblikes.id) AS count_likes, COUNT(DISTINCT jobcomments.id) AS count_comments, Users.name, Users.imageUrl from Jobs
-    left join JobLikes on Joblikes.job_id = jobs.id
-    left join JobComments on JobComments.job_id = jobs.id
-    left join Users on Users.id=jobs.user_id
-    GROUP BY jobs.id
+    const query = `select Jobs.id, Jobs.jobTitle, Jobs.description, Jobs.user_id, Jobs.company, Jobs.jobUrl, Jobs.status, Jobs.location, Jobs.username, Jobs.private, Jobs.caption, COUNT(DISTINCT joblikes.id) AS count_likes, COUNT(DISTINCT jobcomments.id) AS count_comments, Users.name, Users.imageUrl from Jobs
+    left join JobLikes on Joblikes.job_id = Jobs.id
+    left join JobComments on JobComments.job_id = Jobs.id
+    left join Users on Users.id=Jobs.user_id
+    GROUP BY Jobs.id
     order by private desc`;
 
     const connection = await mysql.createConnection(dbConfig);
@@ -106,7 +106,7 @@ async function update(jobId, update) {
 
 async function deleteJob(jobId) {
   return new Promise(async (resolve, reject) => {
-    const query = "DELETE FROM jobs WHERE id = ?";
+    const query = "DELETE FROM Jobs WHERE id = ?";
 
     const connection = await mysql.createConnection(dbConfig);
     try {
@@ -127,7 +127,7 @@ async function deleteJob(jobId) {
 async function findJobOwner(jobId) {
   return new Promise(async (resolve, reject) => {
     const query =
-      "SELECT Users.name FROM jobs JOIN Users ON jobs.user_id = Users.id WHERE jobs.id = ?";
+      "SELECT Users.name FROM Jobs JOIN Users ON Jobs.user_id = Users.id WHERE Jobs.id = ?";
 
     const connection = await mysql.createConnection(dbConfig);
     try {
