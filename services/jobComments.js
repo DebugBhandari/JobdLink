@@ -22,8 +22,8 @@ async function create(jobComment) {
 //Find by Job ID
 async function findByJobId(jobId) {
   return new Promise(async (resolve, reject) => {
-    const query = `SELECT JobComments.comment, users.name, users.imageUrl, users.email, jobComments.id, jobComments.commentedAt FROM JobComments
-    JOIN users ON JobComments.user_id = users.id
+    const query = `SELECT JobComments.comment, Users.name, Users.imageUrl, Users.email, jobComments.id, jobComments.commentedAt FROM JobComments
+    JOIN Users ON JobComments.user_id = Users.id
     WHERE job_id = ? ORDER BY commentedAt DESC`;
 
     const connection = await mysql.createConnection(dbConfig);
