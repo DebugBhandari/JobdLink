@@ -39,6 +39,7 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
+  res.set("Cache-Control", "no-store");
   next();
 });
 app.use(cors());
@@ -166,7 +167,15 @@ app.use("/jobComment", jobCommentRouter);
 
 if (process.env.NODE_ENV || "development") {
   // Serve static files from the React app
-  app.use(express.static(path.join(__dirname, "jatfront/build")));
+  app.use(
+    express.static(path.join(__dirname, "jatfront/build"), {
+      etag: false,
+      lastModified: false,
+      setHeaders: (res, path) => {
+        res.setHeader("Cache-Control", "no-store");
+      },
+    })
+  );
 
   // Serve the React app for all non-API routes
   app.get("*", (req, res) => {
