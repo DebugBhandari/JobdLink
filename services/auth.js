@@ -20,7 +20,7 @@ import bcrypt from "bcryptjs";
 export const createUser = async (name, email, imageUrl, linkedinId) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const query = `INSERT INTO users (name, email, imageUrl, linkedinId) VALUES (?, ?, ?, ?)`;
+    const query = `INSERT INTO Users (name, email, imageUrl, linkedinId) VALUES (?, ?, ?, ?)`;
     const values = [name, email, imageUrl, linkedinId];
     const [result] = await connection.query(query, values);
     connection.end();
@@ -33,7 +33,7 @@ export const createUser = async (name, email, imageUrl, linkedinId) => {
 export const findUserByEmail = async (email) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const query = `SELECT * FROM users WHERE email = ?`;
+    const query = `SELECT * FROM Users WHERE email = ?`;
     const [rows] = await connection.query(query, [email]);
     connection.end();
     return rows[0];
