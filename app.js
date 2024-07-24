@@ -26,8 +26,7 @@ import { v4 as uuidv4 } from "uuid";
 // import passport.js
 import "./utils/passport.js";
 
-export const baseUrl =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:3001";
+export const baseUrl = process.env.REACT_APP_BASE_URL;
 
 app.use(bodyParser.json());
 app.use(express.json());

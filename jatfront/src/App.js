@@ -11,10 +11,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Login from "./Components/Login";
 import Links from "./Components/Links";
 import LinkView from "./Components/LinkView";
-export const baseUrl =
-  process.env.NODE_ENV === "production"
-    ? ""
-    : "http://localhost:3001";
+export const baseUrl = process.env.REACT_APP_BASE_URL;
 
 const theme = createTheme({
   palette: {
