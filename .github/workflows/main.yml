@@ -63,5 +63,8 @@ jobs:
             # Stop and remove old containers if they exist
             docker-compose down
 
+             # Load Docker Images
+            docker load -i /var/www/jobd.link/jobdlinkdocker.tar
+
             # Start new containers with the updated images
             docker-compose up -d
