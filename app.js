@@ -163,9 +163,12 @@ app.use("/jobLike", jobLikeRouter);
 app.use("/jobComment", jobCommentRouter);
 
 if (process.env.NODE_ENV || "development") {
-  app.use(express.static("jatfront/build"));
+  // Serve static files from the React app
+  app.use(express.static(path.join(__dirname, "jatfront/build")));
+
+  // Serve the React app for all non-API routes
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve("jatfront", "build", "index.html"));
+    res.sendFile(path.join(__dirname, "jatfront/build", "index.html"));
   });
 }
 
