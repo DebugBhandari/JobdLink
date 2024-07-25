@@ -7,6 +7,9 @@ import mysql from "mysql2/promise";
 import cors from "cors";
 import axios from "axios";
 import path from "path";
+import fs from "fs";
+import multer from "multer";
+import cron from "node-cron";
 
 const app = express();
 app.use(express.json());
@@ -17,13 +20,22 @@ import jobLikeRouter from "./router/jobLike.js";
 import jobCommentRouter from "./router/jobComments.js";
 import { dbConfig } from "./server.js";
 
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import passport from "passport";
 //import session from "express-session";
 import { v4 as uuidv4 } from "uuid";
 // import passport.js
 import "./utils/passport.js";
 
-export const baseUrl = process.env.REACT_APP_BASE_URL;
+export const baseUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://jobd.link";
 
 app.use(bodyParser.json());
 app.use(express.json());
@@ -113,10 +125,81 @@ app.get(
   }
 );
 
-app.post("/share", async (req, res) => {
-  const { token, content, linkedinId } = req.body;
-  console.log(linkedinId);
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Append extension
+  },
+});
 
+const upload = multer({ storage });
+
+app.post("/upload", upload.single("file"), (req, res) => {
+  const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
+    req.file.filename
+  }`;
+  res.json({ url: fileUrl });
+});
+
+app.use("/uploads", express.static(path.resolve("uploads")));
+console.log("Current working directory:", process.cwd());
+
+const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
+  try {
+    // const absoluteImagePath = path.resolve(__dirname, imageUrl);
+    // console.log("Uploading file from path:", absoluteImagePath);
+    if (!fs.existsSync(imageUrl)) {
+      throw new Error(`File does not exist at path: ${imageUrl}`);
+    }
+    const registerUploadResponse = await axios.post(
+      "https://api.linkedin.com/v2/assets?action=registerUpload",
+      {
+        registerUploadRequest: {
+          recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
+          owner: `urn:li:person:${linkedinId}`,
+          serviceRelationships: [
+            {
+              relationshipType: "OWNER",
+              identifier: "urn:li:userGeneratedContent",
+            },
+          ],
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const uploadUrl =
+      registerUploadResponse.data.value.uploadMechanism[
+        "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"
+      ].uploadUrl;
+    const asset = registerUploadResponse.data.value.asset;
+
+    // Upload the image to LinkedIn
+    await axios.put(uploadUrl, fs.readFileSync(imageUrl), {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "image/png",
+      },
+    });
+
+    return asset;
+  } catch (error) {
+    console.error(
+      "Error uploading image to LinkedIn:",
+      error.response ? error.response.data : error
+    );
+    throw new Error("Failed to upload image to LinkedIn.");
+  }
+};
+
+const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken) => {
   try {
     const response = await axios.post(
       "https://api.linkedin.com/v2/ugcPosts",
@@ -126,9 +209,21 @@ app.post("/share", async (req, res) => {
         specificContent: {
           "com.linkedin.ugc.ShareContent": {
             shareCommentary: {
-              text: content,
+              text: "Check out this image!",
             },
-            shareMediaCategory: "NONE",
+            shareMediaCategory: "IMAGE",
+            media: [
+              {
+                status: "READY",
+                media: imageUrn,
+                description: {
+                  text: "Image description",
+                },
+                title: {
+                  text: "Image Title",
+                },
+              },
+            ],
           },
         },
         visibility: {
@@ -137,17 +232,57 @@ app.post("/share", async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
-          "X-Restli-Protocol-Version": "2.0.0",
         },
       }
     );
 
-    res.json({ success: true, data: response.data });
+    console.log("Post shared successfully on LinkedIn!", response.data);
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    console.error(
+      "Error sharing on LinkedIn:",
+      error.response ? error.response.data : error
+    );
+    throw new Error("Failed to share on LinkedIn.");
   }
+};
+
+app.post("/share", async (req, res) => {
+  const { imageUrl, linkedinId, token } = req.body;
+
+  try {
+    const imageUrn = await uploadImageToLinkedIn(imageUrl, linkedinId, token);
+    await shareOnLinkedIn(imageUrn, linkedinId, token);
+    res.json({ message: "Shared successfully on LinkedIn!" });
+  } catch (error) {
+    console.error("Error sharing on LinkedIn:", error);
+    res.status(500).send("Error sharing on LinkedIn");
+  }
+});
+// Schedule a cron job to run every day at midnight to delete files older than 14 days
+cron.schedule("0 0 * * *", () => {
+  const directory = path.resolve("uploads");
+  const now = Date.now();
+  const fourteenDaysInMilliseconds = 14 * 24 * 60 * 60 * 1000;
+
+  fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+
+    files.forEach((file) => {
+      const filePath = path.join(directory, file);
+      fs.stat(filePath, (err, stat) => {
+        if (err) throw err;
+
+        if (now - stat.mtimeMs > fourteenDaysInMilliseconds) {
+          fs.unlink(filePath, (err) => {
+            if (err) throw err;
+            console.log(`Deleted old file: ${file}`);
+          });
+        }
+      });
+    });
+  });
 });
 
 // app.use("/profile", (req, res) => {
@@ -157,7 +292,6 @@ app.post("/share", async (req, res) => {
 //     res.status(401).send("Unauthorized");
 //   }
 // });
-console.log("baseUrl", baseUrl);
 app.use("/jobs", jobsRouter);
 app.use("/jobLike", jobLikeRouter);
 app.use("/jobComment", jobCommentRouter);

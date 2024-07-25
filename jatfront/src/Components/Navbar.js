@@ -73,7 +73,6 @@ export default function SearchAppBar() {
 
   const location = useLocation();
   const params = location.pathname;
-  console.log("params", params);
 
   const logoStyleJobd = {
     textDecoration: "none",
@@ -183,7 +182,7 @@ export default function SearchAppBar() {
               variant="body"
               style={{ textDecoration: "none", color: "white" }}
             >
-              {zUser ? (
+              {zUser.imageUrl ? (
                 zUser.imageUrl !==
                 "https://eu.ui-avatars.com/api/?name=Jobd+Link&size=250" ? (
                   <Avatar

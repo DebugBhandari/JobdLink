@@ -8,7 +8,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-client": "cd jatfront && npm run build",
-    "start": "npm run build-client && nodemon server.js"
+    "watch-client": "cd jatfront && npm run start",
+    "watch-server": "nodemon server.js",
+    "start": "concurrently \"npm run build-client\" \"npm run watch-server\""
   },
   "author": "Deepak Bhandari",
   "license": "ISC",
@@ -19,13 +21,19 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.7",
+    "node-cron": "^3.0.3",
     "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-linkedin": "^1.0.0",
     "passport-linkedin-oauth2": "github:auth0/passport-linkedin-oauth2",
     "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { loadLocal } from "./Job";
 import useJLStore from "../useStore";
 import { Link } from "react-router-dom";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { baseUrl } from "../App";
 //import { JLStoreContext } from "../App";
 
@@ -276,7 +275,7 @@ export default function OneLink({
         <CardActions
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "center",
             alignItems: "center",
             height: 30,
             marginTop: 0,
@@ -285,19 +284,6 @@ export default function OneLink({
             px: "20px",
           }}
         >
-          <Button
-            size="small"
-            sx={{
-              fontSize: "14px",
-              "&:hover": {
-                bgcolor: "primary.main",
-                color: "white",
-              },
-            }}
-          >
-            <LinkedInIcon />
-            Share
-          </Button>
           <Button
             size="small"
             onClick={() => {

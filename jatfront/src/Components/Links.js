@@ -60,11 +60,10 @@ const Links = () => {
     const name = urlParams.get("name");
     const email = urlParams.get("email");
     const imageUrl = urlParams.get("imageUrl");
-    const id = urlParams.get("id");
+    const id = parseInt(urlParams.get("id"));
     const linkedinId = urlParams.get("linkedinId");
     const loggedUser = { id, name, email, imageUrl, linkedinId, token };
 
-    console.log("loggedUser", loggedUser);
     if (token) {
       // localStorage.setItem("tokenJL", token);
       // localStorage.setItem("nameJL", name);

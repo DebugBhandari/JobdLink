@@ -11,7 +11,10 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Login from "./Components/Login";
 import Links from "./Components/Links";
 import LinkView from "./Components/LinkView";
-export const baseUrl = process.env.REACT_APP_BASE_URL;
+export const baseUrl =
+  process.env.REACT_APP_NODE_ENV === "development"
+    ? "http://localhost:3001"
+    : "https://jobd.link";
 
 const theme = createTheme({
   palette: {

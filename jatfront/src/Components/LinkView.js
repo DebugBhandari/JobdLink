@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import CardActions from "@mui/material/CardActions";
@@ -13,6 +13,9 @@ import Comment from "./Comment";
 import Avatar from "@mui/material/Avatar";
 import useJLStore from "../useStore";
 import { loadLocal } from "./Job";
+import html2canvas from "html2canvas";
+
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 import { useSearchParams, useLocation } from "react-router-dom";
 import { baseUrl } from "../App";
@@ -68,7 +71,9 @@ export default function LinkView() {
 
   const location = useLocation();
   const paramsId = parseInt(location.pathname.split("/")[2]);
-  const job = getJobById(paramsId);
+  const job = getJobById(paramsId)
+    ? getJobById(paramsId)
+    : { status: "Not Applied", company: "Test" };
 
   const [likeCommentRefresh, setLikeCommentRefresh] = useState(false);
 
@@ -79,6 +84,7 @@ export default function LinkView() {
   const [userLiked, setUserLiked] = useState(isLikeInStore);
   const [userNames, setUserNames] = useState([]);
   const user_id_JSON = parseInt(zUser.id);
+  const { linkedinId, token } = zUser;
 
   const handleLikeClick = async () => {
     axios
@@ -167,6 +173,65 @@ export default function LinkView() {
   //       console.error("Error fetching likes:", error);
   //     }
   //   };
+
+  const buttonHover = {
+    "&:hover": {
+      bgcolor: "success.main",
+      ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+      ...(job.status === "Not Applied" && {
+        bgcolor: "primary.main",
+      }),
+      color: "white",
+    },
+  };
+
+  const ref = useRef();
+
+  const captureScreenshot = async () => {
+    const canvas = await html2canvas(ref.current);
+    const imgData = canvas.toDataURL("image/png");
+
+    // Convert the base64 string to a file
+    const blob = await fetch(imgData).then((res) => res.blob());
+    const file = new File([blob], "screenshot.png", { type: "image/png" });
+
+    // Upload the file
+    uploadScreenshot(file);
+  };
+
+  const uploadScreenshot = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(`${baseUrl}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      console.log("Screenshot uploaded:", result.url);
+      shareOnLinkedIn(result.url);
+    } catch (error) {
+      console.error("Error uploading screenshot:", error);
+    }
+  };
+
+  const shareOnLinkedIn = async (imageUrl) => {
+    try {
+      const response = await fetch(`${baseUrl}/share`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl, linkedinId, token }),
+      });
+      const result = await response.json();
+      console.log("Shared on LinkedIn:", result);
+    } catch (error) {
+      console.error("Error sharing on LinkedIn:", error);
+    }
+  };
+
   const [trigger, setTrigger] = useState(0); // State to trigger useEffect
   useEffect(() => {
     setZJobs();
@@ -179,17 +244,6 @@ export default function LinkView() {
       }, 1000); // 1 second delay for the second run
     }
   }, [trigger, likeCommentRefresh]);
-
-  const buttonHover = {
-    "&:hover": {
-      bgcolor: "success.main",
-      ...(job.status === "Rejected" && { bgcolor: "error.main" }),
-      ...(job.status === "Not Applied" && {
-        bgcolor: "primary.main",
-      }),
-      color: "white",
-    },
-  };
 
   return (
     <Paper
@@ -209,6 +263,7 @@ export default function LinkView() {
     >
       <Paper
         elevation={3}
+        ref={ref}
         sx={{
           width: 360,
           margin: 3,
@@ -274,45 +329,83 @@ export default function LinkView() {
           >
             {job.caption}
           </Typography>
-          <CardActions
-            sx={{ display: "flex", justifyContent: "space-between" }}
-          >
-            {userLiked === false ? (
-              <Button
-                size="small"
-                onClick={handleLikeClick}
-                sx={{ ...buttonHover }}
-              >
-                Like
-              </Button>
-            ) : (
-              <Button
-                size="small"
-                onClick={handleUnlikeClick}
-                sx={{ ...buttonHover }}
-              >
-                Unlike
-              </Button>
-            )}
-            <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-              {job.count_likes} Likes
-            </Button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={openMenu}
-              onClose={handleMenuClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
+          {zUser.id === job.user_id ? (
+            <CardActions
+              sx={{ display: "flex", justifyContent: "space-between" }}
             >
-              {zJobLikesUsernames.map((user) => (
-                <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
-                  {user.name}
-                </MenuItem>
-              ))}
-            </Menu>
-          </CardActions>
+              <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
+                {job.count_likes} Likes
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleMenuClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                {zJobLikesUsernames.map((user) => (
+                  <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
+                    {user.name}
+                  </MenuItem>
+                ))}
+              </Menu>
+              <Button
+                size="small"
+                onClick={() => captureScreenshot()}
+                sx={{
+                  fontSize: "14px",
+                  "&:hover": {
+                    bgcolor: "primary.main",
+                    color: "white",
+                  },
+                }}
+              >
+                <LinkedInIcon />
+              </Button>
+            </CardActions>
+          ) : (
+            <CardActions
+              sx={{ display: "flex", justifyContent: "space-between" }}
+            >
+              {userLiked === false ? (
+                <Button
+                  size="small"
+                  onClick={handleLikeClick}
+                  sx={{ ...buttonHover }}
+                >
+                  Like
+                </Button>
+              ) : (
+                <Button
+                  size="small"
+                  onClick={handleUnlikeClick}
+                  sx={{ ...buttonHover }}
+                >
+                  Unlike
+                </Button>
+              )}
+              <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
+                {job.count_likes} Likes
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleMenuClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                {zJobLikesUsernames.map((user) => (
+                  <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
+                    {user.name}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </CardActions>
+          )}
         </CardContent>
       </Paper>
 

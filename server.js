@@ -1,6 +1,5 @@
 import app from "./app.js";
 import mysql from "mysql2/promise";
-import { baseUrl } from "./app.js";
 
 // MySQL connection
 export const dbConfig = {
@@ -92,7 +91,12 @@ const initializeDb = async () => {
     await connection.end();
     console.log("Database initialized");
     app.listen(app.get("port"), () => {
-      console.log("  App is running at %s", baseUrl);
+      console.log(
+        "  App is running at %s",
+        process.env.NODE_ENV === "production"
+          ? `https://jobd.link`
+          : `http://localhost:${app.get("port")}`
+      );
       console.log("  Press CTRL-C to stop\n");
     });
   } catch (error) {
