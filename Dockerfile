@@ -3,7 +3,7 @@ FROM node:20
 
 # Set working directory
 WORKDIR /app
-
+VOLUME ["/app"]
 # Copy package.json and install dependencies
 COPY package*.json ./
 RUN npm install

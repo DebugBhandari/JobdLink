@@ -30,7 +30,7 @@ services:
     depends_on:
       - jatDatabase
     volumes:
-      -./uploads:/app/uploads
+      - ./uploads:/app/uploads
 
 volumes:
   mysql_data:
