@@ -131,9 +131,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.post("/upload", upload.single("file"), (req, res) => {
-  const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
-    req.file.filename
-  }`;
+  const fileUrl = `https://${req.get("host")}/uploads/${req.file.filename}`;
   res.json({ url: fileUrl });
 });
 
