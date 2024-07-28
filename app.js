@@ -135,16 +135,16 @@ app.post("/upload", upload.single("file"), (req, res) => {
   res.json({ url: fileUrl });
 });
 
-app.use("/uploads", express.static(path.resolve("uploads")));
+app.use("/uploads", express.static("uploads"));
 
-const uploadImageToLinkedIn = async (imageUrl, accessToken) => {
+const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
   try {
     const registerUploadResponse = await axios.post(
       "https://api.linkedin.com/v2/assets?action=registerUpload",
       {
         registerUploadRequest: {
           recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
-          owner: "urn:li:person:YOUR_LINKEDIN_USER_ID",
+          owner: `urn:li:person:${linkedinId}`,
           serviceRelationships: [
             {
               relationshipType: "OWNER",
@@ -238,7 +238,7 @@ app.post("/share", async (req, res) => {
   const { imageUrl, linkedinId, token } = req.body;
 
   try {
-    const imageUrn = await uploadImageToLinkedIn(imageUrl, token);
+    const imageUrn = await uploadImageToLinkedIn(imageUrl, linkedinId, token);
     await shareOnLinkedIn(imageUrn, linkedinId, token);
     res.json({ message: "Shared successfully on LinkedIn!" });
   } catch (error) {
