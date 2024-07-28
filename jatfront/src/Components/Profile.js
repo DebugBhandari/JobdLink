@@ -17,7 +17,7 @@ const Profile = ({ handleOpen }) => {
           <Avatar
             alt={zUser.name}
             src={zUser.imageUrl}
-            sx={{ width: 56, height: 56 }}
+            sx={{ width: 52, height: 52 }}
           />
           <Typography sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}>
             {zUser.name}
@@ -25,10 +25,7 @@ const Profile = ({ handleOpen }) => {
         </div>
         <br></br>
         <Typography sx={{ fontSize: "16px" }}>{zUser.email}</Typography>
-        <br></br>
-        <br></br>
-        <br></br>
-        <br></br>
+
         <br></br>
         <Typography sx={{ fontSize: "16px" }}>
           Loves Coding and Football.
@@ -39,10 +36,15 @@ const Profile = ({ handleOpen }) => {
           You dont rise to your goals, you fall to your habits.
         </Typography>
         <br></br>
-        <Typography sx={{ fontSize: "16px" }}>Applied: 5</Typography>
-        <Typography sx={{ fontSize: "16px" }}>Linked: 1</Typography>
         <br></br>
-        <Typography sx={{ fontSize: "16px" }}>Resume.pdf</Typography>
+        <br></br>
+        <div className="rowDiv">
+          {" "}
+          <Typography sx={{ fontSize: "16px" }}>Applied: 5</Typography>
+          <Typography sx={{ fontSize: "16px" }}>Linked: 1</Typography>
+          <br></br>
+          <Typography sx={{ fontSize: "16px" }}>Resume.pdf</Typography>
+        </div>
         <br></br>
         <br></br>
         <div className="profileButton">

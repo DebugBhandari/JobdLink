@@ -18,6 +18,8 @@ import axios from "axios";
 import JobdLanding from "../assets/JobdLanding.png";
 import CardMedia from "@mui/material/CardMedia";
 import { baseUrl } from "../App";
+
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 function Copyright(props) {
   return (
     <Typography
@@ -112,9 +114,19 @@ export default function SignInSide() {
               onClick={handleLogin}
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, bgcolor: "success.main" }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                bgcolor: "white",
+                color: "#2a2e45",
+                "&:hover": {
+                  bgcolor: "#2a2e45",
+                  color: "white",
+                },
+              }}
             >
-              Sign In With LinkedIn
+              Sign In With{" "}
+              <LinkedInIcon sx={{ marginBottom: "4px", marginLeft: "4px" }} />
             </Button>
 
             <Copyright sx={{ mt: 5 }} />

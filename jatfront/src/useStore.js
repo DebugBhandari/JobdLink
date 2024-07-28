@@ -100,6 +100,7 @@ const useJLStore = create(
           const response = await axios.get(
             `${baseUrl}/jobLike/${jobId}/usernames`
           );
+          console.log("Usernames:", response.data);
           set({ zJobLikesUsernames: response.data });
         } catch (error) {
           console.error("Error fetching usernames:", error);
