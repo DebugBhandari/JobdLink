@@ -53,8 +53,17 @@ const useJLStore = create(
           console.error("Token:", get().zUser.token);
         }
       },
-      getJobById: (id) => {
-        return useJLStore.getState().zJobs.find((job) => job.id === id);
+      zJob: { status: "Not Applied", company: "Test" },
+      setJobById: async (id) => {
+        try {
+          const response = await axios.get(`${baseUrl}/jobs/${id}`, {
+            "content-type": "application/json",
+          });
+          set({ zJob: response.data });
+        } catch (error) {
+          console.error("Error fetching jobs:", error);
+          console.error("Token:", get().zUser.token);
+        }
       },
       zJobComments: [],
       setZJobComments: async (jobId) => {

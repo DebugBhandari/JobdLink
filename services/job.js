@@ -31,11 +31,49 @@ async function create(job) {
 
 async function findById(jobId) {
   return new Promise(async (resolve, reject) => {
-    const query = "SELECT * FROM Jobs WHERE id = ?";
+    const query = `
+    SELECT 
+      Jobs.id, 
+      Jobs.jobTitle, 
+      Jobs.description, 
+      Jobs.user_id,
+      Jobs.company, 
+      Jobs.jobUrl, 
+      Jobs.status, 
+      Jobs.location, 
+      Jobs.username,
+      Jobs.private, 
+      Jobs.caption, 
+      COUNT(DISTINCT JobLikes.id) AS count_likes, 
+      COUNT(DISTINCT JobComments.id) AS count_comments,
+      Users.name, 
+      Users.imageUrl 
+    FROM Jobs
+    LEFT JOIN JobLikes ON JobLikes.job_id = Jobs.id
+    LEFT JOIN JobComments ON JobComments.job_id = Jobs.id
+    LEFT JOIN Users ON Users.id = Jobs.user_id
+    WHERE Jobs.id = ?
+    GROUP BY 
+      Jobs.id, 
+      Jobs.jobTitle, 
+      Jobs.description, 
+      Jobs.user_id, 
+      Jobs.company, 
+      Jobs.jobUrl, 
+      Jobs.status, 
+      Jobs.location, 
+      Jobs.username, 
+      Jobs.private, 
+      Jobs.caption, 
+      Users.name, 
+      Users.imageUrl
+    ORDER BY Jobs.created_at DESC;
+  `;
 
     const connection = await mysql.createConnection(dbConfig);
     try {
       const [results] = await connection.execute(query, [jobId]);
+      console.log(results);
       if (results.length === 0) {
         reject(new Error(`Job ${jobId} not found`));
       } else {

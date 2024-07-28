@@ -41,6 +41,8 @@ export default function LinkView() {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
   const {
+    zJob,
+    setJobById,
     zJobs,
     setZJobs,
     getJobById,
@@ -55,6 +57,8 @@ export default function LinkView() {
     zJobLikesUsernames,
     setZJobLikesUsernames,
   } = useJLStore((state) => ({
+    zJob: state.zJob,
+    setJobById: state.setJobById,
     zJobs: state.zJobs,
     setZJobs: state.setZJobs,
     getJobById: state.getJobById,
@@ -72,13 +76,10 @@ export default function LinkView() {
 
   const location = useLocation();
   const paramsId = parseInt(location.pathname.split("/")[2]);
-  const job = getJobById(paramsId)
-    ? getJobById(paramsId)
-    : { status: "Not Applied", company: "Test" };
 
   const [likeCommentRefresh, setLikeCommentRefresh] = useState(false);
 
-  //const [job, setJob] = useState();
+  const [job, setJob] = useState(zJob);
   const isLikeInStore = zJobLikes.find((like) => like.job_id === job.id)
     ? true
     : false;
@@ -237,9 +238,10 @@ export default function LinkView() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ imageUrl, linkedinId, token }),
+        body: JSON.stringify({ imageUrl, linkedinId, token, job_id: job.id }),
       });
       const result = await response.json();
+      alert("Shared on LinkedIn!");
       console.log("Shared on LinkedIn:", result);
     } catch (error) {
       console.error("Error sharing on LinkedIn:", error);
@@ -249,6 +251,7 @@ export default function LinkView() {
   useEffect(() => {
     setZJobs();
     //getUsersLikes();
+    setJobById(paramsId);
     setZJobComments(paramsId);
     setZJobLikesUsernames(paramsId);
   }, [likeCommentRefresh]);
@@ -352,7 +355,8 @@ export default function LinkView() {
                 </Button>
               )}
               <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-                {job.count_likes} Likes
+                {job.count_likes}{" "}
+                <ThumbUpAltIcon sx={{ marginBottom: "4px" }} />
               </Button>
               <Menu
                 id="basic-menu"

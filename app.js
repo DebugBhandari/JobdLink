@@ -119,19 +119,27 @@ app.get(
   }
 );
 
+// Set up storage with Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Append extension
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
 const upload = multer({ storage });
 
 app.post("/upload", upload.single("file"), (req, res) => {
-  const fileUrl = `https://${req.get("host")}/uploads/${req.file.filename}`;
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
+    req.file.filename
+  }`;
+  console.log(`File uploaded: ${fileUrl}`);
   res.json({ url: fileUrl });
 });
 
@@ -167,8 +175,15 @@ const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
       ].uploadUrl;
     const asset = registerUploadResponse.data.value.asset;
 
+    // Convert imageUrl to a file path
+    const fileName = path.basename(imageUrl);
+    const filePath = path.resolve("uploads", fileName);
+
+    // Read the file from the filesystem
+    const imageData = fs.readFileSync(filePath);
+
     // Upload the image to LinkedIn
-    await axios.put(uploadUrl, fs.readFileSync(imageUrl), {
+    await axios.put(uploadUrl, imageData, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "image/png",
@@ -179,13 +194,13 @@ const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
   } catch (error) {
     console.error(
       "Error uploading image to LinkedIn:",
-      error.response ? error.response.data : error
+      error.response ? error.response.data : error.message
     );
     throw new Error("Failed to upload image to LinkedIn.");
   }
 };
 
-const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken) => {
+const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken, job_id) => {
   try {
     const response = await axios.post(
       "https://api.linkedin.com/v2/ugcPosts",
@@ -195,7 +210,7 @@ const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken) => {
         specificContent: {
           "com.linkedin.ugc.ShareContent": {
             shareCommentary: {
-              text: "Check out this image!",
+              text: `https://jobd.link/links/${job_id}`,
             },
             shareMediaCategory: "IMAGE",
             media: [
@@ -225,30 +240,32 @@ const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken) => {
     );
 
     console.log("Post shared successfully on LinkedIn!", response.data);
+    return response.data;
   } catch (error) {
     console.error(
       "Error sharing on LinkedIn:",
-      error.response ? error.response.data : error
+      error.response ? error.response.data : error.message
     );
     throw new Error("Failed to share on LinkedIn.");
   }
 };
 
 app.post("/share", async (req, res) => {
-  const { imageUrl, linkedinId, token } = req.body;
+  const { imageUrl, linkedinId, token, job_id } = req.body;
 
   try {
     const imageUrn = await uploadImageToLinkedIn(imageUrl, linkedinId, token);
-    await shareOnLinkedIn(imageUrn, linkedinId, token);
-    res.json({ message: "Shared successfully on LinkedIn!" });
+    const result = await shareOnLinkedIn(imageUrn, linkedinId, token, job_id);
+    res.json({ message: "Shared successfully on LinkedIn!", data: result });
   } catch (error) {
     console.error("Error sharing on LinkedIn:", error);
     res.status(500).send("Error sharing on LinkedIn");
   }
 });
+
 // Schedule a cron job to run every day at midnight to delete files older than 14 days
 cron.schedule("0 0 * * *", () => {
-  const directory = path.join(__dirname, "uploads");
+  const directory = path.resolve("uploads");
   const now = Date.now();
   const fourteenDaysInMilliseconds = 14 * 24 * 60 * 60 * 1000;
 
