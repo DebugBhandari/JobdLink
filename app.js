@@ -20,12 +20,6 @@ import jobLikeRouter from "./router/jobLike.js";
 import jobCommentRouter from "./router/jobComments.js";
 import { dbConfig } from "./server.js";
 
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 import passport from "passport";
 //import session from "express-session";
 import { v4 as uuidv4 } from "uuid";
@@ -144,21 +138,15 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 app.use("/uploads", express.static(path.resolve("uploads")));
-console.log("Current working directory:", process.cwd());
 
-const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
+const uploadImageToLinkedIn = async (imageUrl, accessToken) => {
   try {
-    // const absoluteImagePath = path.resolve(__dirname, imageUrl);
-    // console.log("Uploading file from path:", absoluteImagePath);
-    if (!fs.existsSync(imageUrl)) {
-      throw new Error(`File does not exist at path: ${imageUrl}`);
-    }
     const registerUploadResponse = await axios.post(
       "https://api.linkedin.com/v2/assets?action=registerUpload",
       {
         registerUploadRequest: {
           recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
-          owner: `urn:li:person:${linkedinId}`,
+          owner: "urn:li:person:YOUR_LINKEDIN_USER_ID",
           serviceRelationships: [
             {
               relationshipType: "OWNER",
@@ -252,7 +240,7 @@ app.post("/share", async (req, res) => {
   const { imageUrl, linkedinId, token } = req.body;
 
   try {
-    const imageUrn = await uploadImageToLinkedIn(imageUrl, linkedinId, token);
+    const imageUrn = await uploadImageToLinkedIn(imageUrl, token);
     await shareOnLinkedIn(imageUrn, linkedinId, token);
     res.json({ message: "Shared successfully on LinkedIn!" });
   } catch (error) {
@@ -262,7 +250,7 @@ app.post("/share", async (req, res) => {
 });
 // Schedule a cron job to run every day at midnight to delete files older than 14 days
 cron.schedule("0 0 * * *", () => {
-  const directory = path.resolve("uploads");
+  const directory = path.join(__dirname, "uploads");
   const now = Date.now();
   const fourteenDaysInMilliseconds = 14 * 24 * 60 * 60 * 1000;
 

@@ -63,8 +63,8 @@ const Linkd = ({ zPJobs }) => {
   // console.log("zJobs", JSON.parse(zJobs || []));
 
   return (
-    <div className="linkdJobd">
-      <div className="sideLinks">
+    <div className="sideLinks">
+      <div className="sideLinksContent">
         {linkedJobs
           .filter(
             (jobToFilter) =>

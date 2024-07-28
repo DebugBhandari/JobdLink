@@ -41,6 +41,7 @@ export default function EditJobModal({
   ...props
 }) {
   const zUser = useJLStore((state) => state.zUser);
+  const setZJobs = useJLStore((state) => state.setZJobs);
   const local_user_id = zUser.id;
   const CardActionsStyled = styled(CardActions)({
     display: "flex",
@@ -81,7 +82,7 @@ export default function EditJobModal({
       .then((response) => {
         console.log(`Job ${job.id} updated successfully`);
         console.log(response.data);
-
+        setZJobs();
         handleClose();
       })
       .catch((error) => {

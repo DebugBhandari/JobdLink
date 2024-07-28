@@ -56,7 +56,7 @@ async function findAll() {
     left join JobComments on JobComments.job_id = Jobs.id
     left join Users on Users.id=Jobs.user_id
     GROUP BY Jobs.id
-    order by private desc`;
+    order by Jobs.created_at desc`;
 
     const connection = await mysql.createConnection(dbConfig);
     try {
@@ -106,11 +106,15 @@ async function update(jobId, update) {
 
 async function deleteJob(jobId) {
   return new Promise(async (resolve, reject) => {
-    const query = "DELETE FROM Jobs WHERE id = ?";
+    const queryJobLikes = "DELETE FROM JobLikes WHERE job_id = ?";
+    const queryJobComments = "DELETE FROM JobComments WHERE job_id = ?";
+    const queryJobs = "DELETE FROM Jobs WHERE id = ?";
 
     const connection = await mysql.createConnection(dbConfig);
     try {
-      const [results] = await connection.execute(query, [jobId]);
+      await connection.execute(queryJobLikes, [jobId]);
+      await connection.execute(queryJobComments, [jobId]);
+      const [results] = await connection.execute(queryJobs, [jobId]);
       if (results.affectedRows === 0) {
         resolve(null);
       } else {

@@ -16,6 +16,11 @@ import { Link } from "react-router-dom";
 import { baseUrl } from "../App";
 //import { JLStoreContext } from "../App";
 
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+
+import CommentIcon from "@mui/icons-material/Comment";
+
 export default function OneLink({
   job,
   likeCommentRefresh,
@@ -77,29 +82,38 @@ export default function OneLink({
     },
   };
 
+  const invisibleStyle = {
+    display: "none",
+  };
+  zJobLikesUsernames.length > 0 && (invisibleStyle.display = "block");
+
   //For Menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
   const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setZJobLikesUsernames(job.id);
+    if (job.count_likes > 0) {
+      setAnchorEl(event.currentTarget);
+    }
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
   const handleLikeClick = async () => {
-    axios
-      .post(`${baseUrl}/jobLike`, {
-        job_id: job.id,
-        user_id: user_id_JSON,
-      })
-      .then((response) => {
-        console.log("Liked", response.data);
-        setUserLiked(true);
-        addZJobLike({ job_id: job.id, user_id: user_id_JSON });
-        setLikeCommentRefresh((prevState) => !prevState);
-        setZJobLikesUsernames(job.id);
-      });
+    user_id_JSON
+      ? axios
+          .post(`${baseUrl}/jobLike`, {
+            job_id: job.id,
+            user_id: user_id_JSON,
+          })
+          .then((response) => {
+            console.log("Liked", response.data);
+            setUserLiked(true);
+            addZJobLike({ job_id: job.id, user_id: user_id_JSON });
+            setLikeCommentRefresh((prevState) => !prevState);
+          })
+      : alert("Please login to like");
   };
   const handleUnlikeClick = async () => {
     axios
@@ -112,91 +126,46 @@ export default function OneLink({
         setZJobLikesUsernames(job.id);
       });
   };
+  const headerStyleConditional = { backgroundColor: "#388e3c" };
+  job.status === "Rejected" &&
+    (headerStyleConditional.backgroundColor = "#d32f2f");
+  job.status === "Not Applied" &&
+    (headerStyleConditional.backgroundColor = "#2a2e45");
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        margin: 4,
-        minHeight: 360,
-        width: 360,
-
-        borderRadius: 4,
-
-        "@media (max-width:600px)": {
-          minWidth: "70dvw",
-          margin: 4,
-        },
-      }}
-    >
-      <CardContent
-        sx={{
-          height: 70,
-          bgcolor: "success.main",
-          ...(job.status === "Rejected" && { bgcolor: "error.main" }),
-          ...(job.status === "Not Applied" && { bgcolor: "primary.main" }), // Conditional styling
-          color: "white",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          borderRadius: 4,
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: 28,
-          }}
-          title={job.company}
-        >
-          {job.company.slice(0, 10) + "," + job.location}
-        </Typography>
-        <Typography gutterBottom sx={{ fontSize: "16px" }}>
+    <div className="linkViewCard">
+      <div className="linkViewCardHeader">
+        <h2 className="cardHeaderTitle" title={job.company}>
           {job.jobTitle}
-        </Typography>
-      </CardContent>
-      <CardContent
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "left",
-          alignItems: "left",
-          minHeight: 160,
-          pb: 0,
-          overflow: "auto",
+        </h2>
+        <h2 className="cardHeaderSubTitle">
+          {" "}
+          {job.company.slice(0, 22) + "," + job.location}
+        </h2>
+      </div>
+      <div
+        style={{
+          width: "100%",
+          height: "10px",
+          ...headerStyleConditional,
         }}
-      >
-        {" "}
-        <div className="rowDiv">
-          <div className="commentAvatar">
-            <Avatar
-              alt={job.imageUrl}
-              src={job.imageUrl}
-              sx={{ width: 36, height: 36 }}
-            />
-            <Typography
-              sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}
-            >
-              {job.name}
-            </Typography>
-          </div>
-          <Typography sx={{ fontSize: "16px" }}>{job.status}</Typography>
+      ></div>
+      <div className="linkViewCardContent">
+        <div className="avatarDiv">
+          <Avatar
+            alt={job.imageUrl}
+            src={job.imageUrl}
+            sx={{ width: 36, height: 36 }}
+          />
+          <h1 className="avatarTitle">{job.name}</h1>
         </div>
-        <Typography sx={{ fontSize: "16px" }} color="text.secondary">
-          {job.jobUrl}
-        </Typography>
-        <Typography sx={{ fontSize: "16px" }}>{job.caption}</Typography>
-      </CardContent>
-      <CardContent
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexDirection: "row",
-          fontSize: "16px",
-          py: 0,
-        }}
-      >
+        <div className="rowDiv">
+          <h1 className="headerNormalText">{job.status}</h1>
+        </div>
+
+        <h1 className="headerGreyText">{job.caption}</h1>
+      </div>
+      <div className="cardActions">
         <Link
           to={`/links/${job.id}`}
           variant="body"
@@ -211,11 +180,13 @@ export default function OneLink({
             color: "#ff00009b",
           }}
         >
-          <Button sx={{ ...buttonHover }}>{job.count_comments} Comments</Button>
+          <Button sx={{ ...buttonHover }}>
+            {job.count_comments} <CommentIcon />
+          </Button>
         </Link>
 
         <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-          {job.count_likes} Likes
+          {job.count_likes} <ThumbUpAltIcon sx={{ marginBottom: "4px" }} />
         </Button>
         {zJobLikesUsernames ? (
           <Menu
@@ -234,73 +205,53 @@ export default function OneLink({
             ))}
           </Menu>
         ) : null}
-      </CardContent>
+      </div>
       {!fromJobd === true ? (
-        <CardActions
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: 30,
-            marginTop: 0,
-            fontSize: "16px",
-            py: 0,
-          }}
-        >
-          {userLiked === false ? (
-            <Button
-              size="small"
-              onClick={() => handleLikeClick()}
-              sx={{
-                fontSize: "16px",
-                ...buttonHover,
-              }}
-            >
-              Like
-            </Button>
-          ) : (
-            <Button
-              size="small"
-              onClick={() => handleUnlikeClick()}
-              sx={{
-                fontSize: "16px",
-                ...buttonHover,
-              }}
-            >
-              Unlike
-            </Button>
-          )}
-        </CardActions>
+        <div className="centreDiv">
+          {" "}
+          <div className="cardActions">
+            {userLiked === false ? (
+              <Button
+                size="small"
+                onClick={() => handleLikeClick()}
+                sx={{
+                  fontSize: "16px",
+                  ...buttonHover,
+                }}
+              >
+                <ThumbUpOffAltIcon /> {/* Likeeee */}
+              </Button>
+            ) : (
+              <Button
+                size="small"
+                onClick={() => handleUnlikeClick()}
+                sx={{
+                  fontSize: "16px",
+                  ...buttonHover,
+                }}
+              >
+                <ThumbUpAltIcon /> {/* Unlikeeee */}
+              </Button>
+            )}
+          </div>{" "}
+        </div>
       ) : (
-        <CardActions
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: 30,
-            marginTop: 0,
-            fontSize: "16px",
-            width: "90%",
-            px: "20px",
-          }}
-        >
-          <Button
-            size="small"
-            onClick={() => {
-              toggleJobdLink(job.id);
-              setZJobs();
-            }}
-            sx={{
-              fontSize: "14px",
-              color: "#ff00009b",
-              fontWeight: 800,
-              ...buttonHover,
-            }}
-          >
-            Jobd
-          </Button>{" "}
-        </CardActions>
+        <div className="centreDiv">
+          {" "}
+          <div className="cardActions">
+            <Button
+              size="small"
+              onClick={() => {
+                toggleJobdLink(job.id);
+                setZJobs();
+              }}
+              sx={{ color: "#d32f2f", fontWeight: 800, ...buttonHover }}
+            >
+              Jobd
+            </Button>{" "}
+          </div>
+        </div>
       )}
-    </Paper>
+    </div>
   );
 }

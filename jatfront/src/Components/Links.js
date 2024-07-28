@@ -89,22 +89,7 @@ const Links = () => {
 
   return (
     <div className="linksRouteDiv">
-      <div
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "20vh",
-          margin: "auto",
-          "@media (max-width: 1000px)": {
-            height: "80vh",
-          },
-          width: "30%",
-          marginTop: 160,
-        }}
-      >
+      <div className="linkdProfile">
         <Profile handleOpen={null} />
       </div>
       <div className="linkdLinkd">

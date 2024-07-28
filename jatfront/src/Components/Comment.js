@@ -48,14 +48,14 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
     return Math.floor(seconds) + " seconds ago";
   };
 
-  const handleCommentDelete = () => {
-    setLikeCommentRefresh((prevState) => !prevState);
+  const handleCommentDelete = (comment) => {
     axios
       .delete(`${baseUrl}/jobComment/${comment.id}/${idJL}`)
       .then((response) => {
         console.log("Comment deleted successfully");
         console.log(response);
         removeZJobComment(comment.id);
+        setLikeCommentRefresh((prevState) => !prevState);
       });
   };
 
@@ -71,16 +71,13 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
         updateZJobComment({ id: comment.id, comment: updatedComment });
         setLikeCommentRefresh((prevState) => !prevState);
         if (updatedComment === "") {
-          handleCommentDelete();
+          handleCommentDelete(comment);
         }
       });
   };
   // const handleCommentEdit = () => {
   //   setEditComment((prevState) => !prevState);
   // };
-  useEffect(() => {
-    setLikeCommentRefresh((prevState) => !prevState);
-  }, []);
 
   return (
     <Paper elevation={3} sx={{ borderRadius: 4, margin: 1, minheight: 100 }}>
@@ -141,7 +138,7 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
           <CardActions sx={{ justifyContent: "center", padding: 0 }}>
             <Button
               size="small"
-              onClick={handleCommentDelete}
+              onClick={() => handleCommentDelete(comment)}
               sx={{
                 "&:hover": { backgroundColor: "primary.main", color: "white" },
               }}

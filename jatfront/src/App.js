@@ -55,9 +55,9 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <div className="mainAppDiv">
-        <Container disableGutters maxWidth={false}>
-          <BrowserRouter>
-            <Navbar />
+        <BrowserRouter>
+          <Navbar />
+          <div className="routesContainer">
             <Routes>
               <Route path="/" element={<Links />} />
               <Route
@@ -68,8 +68,8 @@ function App() {
               <Route path="/JAT" element={<Jobs />} />
               <Route path="/links/:id" element={<LinkView />} />
             </Routes>
-          </BrowserRouter>
-        </Container>
+          </div>
+        </BrowserRouter>
       </div>
     </ThemeProvider>
   );

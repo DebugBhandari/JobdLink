@@ -3,7 +3,6 @@ import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 import Menu from "@mui/material/Menu";
@@ -14,7 +13,9 @@ import Avatar from "@mui/material/Avatar";
 import useJLStore from "../useStore";
 import { loadLocal } from "./Job";
 import html2canvas from "html2canvas";
-
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import CommentIcon from "@mui/icons-material/Comment";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 import { useSearchParams, useLocation } from "react-router-dom";
@@ -87,19 +88,21 @@ export default function LinkView() {
   const { linkedinId, token } = zUser;
 
   const handleLikeClick = async () => {
-    axios
-      .post(`${baseUrl}/jobLike`, {
-        job_id: job.id,
-        user_id: user_id_JSON,
-      })
-      .then((response) => {
-        console.log("Liked", response.data);
-        setUserLiked((prevState) => !prevState);
-        addZJobLike({ job_id: job.id, user_id: user_id_JSON });
-        setLikeCommentRefresh((prevState) => !prevState);
-        setZJobs();
-        setZJobLikesUsernames(job.id);
-      });
+    user_id_JSON
+      ? axios
+          .post(`${baseUrl}/jobLike`, {
+            job_id: job.id,
+            user_id: user_id_JSON,
+          })
+          .then((response) => {
+            console.log("Liked", response.data);
+            setUserLiked((prevState) => !prevState);
+            addZJobLike({ job_id: job.id, user_id: user_id_JSON });
+            setLikeCommentRefresh((prevState) => !prevState);
+            setZJobs();
+            setZJobLikesUsernames(job.id);
+          })
+      : alert("Please login to like the job.");
   };
   const handleUnlikeClick = async () => {
     axios
@@ -127,7 +130,10 @@ export default function LinkView() {
 
   //Likes Menu
   const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setZJobLikesUsernames(job.id);
+    if (job.count_likes > 0) {
+      setAnchorEl(event.currentTarget);
+    }
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -138,29 +144,30 @@ export default function LinkView() {
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    axios
-      .post(`${baseUrl}/jobComment/`, {
-        comment: data.get("commentInput"),
-        job_id: job.id,
-        user_id: user_id_JSON,
-      })
-      .then((response) => {
-        console.log(response.data);
-        console.log("Commented successfully");
-        setNewComment("");
-        addZJobComment({
-          comment: response.data.comment,
-          email: zUser.email,
-          imageUrl: zUser.imageUrl,
-          name: zUser.name,
-          commentedAt: new Date(),
-        });
-        //setLikeCommentRefresh((prevState) => !prevState);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    user_id_JSON
+      ? axios
+          .post(`${baseUrl}/jobComment/`, {
+            comment: newComment,
+            job_id: job.id,
+            user_id: user_id_JSON,
+          })
+          .then((response) => {
+            console.log(response.data);
+            console.log("Commented successfully");
+            setNewComment("");
+            addZJobComment({
+              comment: response.data.comment,
+              email: zUser.email,
+              imageUrl: zUser.imageUrl,
+              name: zUser.name,
+              commentedAt: new Date(),
+            });
+            setLikeCommentRefresh((prevState) => !prevState);
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+      : alert("Please login to comment.");
   };
 
   //   const getUsersLikes = async () => {
@@ -188,7 +195,14 @@ export default function LinkView() {
   const ref = useRef();
 
   const captureScreenshot = async () => {
-    const canvas = await html2canvas(ref.current);
+    const canvas = await html2canvas(ref.current, {
+      width: window.scrollWidth,
+      height: window.scrollHeight,
+      backgroundColor: "white", // Ensure background is transparent
+      useCORS: true, // Handle cross-origin images
+      logging: true, // Enable logging for debugging
+      scale: 2, // Scale the image up by 2x
+    });
     const imgData = canvas.toDataURL("image/png");
 
     // Convert the base64 string to a file
@@ -232,109 +246,59 @@ export default function LinkView() {
     }
   };
 
-  const [trigger, setTrigger] = useState(0); // State to trigger useEffect
   useEffect(() => {
     setZJobs();
     //getUsersLikes();
     setZJobComments(paramsId);
     setZJobLikesUsernames(paramsId);
-    if (trigger < 2) {
-      setTimeout(() => {
-        setTrigger(trigger + 1);
-      }, 1000); // 1 second delay for the second run
-    }
-  }, [trigger, likeCommentRefresh]);
+  }, [likeCommentRefresh]);
+
+  const headerStyleConditional = { backgroundColor: "#388e3c" };
+  job.status === "Rejected" &&
+    (headerStyleConditional.backgroundColor = "#d32f2f");
+  job.status === "Not Applied" &&
+    (headerStyleConditional.backgroundColor = "#2a2e45");
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        width: 360,
-        margin: 3,
-        maxHeight: "90dvh",
-        padding: 2,
-        borderRadius: 4,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexDirection: "column",
-        ...style,
-      }}
-    >
-      <Paper
-        elevation={3}
-        ref={ref}
-        sx={{
-          width: 360,
-          margin: 3,
-          minHeight: 340,
-          borderRadius: 4,
-        }}
-      >
-        <CardContent
-          sx={{
-            height: 60,
-            bgcolor: "success.main",
-            ...(job.status === "Rejected" && { bgcolor: "error.main" }),
-            ...(job.status === "Not Applied" && {
-              bgcolor: "primary.main",
-            }), // Conditional styling
-            color: "white",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            borderRadius: 4,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: 28,
+    <div className="linkView">
+      <div className="linkViewSections">
+        <div className="linkViewCard" ref={ref}>
+          <div className="linkViewCardHeader">
+            <h2 className="cardHeaderTitle" title={job.company}>
+              {job.jobTitle}
+            </h2>
+            <h2 className="cardHeaderSubTitle">
+              {" "}
+              {job.company.slice(0, 22) + "," + job.location}
+            </h2>
+          </div>
+          <div
+            style={{
+              width: "100%",
+              height: "10px",
+              ...headerStyleConditional,
             }}
-            title={job.company}
-          >
-            {job.company.slice(0, 10) + "," + job.location}
-          </Typography>
-          <Typography gutterBottom sx={{ fontSize: "16px" }}>
-            {job.jobTitle}
-          </Typography>
-        </CardContent>
-        <CardContent
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "space-between",
-            flexDirection: "column",
-          }}
-        >
-          <div className="commentAvatar">
-            <Avatar
-              alt={job.imageUrl}
-              src={job.imageUrl}
-              sx={{ width: 36, height: 36 }}
-            />
-            <Typography
-              sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}
-            >
-              {job.name}
-            </Typography>
-          </div>
-          <div className="rowDiv">
-            <Typography sx={{ fontSize: "16px" }}>{job.status}</Typography>
-          </div>
+          ></div>
+          <div className="linkViewCardContent">
+            <div className="avatarDiv">
+              <Avatar
+                alt={job.imageUrl}
+                src={job.imageUrl}
+                sx={{ width: 36, height: 36 }}
+              />
+              <h1 className="avatarTitle">{job.name}</h1>
+            </div>
+            <div className="rowDiv">
+              <h1 className="headerNormalText">{job.status}</h1>
+            </div>
 
-          <Typography
-            sx={{ fontSize: "16px", height: "80px" }}
-            color="text.secondary"
-          >
-            {job.caption}
-          </Typography>
+            <h1 className="headerGreyText">{job.caption}</h1>
+          </div>
           {zUser.id === job.user_id ? (
-            <CardActions
-              sx={{ display: "flex", justifyContent: "space-between" }}
-            >
+            <div className="cardActions">
               <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-                {job.count_likes} Likes
+                {job.count_likes}{" "}
+                <ThumbUpAltIcon sx={{ marginBottom: "4px" }} />
               </Button>
               <Menu
                 id="basic-menu"
@@ -363,19 +327,20 @@ export default function LinkView() {
                 }}
               >
                 <LinkedInIcon />
+              </Button>{" "}
+              <Button sx={{ ...buttonHover }}>
+                {job.count_comments} <CommentIcon />
               </Button>
-            </CardActions>
+            </div>
           ) : (
-            <CardActions
-              sx={{ display: "flex", justifyContent: "space-between" }}
-            >
+            <div className="cardActions">
               {userLiked === false ? (
                 <Button
                   size="small"
                   onClick={handleLikeClick}
                   sx={{ ...buttonHover }}
                 >
-                  Like
+                  <ThumbUpOffAltIcon />
                 </Button>
               ) : (
                 <Button
@@ -383,7 +348,7 @@ export default function LinkView() {
                   onClick={handleUnlikeClick}
                   sx={{ ...buttonHover }}
                 >
-                  Unlike
+                  <ThumbUpAltIcon />
                 </Button>
               )}
               <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
@@ -404,46 +369,56 @@ export default function LinkView() {
                   </MenuItem>
                 ))}
               </Menu>
-            </CardActions>
+            </div>
           )}
-        </CardContent>
-      </Paper>
-
-      <CardContent
-        component="form"
-        onSubmit={handleCommentSubmit}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "left",
-          alignItems: "left",
-          overflow: "auto",
-          width: "90%",
-          height: "50%",
-        }}
-      >
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="commentInput"
-          label="Comment"
-          name="commentInput"
-          autoComplete="Comment"
-          autoFocus
-          size="small"
-          onChange={(e) => setNewComment(e.target.value)}
-          value={newComment}
-        />
-        {zJobComments &&
-          zJobComments.map((comment) => (
-            <Comment
-              key={comment.id + comment.comment + comment.user_id}
-              comment={comment}
-              setLikeCommentRefresh={setLikeCommentRefresh}
-            />
-          ))}
-      </CardContent>
-    </Paper>
+        </div>
+      </div>
+      <div className="linkViewSections">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "left",
+            alignItems: "left",
+            overflow: "auto",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="commentInput"
+            label="Comment"
+            name="commentInput"
+            autoComplete="Comment"
+            autoFocus
+            size="small"
+            onChange={(e) => setNewComment(e.target.value)}
+            onSubmit={handleCommentSubmit}
+            value={newComment}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleCommentSubmit(e);
+              }
+            }}
+          />
+          {zJobComments &&
+            zJobComments.map((comment) => (
+              <Comment
+                key={
+                  Math.floor(Math.random() * 10000) +
+                  Math.floor(Math.random() * 10000) +
+                  comment.comment +
+                  Math.floor(Math.random() * 10000)
+                }
+                comment={comment}
+                setLikeCommentRefresh={setLikeCommentRefresh}
+              />
+            ))}
+        </div>
+      </div>
+    </div>
   );
 }

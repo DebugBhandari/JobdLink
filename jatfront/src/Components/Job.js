@@ -36,6 +36,7 @@ export default function Job({ job, setJobsRefresh }) {
   const handleDeleteClick = () => {
     axios.delete(`${baseUrl}/jobs/${job.id}`).then((response) => {
       setJobsRefresh((prevState) => !prevState);
+      setZJobs();
       console.log("Job deleted successfully");
     });
   };
@@ -118,12 +119,12 @@ export default function Job({ job, setJobsRefresh }) {
             sx={{
               fontSize: 28,
             }}
-            title={job.company}
+            title={job.jobTitle}
           >
-            {job.company.slice(0, 10) + "," + job.location}
+            {job.jobTitle}
           </Typography>
           <Typography gutterBottom sx={{ fontSize: "16px" }}>
-            {job.jobTitle}
+            {job.company.slice(0, 22) + "," + job.location}
           </Typography>
         </CardContent>
         <CardContent

@@ -27,6 +27,7 @@ export const style = {
   margin: "auto",
   bgcolor: "background.paper",
   boxShadow: 24,
+  border: "12px solid #000",
 };
 
 export default function LinkModal({

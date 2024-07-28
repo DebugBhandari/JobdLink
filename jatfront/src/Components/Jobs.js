@@ -59,15 +59,15 @@ const Jobs = () => {
   return (
     <div className="jobsRouteDiv">
       <div className="jobdLinkdAddJob">
+        <div className="addButton" onClick={handleOpen}>
+          Add Job
+        </div>
         <Linkd zPJobs={zJobs} />
         <PostJobModal
           setJobsRefresh={setJobsRefresh}
           handleClose={handleClose}
           open={open}
         />
-        <div className="addButton" onClick={handleOpen}>
-          Add Job
-        </div>
       </div>
       <div className="jobdJobd">
         {privateJobs
