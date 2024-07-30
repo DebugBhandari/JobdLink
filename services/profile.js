@@ -13,7 +13,7 @@ async function create(profile) {
       profile.website,
       profile.github,
       profile.linkedin,
-      profile.partialView,
+      profile.partialView === "true" ? true : false,
     ];
     const connection = await mysql.createConnection(dbConfig);
     try {
