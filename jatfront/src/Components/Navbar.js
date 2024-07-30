@@ -177,7 +177,7 @@ export default function SearchAppBar() {
             </Link>
           ) : (
             <Link
-              href={`/profile/${zUser.id}`}
+              href={`/userProfile/${zUser.id}`}
               variant="body"
               // style={{
               //   textDecoration: "none",
