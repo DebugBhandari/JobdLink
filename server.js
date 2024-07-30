@@ -88,6 +88,22 @@ const initializeDb = async () => {
     )
     `);
 
+    await connection.query(`
+     CREATE TABLE IF NOT EXISTS Profile (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  bio TEXT,
+  location VARCHAR(255),
+  website VARCHAR(255),
+  github VARCHAR(255),
+  linkedin VARCHAR(255),
+  partialView BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE (user_id),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
+      )`);
+
     await connection.end();
     console.log("Database initialized");
     app.listen(app.get("port"), () => {

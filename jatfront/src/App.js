@@ -59,14 +59,15 @@ function App() {
           <Navbar />
           <div className="routesContainer">
             <Routes>
-              <Route path="/" element={<Links />} />
+              <Route path="/" element={<Links key="1" />} />
               <Route
                 path="/login"
                 element={<Login render={(params) => ({ ...params })} />}
               />
-              <Route path="/register" element={<Register />} />
-              <Route path="/JAT" element={<Jobs />} />
-              <Route path="/links/:id" element={<LinkView />} />
+              <Route path="/register" element={<Register key="2" />} />
+              <Route path="/JAT" element={<Jobs key="3" />} />
+              <Route path="/links/:id" element={<LinkView key="4" />} />
+              <Route path="/profile/:id" element={<DashBoard key="5" />} />
             </Routes>
           </div>
         </BrowserRouter>

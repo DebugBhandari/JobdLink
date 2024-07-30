@@ -89,9 +89,9 @@ const Links = () => {
 
   return (
     <div className="linksRouteDiv">
-      <div className="linkdProfile">
+      {/* <div className="linkdProfile">
         <Profile handleOpen={null} />
-      </div>
+      </div> */}
       <div className="linkdLinkd">
         {linkedJobs
           .filter(

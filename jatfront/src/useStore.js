@@ -18,6 +18,16 @@ const useJLStore = create(
         // token: "thisisafaketokenforthetestuser",
       },
       setZUser: (user) => set(() => ({ zUser: user })),
+      zGuestUser: {},
+      setZGuestUser: async (id) => {
+        try {
+          const response = await axios.get(`${baseUrl}/user/${id}`);
+          set({ zGuestUser: response.data });
+          console.log("Guest User:", response.data);
+        } catch (error) {
+          console.error("Error fetching guest user:", error);
+        }
+      },
       zJobs: [
         // {
         //   id: 1,
@@ -53,46 +63,35 @@ const useJLStore = create(
           console.error("Token:", get().zUser.token);
         }
       },
-      zJob: { status: "Not Applied", company: "Test" },
-      setJobById: async (id) => {
-        try {
-          const response = await axios.get(`${baseUrl}/jobs/${id}`, {
-            "content-type": "application/json",
-          });
-          set({ zJob: response.data });
-        } catch (error) {
-          console.error("Error fetching jobs:", error);
-          console.error("Token:", get().zUser.token);
-        }
-      },
-      zJobComments: [],
-      setZJobComments: async (jobId) => {
-        try {
-          const response = await axios.get(`${baseUrl}/jobComment/${jobId}`);
-          set({ zJobComments: response.data });
-        } catch (error) {
-          console.log("Error fetching comments:", error);
-        }
-      },
-      addZJobComment: (jobComment) =>
-        set((state) => ({ zJobComments: [jobComment, ...state.zJobComments] })),
-      removeZJobComment: (id) =>
-        set((state) => ({
-          zJobComments: [
-            ...state.zJobComments.filter((jobComment) => jobComment.id !== id),
-          ],
-        })),
-      updateZJobComment: (id, comment) =>
-        set((state) => ({
-          zJobComments: [
-            ...state.zJobComments.map((jobComment) => {
-              if (jobComment.id === id) {
-                return { ...jobComment, comment };
-              }
-              return jobComment;
-            }),
-          ],
-        })),
+
+      // zJobComments: [],
+      // setZJobComments: async (jobId) => {
+      //   try {
+      //     const response = await axios.get(`${baseUrl}/jobComment/${jobId}`);
+      //     set({ zJobComments: response.data[0].id ? response.data : [] });
+      //   } catch (error) {
+      //     console.log("Error fetching comments:", error);
+      //   }
+      // },
+      // addZJobComment: (jobComment) =>
+      //   set((state) => ({ zJobComments: [jobComment, ...state.zJobComments] })),
+      // removeZJobComment: (id) =>
+      //   set((state) => ({
+      //     zJobComments: [
+      //       ...state.zJobComments.filter((jobComment) => jobComment.id !== id),
+      //     ],
+      //   })),
+      // updateZJobComment: (id, comment) =>
+      //   set((state) => ({
+      //     zJobComments: [
+      //       ...state.zJobComments.map((jobComment) => {
+      //         if (jobComment.id === id) {
+      //           return { ...jobComment, comment };
+      //         }
+      //         return jobComment;
+      //       }),
+      //     ],
+      //   })),
       zJobLikes: [],
       setZJobLikes: (jobLikes) => set({ zJobLikes: jobLikes }),
       addZJobLike: (jobLike) =>
@@ -121,6 +120,20 @@ const useJLStore = create(
           get().setZJobs();
         } catch (error) {
           console.error("Error toggling job:", error);
+        }
+      },
+      zProfile: {},
+      setZProfile: async (user_id) => {
+        try {
+          const response = await axios.get(`${baseUrl}/profile/${user_id}`, {
+            headers: {
+              Authorization: "Bearer " + get().zUser.token,
+            },
+          });
+          set({ zProfile: response.data });
+          console.log("Profile:", response.data);
+        } catch (error) {
+          console.error("Error fetching profile:", error);
         }
       },
       jobSearchQuery: "",

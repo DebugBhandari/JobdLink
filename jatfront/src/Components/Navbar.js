@@ -167,21 +167,35 @@ export default function SearchAppBar() {
           color="inherit"
           aria-label="open drawer"
         >
-          <Link
-            href="/login"
-            variant="body"
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            {zUser.imageUrl ? (
+          {!zUser.imageUrl ? (
+            <Link
+              href="/login"
+              variant="body"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <LoginIcon />
+            </Link>
+          ) : (
+            <Link
+              href={`/profile/${zUser.id}`}
+              variant="body"
+              // style={{
+              //   textDecoration: "none",
+              //   fontSize: 24,
+              //   fontWeight: "bolder",
+              //   borderRadius: 10,
+              //   padding: 5,
+              //   color: "#388e3c",
+              // }}
+              sx={{ ...logoStyleLink }}
+            >
               <Avatar
                 alt={zUser.name}
                 src={zUser.imageUrl}
                 sx={{ width: 32, height: 32 }}
               />
-            ) : (
-              <LoginIcon />
-            )}
-          </Link>
+            </Link>
+          )}
         </IconButton>
         <Search>
           <SearchIconWrapper>

@@ -51,30 +51,6 @@ export default function Job({ job, setJobsRefresh }) {
     },
   };
 
-  const handlePost = async () => {
-    const token = await loadLocal("tokenJL");
-    const linkedinId = await loadLocal("linkedinIdJL");
-
-    if (!token || !content) return;
-
-    try {
-      const response = await axios.post(`${baseUrl}/share`, {
-        token,
-        content,
-        linkedinId,
-      });
-
-      if (response.data.success) {
-        alert("Post successful!");
-      } else {
-        alert("Failed to post!");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error posting to LinkedIn");
-    }
-  };
-
   return (
     <>
       <EditJobModal
@@ -83,24 +59,11 @@ export default function Job({ job, setJobsRefresh }) {
         open={open}
         handleClose={handleClose}
       />
-      <Paper
-        elevation={3}
-        sx={{
-          margin: 4,
-          minHeight: 360,
-          width: 360,
-
-          borderRadius: 4,
-
-          // "@media (max-width: 1000px)": {
-          //   minWidth: "70dvw",
-          //   margin: 4,
-          // },
-        }}
-      >
+      <div className="linkViewCard">
         <CardContent
           sx={{
-            height: 70,
+            height: 60,
+            width: "90%",
             bgcolor: "success.main",
             ...(job.status === "Rejected" && { bgcolor: "error.main" }),
             ...(job.status === "Not Applied" && {
@@ -130,6 +93,7 @@ export default function Job({ job, setJobsRefresh }) {
         <CardContent
           sx={{
             display: "flex",
+            width: "92%",
             flexDirection: "column",
             justifyContent: "left",
             alignItems: "left",
@@ -139,28 +103,26 @@ export default function Job({ job, setJobsRefresh }) {
         >
           <div className="rowDiv">
             {" "}
-            <Typography variant="h8">
+            <h1 className="headerNormalText">
+              {" "}
               {job.private ? "Private" : "Linkd"}
-            </Typography>
-            <Typography variant="h8" color="primary.">
-              {job.status}
-            </Typography>
+            </h1>
+            <h1 className="headerNormalText">{job.status}</h1>
           </div>
 
           <div className="rowDiv">
             <Typography variant="h8" color="text.secondary">
               {job.username}
             </Typography>
+            <Typography variant="h8" color="primary.">
+              {job.created_at.slice(0, 10)}
+            </Typography>
           </div>
           <Typography variant="h8" color="text.secondary">
             {job.jobUrl}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {job.caption}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {job.description}
-          </Typography>
+          <h1 className="headerGreyText">{job.caption}</h1>
+          <h1 className="headerNormalText">{job.description}</h1>
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "center" }}>
           <Button size="small" onClick={handleOpen} sx={{ ...buttonHover }}>
@@ -184,7 +146,7 @@ export default function Job({ job, setJobsRefresh }) {
             Link
           </Button>
         </CardActions>
-      </Paper>
+      </div>
     </>
   );
 }

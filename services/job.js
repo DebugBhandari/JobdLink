@@ -44,6 +44,7 @@ async function findById(jobId) {
       Jobs.username,
       Jobs.private, 
       Jobs.caption, 
+      Jobs.created_at,
       COUNT(DISTINCT JobLikes.id) AS count_likes, 
       COUNT(DISTINCT JobComments.id) AS count_comments,
       Users.name, 
@@ -64,6 +65,7 @@ async function findById(jobId) {
       Jobs.location, 
       Jobs.username, 
       Jobs.private, 
+      Jobs.created_at,
       Jobs.caption, 
       Users.name, 
       Users.imageUrl
@@ -89,7 +91,7 @@ async function findById(jobId) {
 
 async function findAll() {
   return new Promise(async (resolve, reject) => {
-    const query = `select Jobs.id, Jobs.jobTitle, Jobs.description, Jobs.user_id, Jobs.company, Jobs.jobUrl, Jobs.status, Jobs.location, Jobs.username, Jobs.private, Jobs.caption, COUNT(DISTINCT JobLikes.id) AS count_likes, COUNT(DISTINCT JobComments.id) AS count_comments, Users.name, Users.imageUrl from Jobs
+    const query = `select Jobs.id, Jobs.jobTitle, Jobs.description, Jobs.created_at, Jobs.user_id, Jobs.company, Jobs.jobUrl, Jobs.status, Jobs.location, Jobs.username, Jobs.private, Jobs.caption, COUNT(DISTINCT JobLikes.id) AS count_likes, COUNT(DISTINCT JobComments.id) AS count_comments, Users.name, Users.imageUrl from Jobs
     left join JobLikes on JobLikes.job_id = Jobs.id
     left join JobComments on JobComments.job_id = Jobs.id
     left join Users on Users.id=Jobs.user_id

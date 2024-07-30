@@ -54,7 +54,7 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
       .then((response) => {
         console.log("Comment deleted successfully");
         console.log(response);
-        removeZJobComment(comment.id);
+        // removeZJobComment(comment.id);
         setLikeCommentRefresh((prevState) => !prevState);
       });
   };
@@ -67,8 +67,8 @@ export default function Comment({ comment, setLikeCommentRefresh }) {
       .then((response) => {
         console.log("Comment updated successfully");
         console.log(response);
-        setEditComment((prevState) => !prevState);
-        updateZJobComment({ id: comment.id, comment: updatedComment });
+        // setEditComment((prevState) => !prevState);
+        // updateZJobComment({ id: comment.id, comment: updatedComment });
         setLikeCommentRefresh((prevState) => !prevState);
         if (updatedComment === "") {
           handleCommentDelete(comment);

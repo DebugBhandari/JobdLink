@@ -70,13 +70,15 @@ export const findOrCreate = async (parsedToken) => {
 };
 
 export const isAuth = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
+  const token = req.headers.authorization;
+  if (!token) {
+    res.status(401).send("No token provided");
+  }
+  try {
+    const decoded = JWT.verify(token, process.env.SECRET_KEY);
+    req.user = decoded;
     next();
-  });
+  } catch (error) {
+    res.status(401).send("Unauthorized");
+  }
 };

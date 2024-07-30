@@ -17,8 +17,14 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import CommentIcon from "@mui/icons-material/Comment";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import Link from "@mui/material/Link";
 
-import { useSearchParams, useLocation } from "react-router-dom";
+import {
+  useSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { baseUrl } from "../App";
 
 export const style = {
@@ -40,16 +46,18 @@ export const style = {
 export default function LinkView() {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+
+  // const location = useLocation();
+  // const paramsId = parseInt(location.pathname.split("/")[2]);
+  // const navigate = useNavigate();
+
+  const { id } = useParams();
+  console.log("id", id);
   const {
-    zJob,
-    setJobById,
     zJobs,
     setZJobs,
     getJobById,
     zUser,
-    setZJobComments,
-    zJobComments,
-    addZJobComment,
     zJobLikes,
     setZJobLikes,
     addZJobLike,
@@ -57,15 +65,10 @@ export default function LinkView() {
     zJobLikesUsernames,
     setZJobLikesUsernames,
   } = useJLStore((state) => ({
-    zJob: state.zJob,
-    setJobById: state.setJobById,
     zJobs: state.zJobs,
     setZJobs: state.setZJobs,
     getJobById: state.getJobById,
     zUser: state.zUser,
-    setZJobComments: state.setZJobComments,
-    zJobComments: state.zJobComments,
-    addZJobComment: state.addZJobComment,
     zJobLikes: state.zJobLikes,
     setZJobLikes: state.setZJobLikes,
     addZJobLike: state.addZJobLike,
@@ -74,12 +77,10 @@ export default function LinkView() {
     setZJobLikesUsernames: state.setZJobLikesUsernames,
   }));
 
-  const location = useLocation();
-  const paramsId = parseInt(location.pathname.split("/")[2]);
-
   const [likeCommentRefresh, setLikeCommentRefresh] = useState(false);
 
-  const [job, setJob] = useState(zJob);
+  const [job, setJob] = useState({});
+  const [comments, setComments] = useState([]);
   const isLikeInStore = zJobLikes.find((like) => like.job_id === job.id)
     ? true
     : false;
@@ -143,6 +144,23 @@ export default function LinkView() {
   //Empty Comments after submit
   const [newComment, setNewComment] = useState("");
 
+  const fetchJobById = async (id) => {
+    try {
+      const response = await axios.get(`${baseUrl}/jobs/${id}`);
+      setJob(response.data);
+    } catch (error) {
+      console.error("Error fetching job:", error);
+    }
+  };
+  const fetchComents = async (id) => {
+    try {
+      const response = await axios.get(`${baseUrl}/jobComment/${id}`);
+      setComments(response.data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     user_id_JSON
@@ -156,13 +174,14 @@ export default function LinkView() {
             console.log(response.data);
             console.log("Commented successfully");
             setNewComment("");
-            addZJobComment({
-              comment: response.data.comment,
-              email: zUser.email,
-              imageUrl: zUser.imageUrl,
-              name: zUser.name,
-              commentedAt: new Date(),
-            });
+            // addZJobComment({
+            //   comment: response.data.comment,
+            //   email: zUser.email,
+            //   imageUrl: zUser.imageUrl,
+            //   name: zUser.name,
+            //   commentedAt: new Date(),
+            // });
+            fetchComents(id);
             setLikeCommentRefresh((prevState) => !prevState);
           })
           .catch((error) => {
@@ -247,13 +266,12 @@ export default function LinkView() {
       console.error("Error sharing on LinkedIn:", error);
     }
   };
-
   useEffect(() => {
-    setZJobs();
-    //getUsersLikes();
-    setJobById(paramsId);
-    setZJobComments(paramsId);
-    setZJobLikesUsernames(paramsId);
+    fetchJobById(id);
+    fetchComents(id);
+
+    //setZJobComments(id);
+    setZJobLikesUsernames(id);
   }, [likeCommentRefresh]);
 
   const headerStyleConditional = { backgroundColor: "#388e3c" };
@@ -272,7 +290,7 @@ export default function LinkView() {
             </h2>
             <h2 className="cardHeaderSubTitle">
               {" "}
-              {job.company.slice(0, 22) + "," + job.location}
+              {job.company?.slice(0, 22) + "," + job.location}
             </h2>
           </div>
           <div
@@ -283,25 +301,32 @@ export default function LinkView() {
             }}
           ></div>
           <div className="linkViewCardContent">
-            <div className="avatarDiv">
-              <Avatar
-                alt={job.imageUrl}
-                src={job.imageUrl}
-                sx={{ width: 36, height: 36 }}
-              />
-              <h1 className="avatarTitle">{job.name}</h1>
-            </div>
+            <Link href={`/profile/${job.user_id}`}>
+              <div className="avatarDiv">
+                <Avatar
+                  alt={job.imageUrl}
+                  src={job.imageUrl}
+                  sx={{ width: 36, height: 36 }}
+                />
+                <h1 className="avatarTitle">{job.name}</h1>
+              </div>
+            </Link>
             <div className="rowDiv">
-              <h1 className="headerNormalText">{job.status}</h1>
+              <h1 className="headerNormalText">{job.status}</h1>{" "}
+              <h1 className="headerNormalText">
+                {job.created_at?.slice(0, 10)}
+              </h1>
             </div>
 
             <h1 className="headerGreyText">{job.caption}</h1>
           </div>
           {zUser.id === job.user_id ? (
             <div className="cardActions">
-              <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-                {job.count_likes}{" "}
-                <ThumbUpAltIcon sx={{ marginBottom: "4px" }} />
+              <Button
+                onClick={handleMenuClick}
+                sx={{ fontSize: "12px", width: "120px", ...buttonHover }}
+              >
+                {job.count_likes} Likes
               </Button>
               <Menu
                 id="basic-menu"
@@ -331,8 +356,8 @@ export default function LinkView() {
               >
                 <LinkedInIcon />
               </Button>{" "}
-              <Button sx={{ ...buttonHover }}>
-                {job.count_comments} <CommentIcon />
+              <Button sx={{ fontSize: "12px", width: "120px", ...buttonHover }}>
+                {job.count_comments} Comments
               </Button>
             </div>
           ) : (
@@ -408,8 +433,8 @@ export default function LinkView() {
               }
             }}
           />
-          {zJobComments &&
-            zJobComments.map((comment) => (
+          {comments &&
+            comments.map((comment) => (
               <Comment
                 key={
                   Math.floor(Math.random() * 10000) +

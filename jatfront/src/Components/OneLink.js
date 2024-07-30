@@ -12,7 +12,7 @@ import Avatar from "@mui/material/Avatar";
 import { useNavigate } from "react-router-dom";
 import { loadLocal } from "./Job";
 import useJLStore from "../useStore";
-import { Link } from "react-router-dom";
+import Link from "@mui/material/Link";
 import { baseUrl } from "../App";
 //import { JLStoreContext } from "../App";
 
@@ -44,6 +44,7 @@ export default function OneLink({
     zJobLikes,
     setZJobLikes,
     zUser,
+    setZJobById,
     setZUser,
     addZJobLike,
     removeZJobLike,
@@ -58,6 +59,7 @@ export default function OneLink({
     zJobLikes: state.zJobLikes,
     setZJobLikes: state.setZJobLikes,
     zUser: state.zUser,
+    setZJobById: state.setZJobById,
     setZUser: state.setZUser,
     addZJobLike: state.addZJobLike,
     removeZJobLike: state.removeZJobLike,
@@ -151,23 +153,26 @@ export default function OneLink({
         }}
       ></div>
       <div className="linkViewCardContent">
-        <div className="avatarDiv">
-          <Avatar
-            alt={job.imageUrl}
-            src={job.imageUrl}
-            sx={{ width: 36, height: 36 }}
-          />
-          <h1 className="avatarTitle">{job.name}</h1>
-        </div>
+        <Link href={`/profile/${job.user_id}`}>
+          <div className="avatarDiv">
+            <Avatar
+              alt={job.imageUrl}
+              src={job.imageUrl}
+              sx={{ width: 36, height: 36 }}
+            />
+            <h1 className="avatarTitle">{job.name}</h1>
+          </div>{" "}
+        </Link>
         <div className="rowDiv">
           <h1 className="headerNormalText">{job.status}</h1>
+          <h1 className="headerNormalText">{job.created_at.slice(0, 10)}</h1>
         </div>
 
         <h1 className="headerGreyText">{job.caption}</h1>
       </div>
       <div className="cardActions">
         <Link
-          to={`/links/${job.id}`}
+          href={`/links/${job.id}`}
           variant="body"
           style={{
             textDecoration: "none",
@@ -180,13 +185,16 @@ export default function OneLink({
             color: "#ff00009b",
           }}
         >
-          <Button sx={{ ...buttonHover }}>
-            {job.count_comments} <CommentIcon />
+          <Button sx={{ fontSize: "12px", width: "120px", ...buttonHover }}>
+            {job.count_comments} Comments
           </Button>
         </Link>
 
-        <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-          {job.count_likes} <ThumbUpAltIcon sx={{ marginBottom: "4px" }} />
+        <Button
+          onClick={handleMenuClick}
+          sx={{ fontSize: "12px", width: "120px", ...buttonHover }}
+        >
+          {job.count_likes} Likes
         </Button>
         {zJobLikesUsernames ? (
           <Menu
@@ -207,33 +215,48 @@ export default function OneLink({
         ) : null}
       </div>
       {!fromJobd === true ? (
-        <div className="centreDiv">
-          {" "}
-          <div className="cardActions">
-            {userLiked === false ? (
-              <Button
-                size="small"
-                onClick={() => handleLikeClick()}
-                sx={{
-                  fontSize: "16px",
-                  ...buttonHover,
-                }}
-              >
-                <ThumbUpOffAltIcon /> {/* Likeeee */}
+        <div className="cardActions">
+          <div className="rowDiv">
+            <Link
+              href={`/links/${job.id}`}
+              variant="body"
+              style={{
+                textDecoration: "none",
+                fontSize: 24,
+                zIndex: 5,
+                fontWeight: "bolder",
+                borderRadius: 10,
+                maxHeight: 50,
+                padding: 5,
+                color: "#ff00009b",
+              }}
+            >
+              <Button sx={{ fontSize: "12px", width: "100px", ...buttonHover }}>
+                <CommentIcon sx={{ fontSize: "22px" }} />
               </Button>
-            ) : (
-              <Button
-                size="small"
-                onClick={() => handleUnlikeClick()}
-                sx={{
-                  fontSize: "16px",
-                  ...buttonHover,
-                }}
-              >
-                <ThumbUpAltIcon /> {/* Unlikeeee */}
-              </Button>
-            )}
-          </div>{" "}
+            </Link>
+            <div className="likeDiv">
+              {userLiked === false ? (
+                <Button
+                  size="small"
+                  onClick={() => handleLikeClick()}
+                  sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
+                >
+                  <ThumbUpOffAltIcon sx={{ fontSize: "24px" }} />{" "}
+                  {/* Likeeee */}
+                </Button>
+              ) : (
+                <Button
+                  size="small"
+                  onClick={() => handleUnlikeClick()}
+                  sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
+                >
+                  <ThumbUpAltIcon sx={{ fontSize: "24px" }} />
+                  {/* Unlikeeee */}
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       ) : (
         <div className="centreDiv">

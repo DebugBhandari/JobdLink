@@ -18,6 +18,8 @@ dotenv.config({ path: ".env.local" });
 import jobsRouter from "./router/jobs.js";
 import jobLikeRouter from "./router/jobLike.js";
 import jobCommentRouter from "./router/jobComments.js";
+import profileRouter from "./router/profile.js";
+import userRouter from "./router/user.js";
 import { dbConfig } from "./server.js";
 
 import passport from "passport";
@@ -298,6 +300,8 @@ cron.schedule("0 0 * * *", () => {
 app.use("/jobs", jobsRouter);
 app.use("/jobLike", jobLikeRouter);
 app.use("/jobComment", jobCommentRouter);
+app.use("/profile", profileRouter);
+app.use("/user", userRouter);
 
 if (process.env.NODE_ENV || "development") {
   // Serve static files from the React app

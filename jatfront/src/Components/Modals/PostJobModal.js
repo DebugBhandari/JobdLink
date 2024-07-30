@@ -74,23 +74,31 @@ const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
     }
 
     try {
-      const response = await axios.post(`${baseUrl}/jobs`, {
-        jobTitle: data.jobTitle,
-        company: data.company,
-        jobUrl: data.jobUrl,
-        status: data.status,
-        location: data.location,
-        username: data.username,
-        private: data.private === "true",
-        user_id: zUser ? zUser.id : 99999,
-        description: data.description,
-        caption: data.caption,
-      });
+      const response = await axios.post(
+        `${baseUrl}/jobs`,
+        {
+          jobTitle: data.jobTitle,
+          company: data.company,
+          jobUrl: data.jobUrl,
+          status: data.status,
+          location: data.location,
+          username: data.username,
+          private: data.private === "true",
+          user_id: zUser ? zUser.id : 99999,
+          description: data.description,
+          caption: data.caption,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + zUser.token,
+          },
+        }
+      );
       console.log(response.data);
       console.log("Job added successfully");
       setZJobs();
-      handleClose();
       reset(); // Reset the form after successful submission
+      handleClose();
     } catch (error) {
       console.log(error);
     }
@@ -125,7 +133,7 @@ const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
           }}
           component="div"
         >
-          <AlertMessage variant="h5">Please log in to post a job.</AlertMessage>
+          <AlertMessage variant="h6">Please log in to post a job.</AlertMessage>
           <IconButton
             size="large"
             edge="start"

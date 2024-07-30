@@ -91,6 +91,7 @@
   align-items: center;
 
   flex-wrap: wrap;
+  margin-top: 10dvh;
 }
 
 .profileMainDiv {
@@ -107,7 +108,8 @@
   border-radius: 4px;
   box-shadow: 5px 2px 5px 2px rgb(68, 68, 68);
   text-align: left;
-  padding: 16px;
+  padding: 36px;
+  margin: 8px;
 }
 
 /* Avatarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr */
@@ -136,6 +138,14 @@
 }
 
 .rowDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.rowDivProfile {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -201,9 +211,9 @@
   align-items: center;
   box-shadow: 5px 2px 5px 2px rgb(68, 68, 68);
   color: black;
-  height: 80px;
-  width: 360px;
-  border-radius: 4%;
+  height: 90px;
+  width: 340px;
+  border-radius: 12%;
 }
 
 .addButton:hover {
@@ -234,7 +244,7 @@
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   border-radius: 8px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex-direction: column;
   margin: 16px;
@@ -324,9 +334,10 @@
 @media only screen and (max-width: 1000px) {
   .profileMainDiv {
     position: relative;
-
+    width: 100%;
     margin-bottom: 8dvh;
   }
+
   .jobsRouteDiv {
     flex-direction: column;
   }
@@ -360,5 +371,8 @@
   }
   .linkViewSections {
     width: 100dvw;
+  }
+  .rowDivProfile {
+    flex-direction: column;
   }
 }
