@@ -67,7 +67,7 @@ function App() {
               <Route path="/register" element={<Register key="2" />} />
               <Route path="/JAT" element={<Jobs key="3" />} />
               <Route path="/links/:id" element={<LinkView key="4" />} />
-              <Route path="/profile/:id" element={<DashBoard key="5" />} />
+              <Route path="/userProfile/:id" element={<DashBoard key="5" />} />
             </Routes>
           </div>
         </BrowserRouter>

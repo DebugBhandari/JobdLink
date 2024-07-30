@@ -153,7 +153,7 @@ export default function OneLink({
         }}
       ></div>
       <div className="linkViewCardContent">
-        <Link href={`/profile/${job.user_id}`}>
+        <Link href={`/userProfile/${job.user_id}`}>
           <div className="avatarDiv">
             <Avatar
               alt={job.imageUrl}
