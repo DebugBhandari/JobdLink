@@ -217,6 +217,7 @@ export default function OneLink({
         {fromJobd ? (
           <Button
             size="small"
+            data-html2canvas-ignore
             onClick={() => {
               toggleJobdLink(job.id);
               setZJobs();
@@ -340,6 +341,7 @@ export default function OneLink({
           {" "}
           <Button
             size="small"
+            data-html2canvas-ignore
             onClick={() => captureScreenshot()}
             sx={{
               fontSize: "14px",
