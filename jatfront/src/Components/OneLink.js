@@ -198,6 +198,27 @@ export default function OneLink({
   return (
     <div className="linkViewCard" ref={ref}>
       <div className="linkViewCardHeader">
+        {fromJobd ? (
+          <Button
+            size="small"
+            onClick={() => {
+              toggleJobdLink(job.id);
+              setZJobs();
+            }}
+            sx={{
+              fontWeight: 800,
+              fontSize: "12px",
+              position: "absolute",
+              height: "30px",
+              borderRadius: 2,
+              top: 0,
+              right: 0,
+              ...buttonHover,
+            }}
+          >
+            Jobd
+          </Button>
+        ) : null}
         <h2 className="cardHeaderTitle" title={job.company}>
           {job.jobTitle}
         </h2>
@@ -277,50 +298,29 @@ export default function OneLink({
       </div>
       {!fromJobd === true ? (
         <div className="cardActions">
-          <div className="rowDiv">
-            <Link
-              href={`/links/${job.id}`}
-              variant="body"
-              style={{
-                textDecoration: "none",
-                fontSize: 24,
-                zIndex: 5,
-                fontWeight: "bolder",
-                borderRadius: 10,
-                maxHeight: 50,
-                padding: 5,
-                color: "#ff00009b",
-              }}
-            >
-              <Button sx={{ fontSize: "12px", width: "100px", ...buttonHover }}>
-                <CommentIcon sx={{ fontSize: "22px" }} />
+          <div className="centreDiv">
+            {userLiked === false ? (
+              <Button
+                size="small"
+                onClick={() => handleLikeClick()}
+                sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
+              >
+                <ThumbUpOffAltIcon sx={{ fontSize: "24px" }} /> {/* Likeeee */}
               </Button>
-            </Link>
-            <div className="likeDiv">
-              {userLiked === false ? (
-                <Button
-                  size="small"
-                  onClick={() => handleLikeClick()}
-                  sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
-                >
-                  <ThumbUpOffAltIcon sx={{ fontSize: "24px" }} />{" "}
-                  {/* Likeeee */}
-                </Button>
-              ) : (
-                <Button
-                  size="small"
-                  onClick={() => handleUnlikeClick()}
-                  sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
-                >
-                  <ThumbUpAltIcon sx={{ fontSize: "24px" }} />
-                  {/* Unlikeeee */}
-                </Button>
-              )}
-            </div>
+            ) : (
+              <Button
+                size="small"
+                onClick={() => handleUnlikeClick()}
+                sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
+              >
+                <ThumbUpAltIcon sx={{ fontSize: "24px" }} />
+                {/* Unlikeeee */}
+              </Button>
+            )}
           </div>
         </div>
       ) : (
-        <div className="cardActions">
+        <div className="centreDiv">
           {" "}
           <Button
             size="small"
@@ -334,20 +334,6 @@ export default function OneLink({
             }}
           >
             <LinkedInIcon /> Share
-          </Button>{" "}
-          <Button
-            size="small"
-            onClick={() => {
-              toggleJobdLink(job.id);
-              setZJobs();
-            }}
-            sx={{
-              fontWeight: 800,
-              width: "100px",
-              ...buttonHover,
-            }}
-          >
-            Jobd
           </Button>{" "}
         </div>
       )}

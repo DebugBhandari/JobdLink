@@ -50,6 +50,16 @@ export default function Job({ job, setJobsRefresh }) {
       color: "white",
     },
   };
+  const linkButtonHover = {
+    "&:hover": {
+      color: "success.main",
+      ...(job.status === "Rejected" && { color: "error.main" }),
+      ...(job.status === "Not Applied" && {
+        color: "primary.main",
+      }),
+      bgcolor: "white",
+    },
+  };
 
   return (
     <>
@@ -74,10 +84,32 @@ export default function Job({ job, setJobsRefresh }) {
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
+            position: "relative",
 
             borderRadius: 4,
           }}
         >
+          {" "}
+          <Button
+            onClick={() => {
+              toggleJobdLink(job.id);
+              setZJobs();
+            }}
+            sx={{
+              fontWeight: 800,
+              position: "absolute",
+              borderRadius: 2,
+
+              height: "30px",
+              fontSize: "12px",
+              top: 0,
+              left: 0,
+              color: "white",
+              ...linkButtonHover,
+            }}
+          >
+            Link
+          </Button>
           <Typography
             sx={{
               fontSize: 28,
@@ -134,16 +166,6 @@ export default function Job({ job, setJobsRefresh }) {
             sx={{ ...buttonHover }}
           >
             Delete
-          </Button>
-
-          <Button
-            onClick={() => {
-              toggleJobdLink(job.id);
-              setZJobs();
-            }}
-            sx={{ fontWeight: 800, ...buttonHover }}
-          >
-            Link
           </Button>
         </CardActions>
       </div>
