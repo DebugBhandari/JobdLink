@@ -39,7 +39,6 @@ const Links = () => {
   const [linkView, setLinkView] = useState(false);
 
   const token = zUser.token;
-  console.log("baseUrl", baseUrl);
 
   const user_id_JSON = parseInt(zUser.id);
 

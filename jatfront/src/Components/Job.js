@@ -118,7 +118,10 @@ export default function Job({ job, setJobsRefresh }) {
           >
             {job.jobTitle}
           </Typography>
-          <Typography gutterBottom sx={{ fontSize: "16px" }}>
+          <Typography
+            gutterBottom
+            sx={{ fontSize: "16px", wordBreak: "break-all" }}
+          >
             {job.company.slice(0, 22) + "," + job.location}
           </Typography>
         </CardContent>
@@ -143,14 +146,22 @@ export default function Job({ job, setJobsRefresh }) {
           </div>
 
           <div className="rowDiv">
-            <Typography variant="h8" color="text.secondary">
+            <Typography
+              variant="h8"
+              color="text.secondary"
+              sx={{ wordBreak: "break-all" }}
+            >
               {job.username}
             </Typography>
             <Typography variant="h8" color="primary.">
               {job.created_at.slice(0, 10)}
             </Typography>
           </div>
-          <Typography variant="h8" color="text.secondary">
+          <Typography
+            variant="h8"
+            color="text.secondary"
+            sx={{ wordBreak: "break-all" }}
+          >
             {job.jobUrl}
           </Typography>
           <h1 className="headerGreyText">{job.caption}</h1>

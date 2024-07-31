@@ -25,8 +25,6 @@ export default function OneLink({
   const [userNames, setUserNames] = useState([]);
   const zUser = useJLStore((state) => state.zUser);
   const user_id_JSON = parseInt(zUser.id);
-  console.log("user_id_JSON", user_id_JSON);
-  console.log("job-id", job.id);
   //const created_at = new Date(job.created_at);
   const [userLiked, setUserLiked] = useState();
   //const locale_date = created_at.toLocaleDateString();
@@ -75,8 +73,6 @@ export default function OneLink({
   };
 
   const handleLikeClick = async () => {
-    console.log("job.id fffff", job.id);
-    console.log("user_id_JSON ffff", user_id_JSON);
     axios
       .post(`${baseUrl}/jobLike`, {
         job_id: job.id,

@@ -50,7 +50,6 @@ export default function LinkView() {
   // const navigate = useNavigate();
 
   const { id } = useParams();
-  console.log("id", id);
   const {
     zJobs,
     setZJobs,

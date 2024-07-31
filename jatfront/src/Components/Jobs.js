@@ -20,8 +20,6 @@ const Jobs = () => {
   const zUser = useJLStore((state) => state.zUser);
   const toggleJobdLink = useJLStore((state) => state.toggleJobdLink);
   const local_user_id = parseInt(zUser.id);
-  console.log("privateJobs", privateJobs);
-  console.log("zJobs", zJobs);
   //const { contextData, setContextData } = useContext(JLStoreContext);
   //console.log("contextData", contextData);
   // const {
