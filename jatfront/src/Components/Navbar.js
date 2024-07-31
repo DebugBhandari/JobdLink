@@ -111,7 +111,7 @@ export default function SearchAppBar() {
 
   return (
     <div className="navDiv">
-      <div className="navTitle">
+      <div className="footSubDiv">
         <Typography
           variant="h6"
           noWrap

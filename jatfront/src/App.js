@@ -6,6 +6,7 @@ import Register from "./Components/Register"; // Import the 'Register' component
 import DashBoard from "./Components/DashBoard"; // Import the 'DashBoard' component
 import Jobs from "./Components/Jobs";
 import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
 import { Container } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Login from "./Components/Login";
@@ -70,6 +71,7 @@ function App() {
               <Route path="/userProfile/:id" element={<DashBoard key="5" />} />
             </Routes>
           </div>
+          <Footer />
         </BrowserRouter>
       </div>
     </ThemeProvider>
