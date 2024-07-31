@@ -240,7 +240,7 @@ export default function OneLink({
         </h2>
         <h2 className="cardHeaderSubTitle">
           {" "}
-          {job.company.slice(0, 22) + "," + job.location}
+          {job.company.slice(0, 22) + ", " + job.location}
         </h2>
       </div>
       <div

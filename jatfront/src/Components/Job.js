@@ -122,7 +122,7 @@ export default function Job({ job, setJobsRefresh }) {
             gutterBottom
             sx={{ fontSize: "16px", wordBreak: "break-all" }}
           >
-            {job.company.slice(0, 22) + "," + job.location}
+            {job.company.slice(0, 22) + ", " + job.location}
           </Typography>
         </CardContent>
         <CardContent
