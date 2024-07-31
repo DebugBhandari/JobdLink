@@ -88,6 +88,22 @@ export default function OneLink({
       color: "white",
     },
   };
+  const toggleHover = {
+    bgcolor: "success.main",
+    ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+    ...(job.status === "Not Applied" && {
+      bgcolor: "primary.main",
+    }),
+    color: "white",
+    "&:hover": {
+      bgcolor: "white",
+      color: "success.main",
+      ...(job.status === "Rejected" && { color: "error.main" }),
+      ...(job.status === "Not Applied" && {
+        color: "primary.main",
+      }),
+    },
+  };
 
   const invisibleStyle = {
     display: "none",
@@ -213,10 +229,10 @@ export default function OneLink({
               borderRadius: 2,
               top: 0,
               right: 0,
-              ...buttonHover,
+              ...toggleHover,
             }}
           >
-            Jobd
+            Link
           </Button>
         ) : null}
         <h2 className="cardHeaderTitle" title={job.company}>

@@ -121,14 +121,9 @@ const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
         <Paper
           elevation={3}
           sx={{
-            maxWidth: 350,
+            maxWidth: 340,
             margin: 3,
             minHeight: 100,
-            padding: 2,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
             ...style,
           }}
           component="div"
@@ -169,6 +164,9 @@ const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
         component="form"
         onSubmit={handleSubmit(onSubmit)}
       >
+        <div className="linkViewCardHeader">
+          <div className="postJobHeader">New Job</div>
+        </div>
         <CardContentStyled>
           <TextFieldStyled
             margin="normal"

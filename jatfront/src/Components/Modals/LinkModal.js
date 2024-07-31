@@ -20,14 +20,18 @@ export const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "90%",
-  "@media (min-width: 780px)": {
-    width: "50%",
-    top: "50%",
+  "@media (max-width: 780px)": {
+    top: "40%",
+    left: "44%",
   },
-  margin: "auto",
   bgcolor: "background.paper",
   boxShadow: 24,
-  border: "12px solid #000",
+  borderRadius: 4,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flexDirection: "column",
+  border: "2px solid black",
 };
 
 export default function LinkModal({

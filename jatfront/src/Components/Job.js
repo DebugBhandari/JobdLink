@@ -108,7 +108,7 @@ export default function Job({ job, setJobsRefresh }) {
               ...linkButtonHover,
             }}
           >
-            Link
+            Jobd
           </Button>
           <Typography
             sx={{

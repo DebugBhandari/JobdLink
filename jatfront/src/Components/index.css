@@ -211,9 +211,11 @@
   align-items: center;
   box-shadow: 5px 2px 5px 2px rgb(68, 68, 68);
   color: black;
-  height: 90px;
+  height: 100px;
   width: 340px;
-  border-radius: 12%;
+  border-radius: 12px;
+  font-size: large;
+  font-weight: 900;
 }
 
 .addButton:hover {
@@ -259,6 +261,20 @@
   border-radius: 8px 8px 0px 0px;
   width: 100%;
   position: relative;
+}
+
+.postJobHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 90px;
+  border-radius: 8px 8px 0px 0px;
+  width: 100%;
+  position: relative;
+  background-color: #2a2e45;
+  color: white;
+  border-radius: 12px;
 }
 
 .linkViewCardContent {
