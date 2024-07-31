@@ -141,7 +141,7 @@ export default function Job({ job, setJobsRefresh }) {
               toggleJobdLink(job.id);
               setZJobs();
             }}
-            sx={{ color: "#388e3c", fontWeight: 800, ...buttonHover }}
+            sx={{ fontWeight: 800, ...buttonHover }}
           >
             Link
           </Button>

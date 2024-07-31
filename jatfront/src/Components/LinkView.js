@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import CardActions from "@mui/material/CardActions";
@@ -12,11 +12,9 @@ import Comment from "./Comment";
 import Avatar from "@mui/material/Avatar";
 import useJLStore from "../useStore";
 import { loadLocal } from "./Job";
-import html2canvas from "html2canvas";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import CommentIcon from "@mui/icons-material/Comment";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import Link from "@mui/material/Link";
 
 import {
@@ -152,7 +150,7 @@ export default function LinkView() {
       console.error("Error fetching job:", error);
     }
   };
-  const fetchComents = async (id) => {
+  const fetchComments = async (id) => {
     try {
       const response = await axios.get(`${baseUrl}/jobComment/${id}`);
       setComments(response.data);
@@ -181,7 +179,7 @@ export default function LinkView() {
             //   name: zUser.name,
             //   commentedAt: new Date(),
             // });
-            fetchComents(id);
+            fetchComments(id);
             setLikeCommentRefresh((prevState) => !prevState);
           })
           .catch((error) => {
@@ -212,63 +210,9 @@ export default function LinkView() {
     },
   };
 
-  const ref = useRef();
-
-  const captureScreenshot = async () => {
-    const canvas = await html2canvas(ref.current, {
-      width: window.scrollWidth,
-      height: window.scrollHeight,
-      backgroundColor: "white", // Ensure background is transparent
-      useCORS: true, // Handle cross-origin images
-      logging: true, // Enable logging for debugging
-      scale: 2, // Scale the image up by 2x
-    });
-    const imgData = canvas.toDataURL("image/png");
-
-    // Convert the base64 string to a file
-    const blob = await fetch(imgData).then((res) => res.blob());
-    const file = new File([blob], "screenshot.png", { type: "image/png" });
-
-    // Upload the file
-    uploadScreenshot(file);
-  };
-
-  const uploadScreenshot = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch(`${baseUrl}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      console.log("Screenshot uploaded:", result.url);
-      shareOnLinkedIn(result.url);
-    } catch (error) {
-      console.error("Error uploading screenshot:", error);
-    }
-  };
-
-  const shareOnLinkedIn = async (imageUrl) => {
-    try {
-      const response = await fetch(`${baseUrl}/share`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ imageUrl, linkedinId, token, job_id: job.id }),
-      });
-      const result = await response.json();
-      alert("Shared on LinkedIn!");
-      console.log("Shared on LinkedIn:", result);
-    } catch (error) {
-      console.error("Error sharing on LinkedIn:", error);
-    }
-  };
   useEffect(() => {
     fetchJobById(id);
-    fetchComents(id);
+    fetchComments(id);
 
     //setZJobComments(id);
     setZJobLikesUsernames(id);
@@ -283,7 +227,7 @@ export default function LinkView() {
   return (
     <div className="linkView">
       <div className="linkViewSections">
-        <div className="linkViewCard" ref={ref}>
+        <div className="linkViewCard">
           <div className="linkViewCardHeader">
             <h2 className="cardHeaderTitle" title={job.company}>
               {job.jobTitle}
@@ -343,19 +287,7 @@ export default function LinkView() {
                   </MenuItem>
                 ))}
               </Menu>
-              <Button
-                size="small"
-                onClick={() => captureScreenshot()}
-                sx={{
-                  fontSize: "14px",
-                  "&:hover": {
-                    bgcolor: "primary.main",
-                    color: "white",
-                  },
-                }}
-              >
-                <LinkedInIcon />
-              </Button>{" "}
+
               <Button sx={{ fontSize: "12px", width: "120px", ...buttonHover }}>
                 {job.count_comments} Comments
               </Button>

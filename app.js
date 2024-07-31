@@ -185,7 +185,7 @@ const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
     const imageData = fs.readFileSync(filePath);
 
     // Upload the image to LinkedIn
-    await axios.put(uploadUrl, imageData, {
+    await axios.put(uploadUr, imageData, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "image/png",

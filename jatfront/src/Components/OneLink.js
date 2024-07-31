@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -14,6 +14,9 @@ import { loadLocal } from "./Job";
 import useJLStore from "../useStore";
 import Link from "@mui/material/Link";
 import { baseUrl } from "../App";
+import html2canvas from "html2canvas";
+
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 //import { JLStoreContext } from "../App";
 
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -36,6 +39,7 @@ export default function OneLink({
   //const locale_date = created_at.toLocaleDateString();
   //const nameJL = loadLocal("nameJL");
   //const navigate = useNavigate();
+
   const {
     zJobs,
     setZJobs,
@@ -73,6 +77,7 @@ export default function OneLink({
   const [userLiked, setUserLiked] = useState(isLikeInStore);
   //const { contextData, setContextData } = useContext(JLStoreContext);
   const user_id_JSON = parseInt(zUser.id);
+  const { linkedinId, token } = zUser;
   const buttonHover = {
     "&:hover": {
       bgcolor: "success.main",
@@ -134,8 +139,64 @@ export default function OneLink({
   job.status === "Not Applied" &&
     (headerStyleConditional.backgroundColor = "#2a2e45");
 
+  const ref = useRef();
+
+  const captureScreenshot = async () => {
+    const canvas = await html2canvas(ref.current, {
+      width: window.scrollWidth,
+      height: window.scrollHeight,
+      backgroundColor: "white", // Ensure background is transparent
+      useCORS: true, // Handle cross-origin images
+      logging: true, // Enable logging for debugging
+      scale: 2, // Scale the image up by 2x
+      // Prevent cross-origin images from tainting the canvas
+    });
+    const imgData = canvas.toDataURL("image/png");
+
+    // Convert the base64 string to a file
+    const blob = await fetch(imgData).then((res) => res.blob());
+    const file = new File([blob], "screenshot.png", { type: "image/png" });
+
+    // Upload the file
+    uploadScreenshot(file);
+  };
+
+  const uploadScreenshot = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(`${baseUrl}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      console.log("Screenshot uploaded:", result.url);
+      shareOnLinkedIn(result.url);
+    } catch (error) {
+      console.error("Error uploading screenshot:", error);
+    }
+  };
+
+  const shareOnLinkedIn = async (imageUrl) => {
+    try {
+      const response = await fetch(`${baseUrl}/share`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl, linkedinId, token, job_id: job.id }),
+      });
+      const result = await response.json();
+      alert("Shared on LinkedIn!");
+      console.log("Shared on LinkedIn:", result);
+    } catch (error) {
+      console.error("Error sharing on LinkedIn:", error);
+    }
+  };
+
   return (
-    <div className="linkViewCard">
+    <div className="linkViewCard" ref={ref}>
       <div className="linkViewCardHeader">
         <h2 className="cardHeaderTitle" title={job.company}>
           {job.jobTitle}
@@ -259,20 +320,35 @@ export default function OneLink({
           </div>
         </div>
       ) : (
-        <div className="centreDiv">
+        <div className="cardActions">
           {" "}
-          <div className="cardActions">
-            <Button
-              size="small"
-              onClick={() => {
-                toggleJobdLink(job.id);
-                setZJobs();
-              }}
-              sx={{ color: "#d32f2f", fontWeight: 800, ...buttonHover }}
-            >
-              Jobd
-            </Button>{" "}
-          </div>
+          <Button
+            size="small"
+            onClick={() => captureScreenshot()}
+            sx={{
+              fontSize: "14px",
+              "&:hover": {
+                bgcolor: "primary.main",
+                color: "white",
+              },
+            }}
+          >
+            <LinkedInIcon /> Share
+          </Button>{" "}
+          <Button
+            size="small"
+            onClick={() => {
+              toggleJobdLink(job.id);
+              setZJobs();
+            }}
+            sx={{
+              fontWeight: 800,
+              width: "100px",
+              ...buttonHover,
+            }}
+          >
+            Jobd
+          </Button>{" "}
         </div>
       )}
     </div>
