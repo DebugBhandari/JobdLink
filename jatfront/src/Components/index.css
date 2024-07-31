@@ -100,6 +100,11 @@
   flex-direction: column;
   width: 90%;
   border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 36px;
+  margin: 8px;
 }
 .profileCard {
   display: flex;
@@ -110,6 +115,15 @@
   text-align: left;
   padding: 36px;
   margin: 8px;
+  width: 90%;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #0f0e0e;
+}
+.profileContentDiv {
+  padding: 28px;
+  margin: 8px;
+  width: 80%;
 }
 
 /* Avatarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr */
@@ -123,6 +137,7 @@
   border-radius: 16px;
   padding: 4px;
   margin-top: 0px;
+  width: 90%;
 }
 .commentAvatar {
   display: flex;
@@ -358,10 +373,21 @@
 @media only screen and (max-width: 1000px) {
   .profileMainDiv {
     position: relative;
-    width: 100%;
+    width: 90%;
     margin-bottom: 8dvh;
   }
-
+  .profileCard {
+    flex-direction: column;
+  }
+  .profileContentDiv {
+    width: 100%;
+  }
+  .profileCentreText {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .jobsRouteDiv {
     flex-direction: column;
   }

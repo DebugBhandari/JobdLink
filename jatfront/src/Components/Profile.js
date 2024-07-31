@@ -115,180 +115,186 @@ const Profile = ({ handleOpen }) => {
               {zProfile.name}
             </Typography>
           </div>
-
-          <div className="rowDivProfile">
-            <h1 className="avatarTitle">{zProfile.email}</h1>
-            {editing ? (
-              <Controller
-                name="location"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Location"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            ) : (
-              <h1 className="avatarTitle">{zProfile.location}</h1>
-            )}
-          </div>
-          <br />
-          {editing ? (
-            <Controller
-              name="bio"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Bio"
-                  variant="outlined"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  margin="normal"
+          <div className="profileContentDiv">
+            <div className="rowDivProfile">
+              <h1 className="avatarTitle">{zProfile.email}</h1>
+              {editing ? (
+                <Controller
+                  name="location"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Location"
+                      variant="outlined"
+                      fullWidth
+                      margin="normal"
+                    />
+                  )}
                 />
+              ) : (
+                <h1 className="avatarTitle">{zProfile.location}</h1>
               )}
-            />
-          ) : (
-            <h1 className="headerGreyText">{zProfile.bio}</h1>
-          )}
-          <br />
-          {editing ? (
-            <Controller
-              name="website"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Portfolio"
-                  variant="outlined"
-                  fullWidth
-                  margin="normal"
-                />
-              )}
-            />
-          ) : (
-            <Typography sx={{ fontSize: "16px" }}>
-              Portfolio: {zProfile.partialView ? "Hidden" : zProfile.website}
-            </Typography>
-          )}
-          <div className="rowDivProfile">
+            </div>
+            <br />
             {editing ? (
               <Controller
-                name="github"
+                name="bio"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Github"
+                    label="Bio"
                     variant="outlined"
                     fullWidth
+                    multiline
+                    rows={4}
                     margin="normal"
                   />
                 )}
               />
             ) : (
-              <Typography
-                sx={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <GitHubIcon />
-                {zProfile.partialView ? "Hidden" : zProfile.github}
-              </Typography>
-            )}
-            {editing ? (
-              <Controller
-                name="linkedin"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Linkedin"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            ) : (
-              <Typography
-                sx={{
-                  fontSize: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <LinkedInIcon />
-                {zProfile.partialView ? "Hidden" : zProfile.linkedin}
-              </Typography>
-            )}
-          </div>
-          <br />
-          <div className="rowDivProfile">
-            <h1 className="headerNormalText">
-              Linked:{" "}
-              {zProfile.partialView ? "Hidden" : zProfile.count_jobs_linkd}
-            </h1>
-            <h1 className="headerNormalText">
-              Total: {zProfile.partialView ? "Hidden" : zProfile.count_jobs}
-            </h1>
-          </div>
-          {editing ? (
-            <Controller
-              name="partialView"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  {...field}
-                  defaultValue="true"
-                >
-                  <FormControlLabel
-                    value="true"
-                    control={<Radio />}
-                    label="Partial Profile"
-                  />
-                  <FormControlLabel
-                    value="false"
-                    control={<Radio />}
-                    label="Full Profile"
-                  />
-                </RadioGroup>
-              )}
-            />
-          ) : zProfile.partialView ? (
-            "Profile Hidden"
-          ) : null}
-
-          <br />
-          <div className="profileButton">
-            {editing ? (
-              <>
-                <Button
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={isSubmitting}
-                >
-                  Save
-                </Button>
-                <Button onClick={handleCancel}>Cancel</Button>
-              </>
-            ) : zProfile.user_id === zUser.id ? (
-              <div className="profileButton">
-                {" "}
-                <Button onClick={() => setEditing(true)}>Edit Profile</Button>
-                <Button onClick={handleLogout}>Logout</Button>
+              <div className="profileCentreText">
+                <h1 className="headerGreyText">{zProfile.bio}</h1>
               </div>
+            )}
+            <br />
+            {editing ? (
+              <Controller
+                name="website"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Portfolio"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
+              />
+            ) : (
+              <div className="profileCentreText">
+                <Typography sx={{ fontSize: "16px" }}>
+                  Portfolio:{" "}
+                  {zProfile.partialView ? "Hidden" : zProfile.website}
+                </Typography>
+              </div>
+            )}
+            <div className="rowDivProfile">
+              {editing ? (
+                <Controller
+                  name="github"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Github"
+                      variant="outlined"
+                      fullWidth
+                      margin="normal"
+                    />
+                  )}
+                />
+              ) : (
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <GitHubIcon />
+                  {zProfile.partialView ? "Hidden" : zProfile.github}
+                </Typography>
+              )}
+              {editing ? (
+                <Controller
+                  name="linkedin"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Linkedin"
+                      variant="outlined"
+                      fullWidth
+                      margin="normal"
+                    />
+                  )}
+                />
+              ) : (
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <LinkedInIcon />
+                  {zProfile.partialView ? "Hidden" : zProfile.linkedin}
+                </Typography>
+              )}
+            </div>
+            <br />
+            <div className="rowDivProfile">
+              <h1 className="headerNormalText">
+                Linked:{" "}
+                {zProfile.partialView ? "Hidden" : zProfile.count_jobs_linkd}
+              </h1>
+              <h1 className="headerNormalText">
+                Total: {zProfile.partialView ? "Hidden" : zProfile.count_jobs}
+              </h1>
+            </div>
+            {editing ? (
+              <Controller
+                name="partialView"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    {...field}
+                    defaultValue="true"
+                  >
+                    <FormControlLabel
+                      value="true"
+                      control={<Radio />}
+                      label="Partial Profile"
+                    />
+                    <FormControlLabel
+                      value="false"
+                      control={<Radio />}
+                      label="Full Profile"
+                    />
+                  </RadioGroup>
+                )}
+              />
+            ) : zProfile.partialView ? (
+              "Profile Hidden"
             ) : null}
+
+            <br />
+            <div className="profileButton">
+              {editing ? (
+                <>
+                  <Button
+                    onClick={handleSubmit(onSubmit)}
+                    disabled={isSubmitting}
+                  >
+                    Save
+                  </Button>
+                  <Button onClick={handleCancel}>Cancel</Button>
+                </>
+              ) : zProfile.user_id === zUser.id ? (
+                <div className="profileButton">
+                  {" "}
+                  <Button onClick={() => setEditing(true)}>Edit Profile</Button>
+                  <Button onClick={handleLogout}>Logout</Button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : zUser.id === paramsId ? (
