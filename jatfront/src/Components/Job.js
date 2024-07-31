@@ -132,7 +132,8 @@ export default function Job({ job, setJobsRefresh }) {
             flexDirection: "column",
             justifyContent: "left",
             alignItems: "left",
-            minHeight: 160,
+            height: 160,
+            overflow: "auto",
             pb: 0,
           }}
         >
