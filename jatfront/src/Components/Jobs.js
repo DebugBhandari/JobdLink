@@ -74,7 +74,8 @@ const Jobs = () => {
           .filter(
             (jobToFilter) =>
               !jobToFilter.jobTitle.search(new RegExp(jobSearchQuery, "i")) ||
-              !jobToFilter.company.search(new RegExp(jobSearchQuery, "i"))
+              !jobToFilter.company.search(new RegExp(jobSearchQuery, "i")) ||
+              !jobToFilter.name.search(new RegExp(jobSearchQuery, "i"))
           )
           .map(
             (job) =>

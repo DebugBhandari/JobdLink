@@ -75,22 +75,26 @@ export default function SearchAppBar() {
 
   const logoStyleJobd = {
     textDecoration: "none",
-    fontSize: params === "/JAT" ? 24 : 16,
+    fontSize: params === "/JAT" ? 28 : 16,
     zIndex: 5,
-    fontWeight: params === "/JAT" ? 900 : 700,
-    borderRadius: 10,
+    fontWeight: params === "/JAT" ? 1200 : 700,
+    borderRadius: 6,
     maxHeight: 50,
-    px: 0,
+    width: "100px",
+
+    px: "2px",
+
     //color: "#ff00009b",
     //color: params === "/JAT" ? "#fa0707" : "#ff00009b",
   };
   const logoStyleLink = {
     textDecoration: "none",
-    fontSize: params === "/" ? 24 : 16,
-    fontWeight: params === "/" ? 900 : 700,
-    borderRadius: 10,
+    fontSize: params === "/" ? 28 : 16,
+    fontWeight: params === "/" ? 1200 : 700,
+    borderRadius: 6,
+    width: "100px",
     //color: "#388e3c",
-    px: 0,
+    px: "4px",
     //color: params === "/" ? "#00f208" : "#388e3c",
   };
   // const [query, setQuery] = useState(jobSearchQuery);
@@ -123,6 +127,7 @@ export default function SearchAppBar() {
             fontSize: 30,
             marginTop: 1,
             fontFamily: "Roboto Slab",
+            borderRadius: 6,
           }}
         >
           {" "}
@@ -187,7 +192,6 @@ export default function SearchAppBar() {
               //   padding: 5,
               //   color: "#388e3c",
               // }}
-              sx={{ ...logoStyleLink }}
             >
               <Avatar
                 alt={zUser.name}

@@ -33,6 +33,14 @@ const Profile = ({ handleOpen }) => {
   const locationPath = useLocation();
   const paramsId = parseInt(locationPath.pathname.split("/")[2]);
 
+  const handleLogout = () => {
+    // Clear the LinkedIn OAuth token from local storage
+    localStorage.removeItem("JLstorage");
+
+    // Redirect to LinkedIn logout URL
+    window.location.href = { baseUrl };
+  };
+
   useEffect(() => {
     setZProfile(paramsId);
     setZGuestUser(paramsId);
@@ -275,7 +283,11 @@ const Profile = ({ handleOpen }) => {
                 <Button onClick={handleCancel}>Cancel</Button>
               </>
             ) : zProfile.user_id === zUser.id ? (
-              <Button onClick={() => setEditing(true)}>Edit Profile</Button>
+              <div className="profileButton">
+                {" "}
+                <Button onClick={() => setEditing(true)}>Edit Profile</Button>
+                <Button onClick={handleLogout}>Logout</Button>
+              </div>
             ) : null}
           </div>
         </div>
@@ -397,6 +409,7 @@ const Profile = ({ handleOpen }) => {
             <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
               Create Profile
             </Button>
+            <Button onClick={handleLogout}>Logout</Button>
           </div>
         </div>
       ) : (
