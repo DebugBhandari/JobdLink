@@ -131,6 +131,7 @@
   align-items: center;
   width: 90%;
   margin-top: 0px;
+  word-break: break-word;
 }
 .profileButton {
   display: flex;
@@ -143,7 +144,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .rowDivProfile {
