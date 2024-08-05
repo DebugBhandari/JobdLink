@@ -18,16 +18,7 @@ const useJLStore = create(
         // token: "thisisafaketokenforthetestuser",
       },
       setZUser: (user) => set(() => ({ zUser: user })),
-      zGuestUser: {},
-      setZGuestUser: async (id) => {
-        try {
-          const response = await axios.get(`${baseUrl}/user/${id}`);
-          set({ zGuestUser: response.data });
-          console.log("Guest User:", response.data);
-        } catch (error) {
-          console.error("Error fetching guest user:", error);
-        }
-      },
+
       zJobs: [
         // {
         //   id: 1,
@@ -131,9 +122,25 @@ const useJLStore = create(
             },
           });
           set({ zProfile: response.data });
-          console.log("Profile:", response.data);
         } catch (error) {
           console.error("Error fetching profile:", error);
+        }
+      },
+      toggleProfilePartial: async (user_id) => {
+        try {
+          const response = await axios.put(`${baseUrl}/profile/toggle/${user_id}`);
+          get().setZProfile(user_id);
+        } catch (error) {
+          console.error("Error toggling profile:", error);
+        }
+      },
+      zGuestProfile: {},
+      setZGuestProfile: async (id) => {
+        try {
+          const response = await axios.get(`${baseUrl}/user/${id}`);
+          set({ zGuestProfile: response.data });
+        } catch (error) {
+          console.error("Error fetching guest user:", error);
         }
       },
       jobSearchQuery: "",

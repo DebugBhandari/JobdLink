@@ -15,7 +15,7 @@ const Jobs = () => {
 
   //const [jobs, setJobs] = useState([]);
   const zJobs = useJLStore((state) => state.zJobs);
-  const privateJobs = zJobs.filter((job) => job.private === 1);
+  //const privateJobs = zJobs.filter((job) => job.private === 1);
   const setZJobs = useJLStore((state) => state.setZJobs);
   const zUser = useJLStore((state) => state.zUser);
   const toggleJobdLink = useJLStore((state) => state.toggleJobdLink);
@@ -56,7 +56,7 @@ const Jobs = () => {
 
   return (
     <div className="jobsRouteDiv">
-      <div className="jobdLinkdAddJob">
+      {/* <div className="jobdLinkdAddJob">
         <div className="addButton" onClick={handleOpen}>
           Add Job
         </div>
@@ -66,9 +66,9 @@ const Jobs = () => {
           handleClose={handleClose}
           open={open}
         />
-      </div>
+      </div> */}
       <div className="jobdJobd">
-        {privateJobs
+        {zJobs
           .filter(
             (jobToFilter) =>
               !jobToFilter.jobTitle.search(new RegExp(jobSearchQuery, "i")) ||

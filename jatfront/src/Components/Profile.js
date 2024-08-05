@@ -5,16 +5,19 @@ import Typography from "@mui/material/Typography";
 import useJLStore from "../useStore";
 import { baseUrl } from "../App";
 import { useLocation } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, set } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import LanguageIcon from "@mui/icons-material/Language";
 import "./index.css";
-
-const Profile = ({ handleOpen }) => {
+import Link from "@mui/material/Link";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import axios from "axios";
+const Profile = ({ partialToggle, setPartialToggle }) => {
   const {
     control,
     handleSubmit,
@@ -27,24 +30,29 @@ const Profile = ({ handleOpen }) => {
   const zUser = useJLStore((state) => state.zUser);
   const zProfile = useJLStore((state) => state.zProfile);
   const setZProfile = useJLStore((state) => state.setZProfile);
-  const zGuestUser = useJLStore((state) => state.zGuestUser);
-  const setZGuestUser = useJLStore((state) => state.setZGuestUser);
+  const zGuestProfile = useJLStore((state) => state.zGuestProfile);
+  const setZGuestProfile = useJLStore((state) => state.setZGuestProfile);
+  const toggleProfilePartial = useJLStore(
+    (state) => state.toggleProfilePartial
+  );
 
   const locationPath = useLocation();
   const paramsId = parseInt(locationPath.pathname.split("/")[2]);
 
-  const handleLogout = () => {
-    // Clear the LinkedIn OAuth token from local storage
-    localStorage.removeItem("JLstorage");
-
-    // Redirect to LinkedIn logout URL
-    window.location.href = { baseUrl };
+  const setProfilePartial = async (user_id) => {
+    try {
+      const response = await axios.put(`${baseUrl}/profile/toggle/${user_id}`);
+      setZProfile(response.data);
+      setPartialToggle((prev) => !prev);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
   };
 
   useEffect(() => {
     setZProfile(paramsId);
-    setZGuestUser(paramsId);
-  }, [paramsId, setZProfile]);
+    setZGuestProfile(paramsId);
+  }, [paramsId, setZProfile, setZGuestProfile, partialToggle]);
 
   useEffect(() => {
     if (zProfile) {
@@ -57,7 +65,7 @@ const Profile = ({ handleOpen }) => {
         partialView: zProfile.partialView ? true : false,
       });
     }
-  }, [zProfile, reset]);
+  }, [reset]);
 
   const onSubmit = async (data) => {
     try {
@@ -77,7 +85,6 @@ const Profile = ({ handleOpen }) => {
         }),
       });
 
-      setEditing(false); // Exit edit mode after saving
       setZProfile(paramsId); // Refresh profile data
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -94,350 +101,211 @@ const Profile = ({ handleOpen }) => {
         linkedin: zProfile.linkedin || "",
         partialView: zProfile.partialView ? "true" : "false",
       });
+      setZProfile(paramsId);
     }
-    setEditing(false); // Exit edit mode on cancel
   };
 
   return (
     <div className="profileMainDiv">
-      {zProfile?.count_jobs ? (
-        // Profile exists, show profile details and edit option
-        <div className="profileCard">
-          <div className="profileAvatar">
+      <div className="profileCard">
+        <div className="profileAvatar">
+          <div className="profileAvatarCard">
             <Avatar
-              alt={zProfile.name}
-              src={zProfile.imageUrl}
-              sx={{ width: 52, height: 52 }}
+              alt={zGuestProfile?.name}
+              src={zGuestProfile?.imageUrl}
+              sx={{
+                width: { xs: 60, md: 80, lg: 100 },
+                height: { xs: 60, md: 80, lg: 100 },
+              }}
             />
-            <Typography
-              sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}
-            >
-              {zProfile.name}
-            </Typography>
-          </div>
-          <div className="profileContentDiv">
-            <div className="rowDivProfile">
-              <h1 className="avatarTitle">{zProfile.email}</h1>
-              {editing ? (
-                <Controller
-                  name="location"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Location"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                    />
-                  )}
-                />
-              ) : (
-                <h1 className="avatarTitle">{zProfile.location}</h1>
-              )}
-            </div>
-            <br />
-            {editing ? (
-              <Controller
-                name="bio"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Bio"
-                    variant="outlined"
-                    fullWidth
-                    multiline
-                    rows={4}
-                    margin="normal"
-                  />
-                )}
-              />
-            ) : (
-              <div className="profileCentreText">
-                <h1 className="headerGreyText">{zProfile.bio}</h1>
-              </div>
-            )}
-            <br />
-            {editing ? (
-              <Controller
-                name="website"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Portfolio"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            ) : (
-              <div className="profileCentreText">
-                <Typography sx={{ fontSize: "16px" }}>
-                  Portfolio:{" "}
-                  {zProfile.partialView ? "Hidden" : zProfile.website}
-                </Typography>
-              </div>
-            )}
-            <div className="rowDivProfile">
-              {editing ? (
-                <Controller
-                  name="github"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Github"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                    />
-                  )}
-                />
-              ) : (
-                <Typography
-                  sx={{
-                    fontSize: "16px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <GitHubIcon />
-                  {zProfile.partialView ? "Hidden" : zProfile.github}
-                </Typography>
-              )}
-              {editing ? (
-                <Controller
-                  name="linkedin"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Linkedin"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                    />
-                  )}
-                />
-              ) : (
-                <Typography
-                  sx={{
-                    fontSize: "16px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <LinkedInIcon />
-                  {zProfile.partialView ? "Hidden" : zProfile.linkedin}
-                </Typography>
-              )}
-            </div>
-            <br />
-            <div className="rowDivProfile">
-              <h1 className="headerNormalText">
-                Linked:{" "}
-                {zProfile.partialView ? "Hidden" : zProfile.count_jobs_linkd}
-              </h1>
-              <h1 className="headerNormalText">
-                Total: {zProfile.partialView ? "Hidden" : zProfile.count_jobs}
-              </h1>
-            </div>
-            {editing ? (
-              <Controller
-                name="partialView"
-                control={control}
-                render={({ field }) => (
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    {...field}
-                    defaultValue="true"
-                  >
-                    <FormControlLabel
-                      value="true"
-                      control={<Radio />}
-                      label="Partial Profile"
-                    />
-                    <FormControlLabel
-                      value="false"
-                      control={<Radio />}
-                      label="Full Profile"
-                    />
-                  </RadioGroup>
-                )}
-              />
-            ) : zProfile.partialView ? (
-              "Profile Hidden"
-            ) : null}
-
-            <br />
-            <div className="profileButton">
-              {editing ? (
-                <>
-                  <Button
-                    onClick={handleSubmit(onSubmit)}
-                    disabled={isSubmitting}
-                  >
-                    Save
-                  </Button>
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </>
-              ) : zProfile.user_id === zUser.id ? (
-                <div className="profileButton">
-                  {" "}
-                  <Button onClick={() => setEditing(true)}>Edit Profile</Button>
-                  <Button onClick={handleLogout}>Logout</Button>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      ) : zUser.id === paramsId ? (
-        // Profile does not exist, show form to create profile
-        <div className="profileCard">
-          <div className="profileAvatar">
-            <Avatar
-              alt={zUser.name}
-              src={zUser.imageUrl}
-              sx={{ width: 52, height: 52 }}
-            />
-            <Typography
-              sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}
-            >
-              {zUser.name}
-            </Typography>
-          </div>
-          <br />
-          <Typography sx={{ fontSize: "16px" }}>{zUser.email}</Typography>
-          <br />
-          <Controller
-            name="bio"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Bio"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                placeholder="Bio"
-                margin="normal"
-              />
-            )}
-          />
-          <Controller
-            name="location"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Location"
-                variant="outlined"
-                fullWidth
-                placeholder="Location"
-                margin="normal"
-              />
-            )}
-          />
-          <Controller
-            name="website"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Website"
-                variant="outlined"
-                fullWidth
-                placeholder="Website"
-                margin="normal"
-              />
-            )}
-          />
-          <Controller
-            name="github"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="GitHub"
-                variant="outlined"
-                fullWidth
-                placeholder="GitHub"
-                margin="normal"
-              />
-            )}
-          />
-          <Controller
-            name="linkedin"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="LinkedIn"
-                variant="outlined"
-                fullWidth
-                placeholder="LinkedIn"
-                margin="normal"
-              />
-            )}
-          />
-          <Controller
-            name="partialView"
-            control={control}
-            render={({ field }) => (
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                {...field}
-                defaultValue="true"
+            <div className="profileAvatarDiv">
+              <Typography
+                sx={{ fontSize: "18px", fontWeight: "bold", padding: 0 }}
               >
-                <FormControlLabel
-                  value="true"
-                  control={<Radio />}
-                  label="Partial Profile"
-                />
-                <FormControlLabel
-                  value="false"
-                  control={<Radio />}
-                  label="Full Profile"
-                />
-              </RadioGroup>
-            )}
-          />
-          <br />
-          <div className="profileButton">
-            <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-              Create Profile
-            </Button>
-            <Button onClick={handleLogout}>Logout</Button>
+                {zGuestProfile?.name}
+              </Typography>
+              <p className="profileAvatarTitle">{zGuestProfile?.email}</p>
+
+              <p className="profileAvatarLocation">
+                <LocationOnIcon sx={{ marginTop: "4px" }} />
+                {zGuestProfile?.location}
+              </p>
+
+              {zGuestProfile.count_jobs ? (
+                <div className="profileLinks">
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      display: "flex",
+                      padding: "6px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      borderRadius: "20%",
+                      color: "black",
+                      margin: "0 2px",
+                    }}
+                  >
+                    {zGuestProfile.partialView ? (
+                      <GitHubIcon sx={{ opacity: 0.2 }} />
+                    ) : (
+                      <a
+                        href={zProfile?.github}
+                        rel="noreferrer"
+                        className="profileLinkIcon"
+                        target="_blank"
+                      >
+                        <GitHubIcon />
+                      </a>
+                    )}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      display: "flex",
+                      padding: "6px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      borderRadius: "20%",
+                      color: "black",
+                      margin: "0 2px",
+                    }}
+                  >
+                    {zGuestProfile.partialView ? (
+                      <LinkedInIcon sx={{ opacity: 0.2 }} />
+                    ) : (
+                      <a
+                        href={zProfile?.linkedin}
+                        rel="noreferrer"
+                        className="profileLinkIcon"
+                        target="_blank"
+                      >
+                        <LinkedInIcon />
+                      </a>
+                    )}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      display: "flex",
+                      padding: "6px",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                      borderRadius: "20%",
+                      color: "black",
+                      margin: "0 2px",
+                    }}
+                  >
+                    {zGuestProfile.partialView ? (
+                      <LanguageIcon sx={{ opacity: 0.2 }} />
+                    ) : (
+                      <a
+                        href={zGuestProfile?.website}
+                        rel="noreferrer"
+                        className="profileLinkIcon"
+                        target="_blank"
+                      >
+                        {" "}
+                        <LanguageIcon />
+                      </a>
+                    )}
+                  </Typography>
+                </div>
+              ) : (
+                <div>{zGuestProfile.name} has not created a profile.</div>
+              )}
+            </div>
+          </div>
+          {zUser?.id === paramsId ? (
+            <div className="profileButton">
+              {/* <Button
+                  onClick={() => setEditing(true)}
+                  sx={{
+                    backgroundColor: "#2a2e45",
+                    color: "white",
+                    fontWeight: "bold",
+                    marginTop: 1,
+                    textTransform: "none",
+                    "&:hover": { backgroundColor: "#757681" },
+                  }}
+                > */}
+              <Button
+                onClick={() => {
+                  window.location.href = `/editProfile/${zUser.id}`;
+                }}
+                sx={{
+                  textDecoration: "none",
+                  fontSize: 14,
+                  fontWeight: "bolder",
+                  backgroundColor: "#2a2e45",
+                  width: "160px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 10,
+                  padding: "6px",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "white",
+                    color: "#2a2e45",
+                  },
+                }}
+              >
+                Edit Profile
+              </Button>
+              {zGuestProfile.partialView !== null ? (
+                <Button
+                  onClick={() => setProfilePartial(zGuestProfile.id)}
+                  sx={{
+                    textDecoration: "none",
+                    fontSize: 14,
+                    fontWeight: "bolder",
+                    backgroundColor: "#2a2e45",
+                    width: "120px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 10,
+                    padding: "6px",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "white",
+                      color: "#2a2e45",
+                    },
+                  }}
+                >
+                  {zProfile?.partialView ? "Partial" : "FullView"}
+                </Button>
+              ) : null}
+
+              {/* </Button> */}
+            </div>
+          ) : null}
+        </div>
+        <div className="profileContentDiv">
+          <div className="profileCentreText">
+            <p className="headerGreyText">{zGuestProfile?.bio}</p>
+          </div>
+          <div className="rowDivProfile">
+            <h1 className="headerNormalText">
+              Linked Jobs:{" "}
+              {zGuestProfile?.partialView
+                ? "Hidden"
+                : zGuestProfile?.count_jobs_linkd}
+            </h1>
+            <h1 className="headerNormalText">
+              Applied Jobs:{" "}
+              {zGuestProfile?.partialView
+                ? "Hidden"
+                : zGuestProfile?.count_jobs}
+            </h1>
           </div>
         </div>
-      ) : (
-        <div className="profileCard">
-          <div className="profileAvatar">
-            <Avatar
-              alt={zGuestUser.name}
-              src={zGuestUser.imageUrl}
-              sx={{ width: 52, height: 52 }}
-            />
-            <Typography
-              sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}
-            >
-              {zGuestUser.name}
-            </Typography>
-          </div>
-          <h1 className="avatarTitle">{zGuestUser.email}</h1>
-          <h1 className="avatarTitle">
-            {zGuestUser.name} has not created a profile.
-          </h1>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

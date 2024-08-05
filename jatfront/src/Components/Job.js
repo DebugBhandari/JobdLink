@@ -11,6 +11,7 @@ import axios from "axios";
 import EditJobModal from "./Modals/EditJobModal";
 import useJLStore from "../useStore";
 import { baseUrl } from "../App";
+import Link from "@mui/material/Link";
 
 export const loadLocal = async (key) => {
   return await localStorage.getItem(key);
@@ -40,7 +41,12 @@ export default function Job({ job, setJobsRefresh }) {
       console.log("Job deleted successfully");
     });
   };
+
+  const handleEditJob = () => {
+    window.location.href = `/editJob/${job.id}`;
+  };
   const buttonHover = {
+    textDecoration: "none",
     "&:hover": {
       bgcolor: "success.main",
       ...(job.status === "Rejected" && { bgcolor: "error.main" }),
@@ -90,26 +96,6 @@ export default function Job({ job, setJobsRefresh }) {
           }}
         >
           {" "}
-          <Button
-            onClick={() => {
-              toggleJobdLink(job.id);
-              setZJobs();
-            }}
-            sx={{
-              fontWeight: 800,
-              position: "absolute",
-              borderRadius: 2,
-
-              height: "30px",
-              fontSize: "12px",
-              top: 0,
-              left: 0,
-              color: "white",
-              ...linkButtonHover,
-            }}
-          >
-            Jobd
-          </Button>
           <Typography
             sx={{
               fontSize: 28,
@@ -169,7 +155,7 @@ export default function Job({ job, setJobsRefresh }) {
           <h1 className="headerNormalText">{job.description}</h1>
         </CardContent>
         <CardActions sx={{ display: "flex", justifyContent: "center" }}>
-          <Button size="small" onClick={handleOpen} sx={{ ...buttonHover }}>
+          <Button size="small" onClick={handleEditJob} sx={{ ...buttonHover }}>
             Edit
           </Button>
           <Button
@@ -178,6 +164,29 @@ export default function Job({ job, setJobsRefresh }) {
             sx={{ ...buttonHover }}
           >
             Delete
+          </Button>
+          <Button
+            onClick={() => {
+              toggleJobdLink(job.id);
+              setZJobs();
+            }}
+            sx={{
+              fontWeight: 800,
+
+              bgcolor: "success.main",
+              ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+              ...(job.status === "Not Applied" && {
+                bgcolor: "primary.main",
+              }),
+              color: "white",
+              height: "30px",
+              fontSize: "12px",
+
+              color: "white",
+              ...linkButtonHover,
+            }}
+          >
+            {job.private ? "Link" : "Unlink"}
           </Button>
         </CardActions>
       </div>

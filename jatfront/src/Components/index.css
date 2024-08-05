@@ -72,72 +72,73 @@
   width: 100%;
   justify-content: center;
   align-items: center;
+  margin: auto;
 }
 
 .linkdProfile {
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 94%;
   align-items: center;
   justify-content: center;
   margin-top: 10dvh;
 }
 
 .linkdLinkd {
-  width: 90%;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-
   flex-wrap: wrap;
   margin-top: 10dvh;
+  margin-bottom: 200px;
 }
 
 .profileMainDiv {
   display: flex;
-  background-color: #ffffff;
   flex-direction: column;
   width: 90%;
-  border-radius: 4px;
+  border-radius: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 36px;
+  padding: 28px;
   margin: 8px;
 }
 .profileCard {
   display: flex;
-  background-color: #ffffff;
   flex-direction: column;
   border-radius: 4px;
-  box-shadow: 5px 2px 5px 2px rgb(68, 68, 68);
   text-align: left;
   padding: 36px;
   margin: 8px;
   width: 90%;
   align-items: center;
   justify-content: center;
-  border: 1px solid #0f0e0e;
+  position: relative;
 }
 .profileContentDiv {
-  padding: 28px;
-  margin: 8px;
-  width: 80%;
+  width: 100%;
 }
 
 /* Avatarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr */
 .profileAvatar {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  color: white;
-  background-color: #2a2e45;
+}
+.profileAvatarCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  color: #2a2e45;
   border-radius: 16px;
   padding: 4px;
   margin-top: 0px;
-  width: 90%;
+  width: 70%;
 }
 .commentAvatar {
   display: flex;
@@ -150,7 +151,9 @@
 }
 .profileButton {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  width: 30%;
 }
 
 .rowDiv {
@@ -170,46 +173,11 @@
 }
 
 .jobsRouteDiv {
-  display: flex;
-
-  flex-direction: row;
   width: 100%;
-  justify-content: center;
-}
-
-.jobdLinkdAddJob {
+  margin: auto;
   display: flex;
-  flex-direction: column;
-
-  min-height: 90dvh;
-  align-items: center;
-  width: 36%;
-  flex-wrap: wrap;
-  margin-top: 10dvh;
-}
-
-.sideLinks {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  max-height: 76dvh;
-  overflow-y: auto;
-  margin-top: 2dvh;
-  width: 90%;
-  scrollbar-color: #388e3c #f1f1f1; /* thumb and track color */
-  scrollbar-width: thin;
-  position: relative;
-  height: 70dvh;
-}
-.sideLinksContent {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  position: absolute;
-  top: 4dvh;
 }
 
 .jobdJobd {
@@ -217,9 +185,11 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 64%;
+  width: 100%;
   margin-top: 10dvh;
   flex-wrap: wrap;
+  margin-bottom: 20dvh;
+  min-height: 100dvh;
 }
 
 .addButton {
@@ -267,12 +237,24 @@
   align-items: center;
   flex-direction: column;
   margin: 16px;
+  padding: 16px;
 }
-
+.linkViewCardDetails {
+  width: 360px;
+  min-height: 340px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  margin: 16px;
+}
 .linkViewCardHeader {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-direction: column;
   height: 90px;
   border-radius: 8px 8px 0px 0px;
@@ -302,6 +284,7 @@
   height: 180px;
   overflow: auto;
   word-break: break-word;
+  margin-top: 10px;
 }
 .cardActions {
   display: flex;
@@ -329,17 +312,66 @@
 .avatarDiv {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   height: 50px;
-  width: 60%;
-  margin-left: 10px;
+  width: 100%;
 }
 .avatarTitle {
   font-size: 16px;
   color: black;
   font-weight: bold;
   word-break: break-word;
+}
+
+.profileAvatarDiv {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  margin-left: 20px;
+}
+.profileAvatarTitle {
+  font-size: 16px;
+  color: grey;
+  word-break: break-word;
+  margin: 0;
+}
+
+.profileLinks {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  margin-top: 8px;
+}
+.profileAvatarLocation {
+  font-size: 14px;
+  color: black;
+  word-break: break-word;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.profileLinkIcon {
+  font-size: 16px;
+  color: black;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  background-color: #2a2e45;
+  color: white;
+  padding: 4px;
+  border-radius: 6px;
+}
+.profileLinkIcon:hover {
+  font-size: 16px;
+  color: black;
+  background-color: white;
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
 .headerNormalText {
   font-size: 16px;
@@ -349,7 +381,7 @@
 .headerGreyText {
   font-size: 16px;
   color: grey;
-  word-break: break-all;
+  white-space: pre-wrap;
 }
 .centreDiv {
   display: flex;
@@ -363,52 +395,65 @@
 }
 
 .footDiv {
+  width: 100%;
+  height: 70px;
+  padding: 0px 100px;
+  margin: auto;
+  position: absolute;
+  background-color: white;
+  bottom: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  width: 100%;
-  height: 90px;
-  background-color: #2a2e45;
-  color: white;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-
-  border-top: 2px solid #2a2e45;
-  padding: 0px 20px;
-  background-color: white;
-  z-index: 100;
+  flex-direction: row;
 }
 .footTitle {
+  width: 1400px;
+  flex-direction: row;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  font-size: 16px;
-  color: black;
-  margin: 0;
-  padding: 0;
 }
 .footTitleDiv {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 34%;
+  width: 300px;
   height: 100px;
-  font-size: 16px;
+  font-size: 12px;
   color: black;
-  margin: 0;
   padding: 0;
-  position: absolute;
-  left: 0;
 }
+
 .footImage {
   height: 48px;
   z-index: 5;
 }
+.imageFooterDiv {
+  width: 100px;
+}
 .imageFooterDiv:hover {
   animation: footimation 2s 1;
+}
+
+.editPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 80%;
+  min-height: 100vh;
+  margin: auto;
+}
+
+.editpageForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 80%;
+  min-height: 100vh;
 }
 @keyframes footimation {
   0% {
@@ -424,30 +469,20 @@
   }
 }
 .footTitleText {
-  font-size: 16px;
-  color: black;
-  margin: 0;
-  padding: 0;
-  margin-bottom: 8px;
-}
-.footRightSide {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 36%;
   font-size: 12px;
   color: black;
   margin: 0;
   padding: 0;
-  position: absolute;
-  right: 0;
-  bottom: 8px;
+  margin-bottom: 8px;
+  width: 300px;
+}
+.footRightSide {
+  font-size: 12px;
+  color: black;
+  width: 300px;
+  padding: 0;
 }
 @media only screen and (max-width: 1400px) {
-  .jobdJobd {
-    flex-direction: column;
-    width: 40%;
-  }
   .jobdLinkdAddJob {
     width: 40%;
   }
@@ -507,5 +542,37 @@
   }
   .rowDivProfile {
     flex-direction: column;
+  }
+  .profileMainDiv {
+    padding: 0;
+
+    min-height: 40dvh;
+  }
+  .profileCard {
+    padding: 0;
+    height: 40dvh;
+  }
+  .profileAvatar {
+    flex-direction: column;
+    padding: 0;
+  }
+  .profileAvatarCard {
+    padding: 0;
+    width: 100%;
+  }
+  .profileButton {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
+  .footTitleDiv {
+    width: 50%;
+  }
+  .footTitle {
+    width: 100%;
+  }
+  .footRightSide {
+    font-size: 8px;
+    width: 50%;
   }
 }

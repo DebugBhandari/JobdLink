@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import CardActions from "@mui/material/CardActions";
@@ -16,6 +16,11 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import CommentIcon from "@mui/icons-material/Comment";
 import Link from "@mui/material/Link";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import captureScreenshot from "../utils/LinkedinApi";
+
+import Typography from "@mui/material/Typography";
+//import { JLStoreContext } from "../App";
 
 import {
   useSearchParams,
@@ -24,6 +29,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { baseUrl } from "../App";
+import OneLink from "./OneLink";
 
 export const style = {
   position: "absolute",
@@ -61,6 +67,7 @@ export default function LinkView() {
     removeZJobLike,
     zJobLikesUsernames,
     setZJobLikesUsernames,
+    toggleJobdLink,
   } = useJLStore((state) => ({
     zJobs: state.zJobs,
     setZJobs: state.setZJobs,
@@ -72,11 +79,15 @@ export default function LinkView() {
     removeZJobLike: state.removeZJobLike,
     zJobLikesUsernames: state.zJobLikesUsernames,
     setZJobLikesUsernames: state.setZJobLikesUsernames,
+    toggleJobdLink: state.toggleJobdLink,
   }));
 
   const [likeCommentRefresh, setLikeCommentRefresh] = useState(false);
-
-  const [job, setJob] = useState({});
+  const ref = useRef();
+  const [job, setJob] = useState({
+    company: "",
+    created_at: "",
+  });
   const [comments, setComments] = useState([]);
   const isLikeInStore = zJobLikes.find((like) => like.job_id === job.id)
     ? true
@@ -144,6 +155,7 @@ export default function LinkView() {
   const fetchJobById = async (id) => {
     try {
       const response = await axios.get(`${baseUrl}/jobs/${id}`);
+      console.log("response", response.data);
       setJob(response.data);
     } catch (error) {
       console.error("Error fetching job:", error);
@@ -208,6 +220,22 @@ export default function LinkView() {
       color: "white",
     },
   };
+  const toggleHover = {
+    bgcolor: "success.main",
+    ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+    ...(job.status === "Not Applied" && {
+      bgcolor: "primary.main",
+    }),
+    color: "white",
+    "&:hover": {
+      bgcolor: "white",
+      color: "success.main",
+      ...(job.status === "Rejected" && { color: "error.main" }),
+      ...(job.status === "Not Applied" && {
+        color: "primary.main",
+      }),
+    },
+  };
 
   useEffect(() => {
     fetchJobById(id);
@@ -215,8 +243,10 @@ export default function LinkView() {
 
     //setZJobComments(id);
     setZJobLikesUsernames(id);
-  }, [likeCommentRefresh]);
-
+  }, [id]);
+  console.log("job", job);
+  console.log("comments", comments);
+  console.log("paramsId", id);
   const headerStyleConditional = { backgroundColor: "#388e3c" };
   job.status === "Rejected" &&
     (headerStyleConditional.backgroundColor = "#d32f2f");
@@ -226,112 +256,12 @@ export default function LinkView() {
   return (
     <div className="linkView">
       <div className="linkViewSections">
-        <div className="linkViewCard">
-          <div className="linkViewCardHeader">
-            <h2 className="cardHeaderTitle" title={job.company}>
-              {job.jobTitle}
-            </h2>
-            <h2 className="cardHeaderSubTitle">
-              {" "}
-              {job.company?.slice(0, 22) + "," + job.location}
-            </h2>
-          </div>
-          <div
-            style={{
-              width: "100%",
-              height: "10px",
-              ...headerStyleConditional,
-            }}
-          ></div>
-          <div className="linkViewCardContent">
-            <Link href={`/userProfile/${job.user_id}`}>
-              <div className="avatarDiv">
-                <Avatar
-                  alt={job.imageUrl}
-                  src={job.imageUrl}
-                  sx={{ width: 36, height: 36 }}
-                />
-                <h1 className="avatarTitle">{job.name}</h1>
-              </div>
-            </Link>
-            <div className="rowDiv">
-              <h1 className="headerNormalText">{job.status}</h1>{" "}
-              <h1 className="headerNormalText">
-                {job.created_at?.slice(0, 10)}
-              </h1>
-            </div>
-
-            <h1 className="headerGreyText">{job.caption}</h1>
-          </div>
-          {zUser.id === job.user_id ? (
-            <div className="cardActions">
-              <Button
-                onClick={handleMenuClick}
-                sx={{ fontSize: "12px", width: "120px", ...buttonHover }}
-              >
-                {job.count_likes} Likes
-              </Button>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={openMenu}
-                onClose={handleMenuClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                {zJobLikesUsernames.map((user) => (
-                  <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
-                    {user.name}
-                  </MenuItem>
-                ))}
-              </Menu>
-
-              <Button sx={{ fontSize: "12px", width: "120px", ...buttonHover }}>
-                {job.count_comments} Comments
-              </Button>
-            </div>
-          ) : (
-            <div className="cardActions">
-              {userLiked === false ? (
-                <Button
-                  size="small"
-                  onClick={handleLikeClick}
-                  sx={{ ...buttonHover }}
-                >
-                  <ThumbUpOffAltIcon />
-                </Button>
-              ) : (
-                <Button
-                  size="small"
-                  onClick={handleUnlikeClick}
-                  sx={{ ...buttonHover }}
-                >
-                  <ThumbUpAltIcon />
-                </Button>
-              )}
-              <Button onClick={handleMenuClick} sx={{ ...buttonHover }}>
-                {job.count_likes}{" "}
-                <ThumbUpAltIcon sx={{ marginBottom: "4px" }} />
-              </Button>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={openMenu}
-                onClose={handleMenuClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                {zJobLikesUsernames.map((user) => (
-                  <MenuItem key={user.name + "modal"} onClick={handleMenuClose}>
-                    {user.name}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </div>
-          )}
-        </div>
+        <OneLink
+          job={job}
+          likeCommentRefresh={likeCommentRefresh}
+          setLikeCommentRefresh={setLikeCommentRefresh}
+          fromJobd={false}
+        />
       </div>
       <div className="linkViewSections">
         <div

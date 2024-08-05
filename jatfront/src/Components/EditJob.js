@@ -151,7 +151,11 @@ const EditJob = ({ job, setIsEditing, setJobsRefresh }) => {
               control={<Radio />}
               label="Private"
             />
-            <FormControlLabel value={false} control={<Radio />} label="Link" />
+            <FormControlLabel
+              value={false}
+              control={<Radio />}
+              label="Public"
+            />
           </RadioGroup>
           <Select
             name="status"

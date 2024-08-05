@@ -55,10 +55,11 @@ export default function SignInSide() {
       <Box
         sx={{
           height: "80dvh",
-          width: "80dvw",
+
           display: "flex",
           flexDirection: "row",
           justifyContents: "center",
+          alignItems: "center",
           margin: "auto",
           marginTop: "10dvh",
           "@media (max-width: 1000px)": {
@@ -66,20 +67,7 @@ export default function SignInSide() {
           },
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContents: "right",
-            alignItems: "center",
-            margin: "auto",
-          }}
-        >
-          <img
-            src={JobdLanding}
-            alt="landingImage"
-            style={{ width: "400px", height: "400px" }}
-          />
-        </Box>
+       
         <Box
           sx={{
             display: "flex",
@@ -89,8 +77,8 @@ export default function SignInSide() {
 
             padding: 4,
 
-            margin: "auto",
-            marginTop: 30,
+            width: "400px",
+
             textAlign: "center",
             "@media (max-width: 1000px)": {
               marginTop: 6,
@@ -131,6 +119,20 @@ export default function SignInSide() {
 
             <Copyright sx={{ mt: 5 }} />
           </Box>
+        </Box> <Box
+          sx={{
+            display: "flex",
+            justifyContents: "center",
+            alignItems: "center",
+            margin: "auto",
+            width: "400px",
+          }}
+        >
+          <img
+            src={JobdLanding}
+            alt="landingImage"
+            style={{ width: "400px", height: "400px" }}
+          />
         </Box>
       </Box>
     </ThemeProvider>

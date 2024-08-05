@@ -24,6 +24,7 @@ const Links = () => {
     setZJobLikes,
     zUser,
     setZUser,
+    setZProfile,
   } = useJLStore((state) => ({
     zJobs: state.zJobs,
     setZJobs: state.setZJobs,
@@ -33,6 +34,7 @@ const Links = () => {
     setZJobLikes: state.setZJobLikes,
     zUser: state.zUser,
     setZUser: state.setZUser,
+    setZProfile: state.setZProfile,
   }));
   //const [user, setUser] = useState(zUser);
   //console.log("user", user);
@@ -72,7 +74,7 @@ const Links = () => {
       // localStorage.setItem("linkedinIdJL", linkedinId);
 
       setZUser(loggedUser);
-
+      setZProfile(loggedUser.id);
       window.location.href = "/";
     }
 

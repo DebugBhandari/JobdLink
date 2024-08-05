@@ -121,10 +121,10 @@ export default function EditJobModal({
             alignItems: "center",
             flexDirection: "column",
             marginTop: 0,
-
-            border: "2px solid #000",
           }}
-        ></CardContent>
+        >
+          Editing...
+        </CardContent>
         <CardContentStyled>
           <TextFieldStyled
             margin="normal"
@@ -137,6 +137,7 @@ export default function EditJobModal({
             autoComplete="jobTitle"
             autoFocus
             size="small"
+            sx={{ marginTop: 2 }}
           />
           <TextFieldStyled
             margin="normal"
@@ -165,6 +166,8 @@ export default function EditJobModal({
           <TextFieldStyled
             margin="normal"
             required
+            multiline
+            rows={4}
             fullWidth
             id="descriptionEdit"
             label="Description"
@@ -178,8 +181,10 @@ export default function EditJobModal({
             margin="normal"
             required
             fullWidth
+            multiline
+            rows={2}
             id="captionEdit"
-            label="Caption"
+            label="Link Caption"
             name="caption"
             defaultValue={job.caption}
             autoComplete="caption"
@@ -208,7 +213,7 @@ export default function EditJobModal({
               <FormControlLabel
                 value={false}
                 control={<Radio />}
-                label="Link"
+                label="Public"
               />
             </RadioGroup>
             <Select
@@ -266,7 +271,7 @@ export default function EditJobModal({
             size="small"
             justify="center"
             type="submit"
-            onClick={handleEditClick}
+            type="submit"
             sx={{
               "&:hover": {
                 bgcolor: "success.main",

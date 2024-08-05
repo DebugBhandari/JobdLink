@@ -50,3 +50,12 @@ export const findProfileByUserId = async (req, res, next) => {
     next(console.log("Profile not found", error));
   }
 };
+export const toggleProfilePartial = async (req, res, next) => {
+  try {
+    const user_id = req.params.userId;
+    const updatedProfile = await ProfileService.toggleProfilePartial(user_id);
+    res.json(updatedProfile);
+  } catch (error) {
+    next(console.log("Profile not found", error));
+  }
+};

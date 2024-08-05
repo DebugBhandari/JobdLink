@@ -12,6 +12,10 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Login from "./Components/Login";
 import Links from "./Components/Links";
 import LinkView from "./Components/LinkView";
+import EditProfile from "./Components/EditProfile";
+import CreateJobComp from "./Components/CreateJobComp";
+import EditJobComp from "./Components/EditJobComp";
+import { EditJobPage } from "./Components/EditJobPage";
 export const baseUrl =
   process.env.REACT_APP_NODE_ENV === "development"
     ? "http://localhost:3001"
@@ -69,6 +73,13 @@ function App() {
               <Route path="/JAT" element={<Jobs key="3" />} />
               <Route path="/links/:id" element={<LinkView key="4" />} />
               <Route path="/userProfile/:id" element={<DashBoard key="5" />} />
+              <Route
+                path="/editProfile/:id"
+                element={<EditProfile key="6" />}
+              />
+              <Route path="/createJob" element={<CreateJobComp />} />
+              <Route path="/editJob/:id" element={<EditJobComp />} />
+              {/* <Route path="/editJob/:id" element={<EditJobPage />} /> */}
             </Routes>
           </div>
           <Footer />

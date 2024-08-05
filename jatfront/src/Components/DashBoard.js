@@ -10,6 +10,7 @@ import { loadLocal } from "./Job.js";
 import { baseUrl } from "../App";
 
 import { useLocation } from "react-router-dom";
+import { set } from "react-hook-form";
 const DashBoard = () => {
   //const [jobs, setJobs] = useState([]);
   const jobSearchQuery = useJLStore((state) => state.jobSearchQuery);
@@ -24,6 +25,7 @@ const DashBoard = () => {
     zJobLikes,
     setZJobLikes,
     zUser,
+    setZGuestProfile,
     setZUser,
   } = useJLStore((state) => ({
     zJobs: state.zJobs,
@@ -34,16 +36,17 @@ const DashBoard = () => {
     setZJobLikes: state.setZJobLikes,
     zUser: state.zUser,
     setZUser: state.setZUser,
+    setZGuestProfile: state.setZGuestProfile,
   }));
   //const [user, setUser] = useState(zUser);
   //console.log("user", user);
   const [linkView, setLinkView] = useState(false);
 
   const token = zUser.token;
-  console.log("baseUrl", baseUrl);
 
   const locationPath = useLocation();
   const paramsId = parseInt(locationPath.pathname.split("/")[2]);
+  const [partialToggle, setPartialToggle] = useState(false);
 
   const user_id_JSON = parseInt(zUser.id);
 
@@ -60,7 +63,8 @@ const DashBoard = () => {
   useEffect(() => {
     setZJobs();
     getUsersLikes();
-  }, [token, likeCommentRefresh]);
+    setZGuestProfile(paramsId);
+  }, [token, likeCommentRefresh, partialToggle]);
 
   const linkedJobs = zJobs.filter(
     (job) => job.private === 0 && job.user_id === paramsId
@@ -73,7 +77,10 @@ const DashBoard = () => {
   return (
     <div className="linksRouteDiv">
       <div className="linkdProfile">
-        <Profile handleOpen={null} />
+        <Profile
+          partialToggle={partialToggle}
+          setPartialToggle={setPartialToggle}
+        />
       </div>
       <div className="linkdLinkd" style={{ marginTop: 0 }}>
         {linkedJobs
@@ -88,7 +95,7 @@ const DashBoard = () => {
               job={job}
               likeCommentRefresh={likeCommentRefresh}
               setLikeCommentRefresh={setLikeCommentRefresh}
-              fromJobd={false}
+              fromJobd={true}
             />
           ))}
       </div>

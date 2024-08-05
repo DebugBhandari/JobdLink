@@ -14,7 +14,7 @@ import { loadLocal } from "./Job";
 import useJLStore from "../useStore";
 import Link from "@mui/material/Link";
 import { baseUrl } from "../App";
-import html2canvas from "html2canvas";
+import captureScreenshot from "../utils/LinkedinApi";
 
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 //import { JLStoreContext } from "../App";
@@ -157,111 +157,90 @@ export default function OneLink({
 
   const ref = useRef();
 
-  const captureScreenshot = async () => {
-    const canvas = await html2canvas(ref.current, {
-      width: window.scrollWidth,
-      height: window.scrollHeight,
-      backgroundColor: "white", // Ensure background is transparent
-      useCORS: true, // Handle cross-origin images
-      logging: true, // Enable logging for debugging
-      scale: 2, // Scale the image up by 2x
-      // Prevent cross-origin images from tainting the canvas
-    });
-    const imgData = canvas.toDataURL("image/png");
-
-    // Convert the base64 string to a file
-    const blob = await fetch(imgData).then((res) => res.blob());
-    const file = new File([blob], "screenshot.png", { type: "image/png" });
-
-    // Upload the file
-    uploadScreenshot(file);
-  };
-
-  const uploadScreenshot = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch(`${baseUrl}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      console.log("Screenshot uploaded:", result.url);
-      shareOnLinkedIn(result.url);
-    } catch (error) {
-      console.error("Error uploading screenshot:", error);
-    }
-  };
-
-  const shareOnLinkedIn = async (imageUrl) => {
-    try {
-      const response = await fetch(`${baseUrl}/share`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ imageUrl, linkedinId, token, job_id: job.id }),
-      });
-      const result = await response.json();
-      alert("Shared on LinkedIn!");
-      console.log("Shared on LinkedIn:", result);
-    } catch (error) {
-      console.error("Error sharing on LinkedIn:", error);
-    }
-  };
-
   return (
     <div className="linkViewCard" ref={ref}>
-      <div className="linkViewCardHeader">
-        {fromJobd ? (
+      <div
+        className="linkViewCardHeader"
+        onClick={() => {
+          window.location.href = `/userProfile/${job.user_id}`;
+        }}
+      >
+        {" "}
+        {job.user_id == user_id_JSON ? (
           <Button
-            size="small"
-            data-html2canvas-ignore
             onClick={() => {
               toggleJobdLink(job.id);
               setZJobs();
             }}
+            data-html2canvas-ignore
             sx={{
               fontWeight: 800,
-              fontSize: "12px",
               position: "absolute",
+              borderRadius: 20,
+
               height: "30px",
-              borderRadius: 2,
+              fontSize: "12px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "white",
+              bgcolor: "success.main",
+              ...(job.status === "Rejected" && { bgcolor: "error.main" }),
+              ...(job.status === "Not Applied" && {
+                bgcolor: "primary.main",
+              }),
+
               top: 0,
               right: 0,
               ...toggleHover,
             }}
           >
-            Link
+            Unlink
           </Button>
         ) : null}
-        <h2 className="cardHeaderTitle" title={job.company}>
-          {job.jobTitle}
-        </h2>
-        <h2 className="cardHeaderSubTitle">
-          {" "}
-          {job.company.slice(0, 22) + ", " + job.location}
-        </h2>
+        <div className="avatarDiv">
+          <Avatar
+            alt={job.imageUrl}
+            src={job.imageUrl}
+            sx={{ width: 44, height: 44 }}
+          />
+          <div className="profileAvatarDiv">
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: "bold",
+                padding: 0,
+              }}
+            >
+              {job.name}
+            </Typography>
+            <p className="profileAvatarTitle" style={{ fontSize: "14px" }}>
+              {job.email}
+            </p>
+          </div>
+        </div>{" "}
       </div>
       <div
         style={{
           width: "100%",
-          height: "10px",
+          height: "6px",
           ...headerStyleConditional,
         }}
       ></div>
-      <div className="linkViewCardContent">
-        <Link href={`/userProfile/${job.user_id}`}>
-          <div className="avatarDiv">
-            <Avatar
-              alt={job.imageUrl}
-              src={job.imageUrl}
-              sx={{ width: 36, height: 36 }}
-            />
-            <h1 className="avatarTitle">{job.name}</h1>
-          </div>{" "}
-        </Link>
+      <div
+        className="linkViewCardContent"
+        onClick={() => {
+          window.location.href = `/links/${job.id}`;
+        }}
+      >
+        <h2 className="cardHeaderTitle" title={job.company}>
+          {job.jobTitle}
+        </h2>
+        <h4 className="cardHeaderSubTitle">
+          {" "}
+          {job?.company.slice(0, 22) + ", " + job.location}
+        </h4>
+
         <div className="rowDiv">
           <h1 className="headerNormalText">{job.status}</h1>
           <h1 className="headerNormalText">{job.created_at.slice(0, 10)}</h1>
@@ -313,48 +292,79 @@ export default function OneLink({
           </Menu>
         ) : null}
       </div>
-      {!fromJobd === true ? (
-        <div className="cardActions">
-          <div className="centreDiv">
-            {userLiked === false ? (
-              <Button
-                size="small"
-                onClick={() => handleLikeClick()}
-                sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
-              >
-                <ThumbUpOffAltIcon sx={{ fontSize: "24px" }} /> {/* Likeeee */}
-              </Button>
-            ) : (
-              <Button
-                size="small"
-                onClick={() => handleUnlikeClick()}
-                sx={{ fontSize: "12px", width: "100px", ...buttonHover }}
-              >
-                <ThumbUpAltIcon sx={{ fontSize: "24px" }} />
-                {/* Unlikeeee */}
-              </Button>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="centreDiv">
-          {" "}
+      <div className="cardActions">
+        {userLiked === false ? (
           <Button
             size="small"
-            data-html2canvas-ignore
-            onClick={() => captureScreenshot()}
+            onClick={() => handleLikeClick()}
             sx={{
-              fontSize: "14px",
-              "&:hover": {
-                bgcolor: "primary.main",
-                color: "white",
-              },
+              fontSize: "12px",
+              width: "100px",
+              textTransform: "none",
+              ...buttonHover,
             }}
           >
-            <LinkedInIcon /> Share
-          </Button>{" "}
-        </div>
-      )}
+            <ThumbUpOffAltIcon sx={{ fontSize: "20px", marginRight: "4px" }} />{" "}
+            Like {/* Likeeee */}
+          </Button>
+        ) : (
+          <Button
+            size="small"
+            onClick={() => handleUnlikeClick()}
+            sx={{
+              fontSize: "12px",
+              width: "100px",
+              textTransform: "none",
+              ...buttonHover,
+            }}
+          >
+            <ThumbUpAltIcon sx={{ fontSize: "20px", marginRight: "4px" }} />{" "}
+            Unlike
+            {/* Unlikeeee */}
+          </Button>
+        )}
+        <Button
+          size="small"
+          data-html2canvas-ignore
+          onClick={() =>
+            setTimeout(captureScreenshot(ref, linkedinId, token, job.id), 1000)
+          }
+          sx={{
+            fontSize: "14px",
+            textTransform: "none",
+            ...buttonHover,
+          }}
+        >
+          <LinkedInIcon sx={{ fontSize: "20px", marginRight: "4px" }} /> Share
+        </Button>{" "}
+        <Link
+          href={`/links/${job.id}`}
+          variant="body"
+          style={{
+            textDecoration: "none",
+            fontSize: 24,
+            zIndex: 5,
+            fontWeight: "bolder",
+            borderRadius: 10,
+            maxHeight: 50,
+            padding: 5,
+            color: "#ff00009b",
+          }}
+        >
+          <Button
+            size="small"
+            sx={{
+              fontSize: "12px",
+              width: "100px",
+              textTransform: "none",
+              ...buttonHover,
+            }}
+          >
+            <CommentIcon sx={{ fontSize: "20px", marginRight: "4px" }} />{" "}
+            Comment
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

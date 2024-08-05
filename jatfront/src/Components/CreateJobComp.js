@@ -21,21 +21,19 @@ import {
 import LoginIcon from "@mui/icons-material/Login";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import useJLStore from "../../useStore";
-import { baseUrl } from "../../App";
-import { style } from "./LinkModal";
+import useJLStore from "../useStore";
+import { baseUrl } from "../App";
+import { useNavigate } from "react-router-dom";
 
 const CardActionsStyled = styled(CardActions)({
   display: "flex",
   justifyContent: "center",
 });
 
-const CardContentStyled = styled(CardContent)({
-  padding: 0,
-});
+const CardContentStyled = styled(CardContent)({ padding: 0 });
 
 const TextFieldStyled = styled(TextField)({
-  margin: 4,
+  padding: 0,
 });
 
 const AlertMessage = styled(Typography)({
@@ -44,9 +42,10 @@ const AlertMessage = styled(Typography)({
   margin: "16px 0",
 });
 
-const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
+const CreateJobComp = () => {
   const zUser = useJLStore((state) => state.zUser);
   const setZJobs = useJLStore((state) => state.setZJobs);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -98,224 +97,223 @@ const PostJobModal = ({ setJobsRefresh, handleClose, open }) => {
       console.log("Job added successfully");
       setZJobs();
       reset(); // Reset the form after successful submission
-      handleClose();
+      navigate("/JAT");
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleRefresh = () => {
-    setTimeout(() => {
-      setJobsRefresh((prevState) => !prevState);
-    }, 500);
-  };
-
   if (!zUser.name) {
     return (
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="parent-modal-title"
-        aria-describedby="parent-modal-description"
+      <Paper
+        elevation={3}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+        component="div"
       >
-        <Paper
-          elevation={3}
-          sx={{
-            maxWidth: 340,
-            margin: 3,
-            minHeight: 100,
-            ...style,
-          }}
-          component="div"
+        <AlertMessage variant="h6">Please log in to post a job.</AlertMessage>
+        <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="open drawer"
         >
-          <AlertMessage variant="h6">Please log in to post a job.</AlertMessage>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
+          <Link
+            href="/login"
+            variant="body"
+            style={{
+              textDecoration: "none",
+              color: "black",
+            }}
           >
-            <Link
-              href="/login"
-              variant="body"
-              style={{
-                textDecoration: "none",
-                color: "black",
-              }}
-            >
-              <LoginIcon sx={{ fontSize: "46px" }} />
-            </Link>
-          </IconButton>
-        </Paper>
-      </Modal>
+            <LoginIcon sx={{ fontSize: "46px" }} />
+          </Link>
+        </IconButton>
+      </Paper>
     );
   }
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="parent-modal-title"
-      aria-describedby="parent-modal-description"
+    <Paper
+      elevation={3}
+      sx={{
+        width: "80%",
+        display: "flex",
+        justifyContent: "center",
+
+        flexDirection: "column",
+        boxShadow: 0,
+        margin: "auto",
+      }}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
     >
-      <Paper
-        elevation={3}
-        sx={{ maxWidth: 350, margin: 3, minHeight: 400, padding: 2, ...style }}
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <div className="linkViewCardHeader">
-          <div className="postJobHeader">New Job</div>
-        </div>
-        <CardContentStyled>
-          <TextFieldStyled
-            margin="normal"
-            required
-            fullWidth
-            id="jobTitle"
-            label="Job Title"
-            {...register("jobTitle", { required: "Job Title is required" })}
-            error={!!errors.jobTitle}
-            helperText={errors.jobTitle?.message}
-            size="small"
-          />
-          <TextFieldStyled
-            margin="normal"
-            required
-            fullWidth
-            id="company"
-            label="Company"
-            {...register("company", { required: "Company is required" })}
-            error={!!errors.company}
-            helperText={errors.company?.message}
-            size="small"
-          />
-          <TextFieldStyled
-            margin="normal"
-            fullWidth
-            id="jobUrl"
-            label="Job URL"
-            {...register("jobUrl")}
-            size="small"
-          />
-          <TextFieldStyled
-            margin="normal"
-            required
-            fullWidth
-            multiline
-            rows={4}
-            id="description"
-            label="Description"
-            {...register("description", {
-              required: "Description is required",
-            })}
-            error={!!errors.description}
-            helperText={errors.description?.message}
-            size="small"
-          />
-          <TextFieldStyled
-            margin="normal"
-            required
-            fullWidth
-            multiline
-            rows={2}
-            id="caption"
-            label="Caption"
-            {...register("caption", { required: "Caption is required" })}
-            error={!!errors.caption}
-            helperText={errors.caption?.message}
-            size="small"
-          />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              margin: 1,
-            }}
+      <div className="linkViewCardHeader"></div> <h2>New Job</h2>
+      <CardContentStyled>
+        <TextFieldStyled
+          margin="normal"
+          required
+          fullWidth
+          id="jobTitle"
+          label="Job Title"
+          {...register("jobTitle", { required: "Job Title is required" })}
+          error={!!errors.jobTitle}
+          helperText={errors.jobTitle?.message}
+          size="small"
+          sx={{ marginTop: 2 }}
+        />
+        <TextFieldStyled
+          margin="normal"
+          required
+          fullWidth
+          id="company"
+          label="Company"
+          {...register("company", { required: "Company is required" })}
+          error={!!errors.company}
+          helperText={errors.company?.message}
+          size="small"
+          sx={{ marginTop: 2 }}
+        />
+        <TextFieldStyled
+          margin="normal"
+          fullWidth
+          id="jobUrl"
+          label="Job URL"
+          {...register("jobUrl")}
+          size="small"
+          sx={{ marginTop: 2 }}
+        />
+        <TextFieldStyled
+          margin="normal"
+          required
+          fullWidth
+          multiline
+          rows={4}
+          id="description"
+          label="Description"
+          {...register("description", {
+            required: "Description is required",
+          })}
+          error={!!errors.description}
+          helperText={errors.description?.message}
+          size="small"
+          sx={{ marginTop: 2 }}
+        />
+        <TextFieldStyled
+          margin="normal"
+          required
+          fullWidth
+          multiline
+          rows={2}
+          id="caption"
+          label="Caption"
+          {...register("caption", { required: "Caption is required" })}
+          error={!!errors.caption}
+          helperText={errors.caption?.message}
+          size="small"
+          sx={{ marginTop: 2 }}
+        />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            margin: 1,
+          }}
+        >
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            {...register("private")}
+            defaultValue="true"
           >
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              {...register("private")}
-              defaultValue="true"
-            >
-              <FormControlLabel
-                value="true"
-                control={<Radio />}
-                label="Private"
-              />
-              <FormControlLabel
-                value="false"
-                control={<Radio />}
-                label="Public"
-              />
-            </RadioGroup>
-            <Select
-              {...register("status", { required: "Status is required" })}
-              defaultValue="Not Applied"
-              label="Status"
-              size="small"
-              error={!!errors.status}
-            >
-              <MenuItem value="Not Applied">Not Applied</MenuItem>
-              <MenuItem value="Applied">Applied</MenuItem>
-              <MenuItem value="Rejected">Rejected</MenuItem>
-              <MenuItem value="1st Interview">1st Interview</MenuItem>
-              <MenuItem value="Task">Task</MenuItem>
-              <MenuItem value="2nd Interview">2nd Interview</MenuItem>
-              <MenuItem value="Jobd">Jobd</MenuItem>
-            </Select>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              margin: 1,
-            }}
-          >
-            <TextFieldStyled
-              margin="normal"
-              required
-              width="50%"
-              id="location"
-              label="Location"
-              {...register("location", { required: "Location is required" })}
-              error={!!errors.location}
-              helperText={errors.location?.message}
-              size="small"
+            <FormControlLabel
+              value="true"
+              control={<Radio />}
+              label="Private"
             />
-            <TextFieldStyled
-              margin="normal"
-              width="50%"
-              id="username"
-              label="Username"
-              {...register("username")}
-              size="small"
+            <FormControlLabel
+              value="false"
+              control={<Radio />}
+              label="Public"
             />
-          </Box>
-        </CardContentStyled>
-        <CardActionsStyled>
-          <Button
+          </RadioGroup>
+          <Select
+            {...register("status", { required: "Status is required" })}
+            defaultValue="Not Applied"
+            label="Status"
             size="small"
-            justify="center"
-            type="submit"
-            onClick={handleRefresh}
-            sx={{
-              "&:hover": { backgroundColor: "primary.main", color: "white" },
-            }}
-            disabled={!zUser}
+            error={!!errors.status}
           >
-            Add Job
-          </Button>
-        </CardActionsStyled>
-      </Paper>
-    </Modal>
+            <MenuItem value="Not Applied">Not Applied</MenuItem>
+            <MenuItem value="Applied">Applied</MenuItem>
+            <MenuItem value="Rejected">Rejected</MenuItem>
+            <MenuItem value="1st Interview">1st Interview</MenuItem>
+            <MenuItem value="Task">Task</MenuItem>
+            <MenuItem value="2nd Interview">2nd Interview</MenuItem>
+            <MenuItem value="Jobd">Jobd</MenuItem>
+          </Select>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            margin: 1,
+          }}
+        >
+          <TextFieldStyled
+            margin="normal"
+            width="50%"
+            id="location"
+            label="Location"
+            {...register("location", { required: "Location is required" })}
+            error={!!errors.location}
+            helperText={errors.location?.message}
+            size="small"
+            sx={{ marginTop: 2 }}
+          />
+          <TextFieldStyled
+            margin="normal"
+            width="50%"
+            id="username"
+            label="Username"
+            {...register("username")}
+            size="small"
+            sx={{ marginTop: 2 }}
+          />
+        </Box>
+      </CardContentStyled>
+      <CardActionsStyled>
+        <Button
+          size="big"
+          justify="center"
+          type="submit"
+          sx={{
+            color: "white",
+            padding: "4px",
+            fontWeight: "bold",
+            backgroundColor: "primary.main",
+            border: "1px solid black",
+            width: "200px",
+            marginTop: "40px",
+            "&:hover": {
+              backgroundColor: "white",
+              color: "primary.main",
+            },
+          }}
+          disabled={!zUser}
+        >
+          Add Job
+        </Button>
+      </CardActionsStyled>
+    </Paper>
   );
 };
 
-export default PostJobModal;
+export default CreateJobComp;
 
 // import React, { useState } from "react";
 // import Card from "@mui/material/Card";

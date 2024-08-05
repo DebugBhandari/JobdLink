@@ -32,6 +32,7 @@ export const style = {
   alignItems: "center",
   flexDirection: "column",
   border: "2px solid black",
+  height: "90%",
 };
 
 export default function LinkModal({

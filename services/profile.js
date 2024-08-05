@@ -1,5 +1,6 @@
 import { dbConfig } from "../server.js";
 import mysql from "mysql2/promise";
+import user from "./user.js";
 
 async function create(profile) {
   return new Promise(async (resolve, reject) => {
@@ -126,9 +127,28 @@ async function deleteProfile(user_id) {
   });
 }
 
+async function toggleProfilePartial(user_id) {
+  return new Promise(async (resolve, reject) => {
+    const query =
+      "UPDATE Profile SET partialView = NOT partialView WHERE user_id = ( SELECT id FROM Users WHERE Users.id = Profile.user_id AND Profile.user_id = ?)";
+    const values = [user_id];
+    const connection = await mysql.createConnection(dbConfig);
+    try {
+      const [results] = await connection.execute(query, values);
+      resolve(results);
+      console.log(results);
+    } catch (error) {
+      reject(error);
+    } finally {
+      await connection.end();
+    }
+  });
+}
+
 export default {
   create,
   findProfileByUserId,
   update,
   deleteProfile,
+  toggleProfilePartial,
 };
