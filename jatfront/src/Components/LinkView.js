@@ -280,7 +280,7 @@ export default function LinkView() {
             justifyContent: "left",
             alignItems: "left",
             overflow: "auto",
-            width: "100%",
+            width: "90dvw",
             height: "100%",
           }}
         >

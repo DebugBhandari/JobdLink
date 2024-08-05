@@ -153,7 +153,9 @@ export default function OneLink({
   };
 
   const shareToLinkedin = async (job_id) => {
-    const postComment = prompt("Write something to Linkedin."); // Display an alert to get user's comment
+    const postComment = prompt(
+      `Are you sure you want to share post ${job_id} to Linkedin? Insert a linkedin caption below.`
+    ); // Display an alert to get user's comment
     if (postComment) {
       setTimeout(() => {
         captureScreenshot(ref, linkedinId, token, job_id, postComment);
