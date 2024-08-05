@@ -71,10 +71,12 @@ export default function OneLink({
     setZJobLikesUsernames: state.setZJobLikesUsernames,
     toggleJobdLink: state.toggleJobdLink,
   }));
+
   const isLikeInStore = zJobLikes.find((like) => like.job_id === job.id)
     ? true
     : false;
   const [userLiked, setUserLiked] = useState(isLikeInStore);
+  console.log("userLiked", userLiked);
   //const { contextData, setContextData } = useContext(JLStoreContext);
   const user_id_JSON = parseInt(zUser.id);
   const { linkedinId, token } = zUser;
@@ -149,6 +151,16 @@ export default function OneLink({
         setZJobLikesUsernames(job.id);
       });
   };
+
+  const shareToLinkedin = async (job_id) => {
+    const postComment = prompt("Write something to Linkedin."); // Display an alert to get user's comment
+    if (postComment) {
+      setTimeout(() => {
+        captureScreenshot(ref, linkedinId, token, job_id, postComment);
+      }, 1000);
+    }
+  };
+
   const headerStyleConditional = { backgroundColor: "#388e3c" };
   job.status === "Rejected" &&
     (headerStyleConditional.backgroundColor = "#d32f2f");
@@ -166,7 +178,7 @@ export default function OneLink({
         }}
       >
         {" "}
-        {job.user_id == user_id_JSON ? (
+        {job.user_id === user_id_JSON ? (
           <Button
             onClick={() => {
               toggleJobdLink(job.id);
@@ -326,9 +338,7 @@ export default function OneLink({
         <Button
           size="small"
           data-html2canvas-ignore
-          onClick={() =>
-            setTimeout(captureScreenshot(ref, linkedinId, token, job.id), 1000)
-          }
+          onClick={() => shareToLinkedin(job.id)}
           sx={{
             fontSize: "14px",
             textTransform: "none",

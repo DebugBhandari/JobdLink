@@ -15,7 +15,7 @@ export default function Footer() {
           </div>{" "}
           <div className="footTitleText">For Jobseekers. By Jobseekers.</div>
         </div>
-        <div className="footRightSide">
+        <div className="footTitleDiv">
           <div className="footRightSideDiv">
             <div className="footRightSideText">
               copyright

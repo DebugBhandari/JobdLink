@@ -97,35 +97,43 @@ export default function LinkView() {
   const user_id_JSON = parseInt(zUser.id);
   const { linkedinId, token } = zUser;
 
-  const handleLikeClick = async () => {
-    user_id_JSON
-      ? axios
-          .post(`${baseUrl}/jobLike`, {
-            job_id: job.id,
-            user_id: user_id_JSON,
-          })
-          .then((response) => {
-            console.log("Liked", response.data);
-            setUserLiked((prevState) => !prevState);
-            addZJobLike({ job_id: job.id, user_id: user_id_JSON });
-            setLikeCommentRefresh((prevState) => !prevState);
-            setZJobs();
-            setZJobLikesUsernames(job.id);
-          })
-      : alert("Please login to like the job.");
-  };
-  const handleUnlikeClick = async () => {
-    axios
-      .delete(`${baseUrl}/jobLike/${job.id}/${user_id_JSON}`)
-      .then((response) => {
-        console.log("Unliked");
-        setUserLiked((prevState) => !prevState);
-        removeZJobLike(job.id);
-        setLikeCommentRefresh((prevState) => !prevState);
-        setZJobs();
-        setZJobLikesUsernames(job.id);
-      });
-  };
+  // const getUsersLikes = async () => {
+  //   try {
+  //     const response = await axios.get(`${baseUrl}/jobLike/${user_id_JSON}`);
+  //     setZJobLikes(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching likes:", error);
+  //   }
+  // };
+  // const handleLikeClick = async () => {
+  //   user_id_JSON
+  //     ? axios
+  //         .post(`${baseUrl}/jobLike`, {
+  //           job_id: job.id,
+  //           user_id: user_id_JSON,
+  //         })
+  //         .then((response) => {
+  //           console.log("Liked", response.data);
+  //           setUserLiked((prevState) => !prevState);
+  //           addZJobLike({ job_id: job.id, user_id: user_id_JSON });
+  //           setLikeCommentRefresh((prevState) => !prevState);
+  //           setZJobs();
+  //           setZJobLikesUsernames(job.id);
+  //         })
+  //     : alert("Please login to like the job.");
+  // };
+  // const handleUnlikeClick = async () => {
+  //   axios
+  //     .delete(`${baseUrl}/jobLike/${job.id}/${user_id_JSON}`)
+  //     .then((response) => {
+  //       console.log("Unliked");
+  //       setUserLiked((prevState) => !prevState);
+  //       removeZJobLike(job.id);
+  //       setLikeCommentRefresh((prevState) => !prevState);
+  //       setZJobs();
+  //       setZJobLikesUsernames(job.id);
+  //     });
+  // };
 
   //   const hasUserLiked = async () => {
   //     try {
@@ -199,16 +207,16 @@ export default function LinkView() {
       : alert("Please login to comment.");
   };
 
-  //   const getUsersLikes = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:3001/jobLike/${user_id_JSON}`
-  //       );
-  //       setZJobLikes(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching likes:", error);
-  //     }
-  //   };
+  const getUsersLikes = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/jobLike/${user_id_JSON}`
+      );
+      setZJobLikes(response.data);
+    } catch (error) {
+      console.error("Error fetching likes:", error);
+    }
+  };
 
   const buttonHover = {
     "&:hover": {
@@ -240,10 +248,10 @@ export default function LinkView() {
   useEffect(() => {
     fetchJobById(id);
     fetchComments(id);
-
+    getUsersLikes();
     //setZJobComments(id);
     setZJobLikesUsernames(id);
-  }, [id]);
+  }, [likeCommentRefresh]);
   console.log("job", job);
   console.log("comments", comments);
   console.log("paramsId", id);
@@ -261,6 +269,7 @@ export default function LinkView() {
           likeCommentRefresh={likeCommentRefresh}
           setLikeCommentRefresh={setLikeCommentRefresh}
           fromJobd={false}
+          key={job.id}
         />
       </div>
       <div className="linkViewSections">

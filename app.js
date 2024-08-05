@@ -202,7 +202,13 @@ const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
   }
 };
 
-const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken, job_id) => {
+const shareOnLinkedIn = async (
+  imageUrn,
+  linkedinId,
+  accessToken,
+  job_id,
+  postComment
+) => {
   try {
     const response = await axios.post(
       "https://api.linkedin.com/v2/ugcPosts",
@@ -212,7 +218,7 @@ const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken, job_id) => {
         specificContent: {
           "com.linkedin.ugc.ShareContent": {
             shareCommentary: {
-              text: `https://jobd.link/links/${job_id}`,
+              text: `${postComment}\n\n` + `https://jobd.link/links/${job_id}`,
             },
             shareMediaCategory: "IMAGE",
             media: [
@@ -253,11 +259,17 @@ const shareOnLinkedIn = async (imageUrn, linkedinId, accessToken, job_id) => {
 };
 
 app.post("/share", async (req, res) => {
-  const { imageUrl, linkedinId, token, job_id } = req.body;
+  const { imageUrl, linkedinId, token, job_id, postComment } = req.body;
 
   try {
     const imageUrn = await uploadImageToLinkedIn(imageUrl, linkedinId, token);
-    const result = await shareOnLinkedIn(imageUrn, linkedinId, token, job_id);
+    const result = await shareOnLinkedIn(
+      imageUrn,
+      linkedinId,
+      token,
+      job_id,
+      postComment
+    );
     res.json({ message: "Shared successfully on LinkedIn!", data: result });
   } catch (error) {
     console.error("Error sharing on LinkedIn:", error);

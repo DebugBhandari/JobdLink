@@ -1,7 +1,13 @@
 import html2canvas from "html2canvas";
 import { baseUrl } from "../App";
 
-const captureScreenshot = async (ref, linkedinId, token, jobId) => {
+const captureScreenshot = async (
+  ref,
+  linkedinId,
+  token,
+  jobId,
+  postComment
+) => {
   try {
     const canvas = await html2canvas(ref.current, {
       width: window.scrollWidth,
@@ -18,13 +24,19 @@ const captureScreenshot = async (ref, linkedinId, token, jobId) => {
     const file = new File([blob], "screenshot.png", { type: "image/png" });
 
     // Upload the file
-    await uploadScreenshot(file, linkedinId, token, jobId);
+    await uploadScreenshot(file, linkedinId, token, jobId, postComment);
   } catch (error) {
     console.error("Error capturing screenshot:", error);
   }
 };
 
-const uploadScreenshot = async (file, linkedinId, token, jobId) => {
+const uploadScreenshot = async (
+  file,
+  linkedinId,
+  token,
+  jobId,
+  postComment
+) => {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -35,20 +47,32 @@ const uploadScreenshot = async (file, linkedinId, token, jobId) => {
     });
     const result = await response.json();
     console.log("Screenshot uploaded:", result.url);
-    await shareOnLinkedIn(result.url, linkedinId, token, jobId);
+    await shareOnLinkedIn(result.url, linkedinId, token, jobId, postComment);
   } catch (error) {
     console.error("Error uploading screenshot:", error);
   }
 };
 
-const shareOnLinkedIn = async (imageUrl, linkedinId, token, jobId) => {
+const shareOnLinkedIn = async (
+  imageUrl,
+  linkedinId,
+  token,
+  jobId,
+  postComment
+) => {
   try {
     const response = await fetch(`${baseUrl}/share`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ imageUrl, linkedinId, token, job_id: jobId }),
+      body: JSON.stringify({
+        imageUrl,
+        linkedinId,
+        token,
+        job_id: jobId,
+        postComment,
+      }),
     });
     const result = await response.json();
     alert("Shared on LinkedIn!");
