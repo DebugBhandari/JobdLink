@@ -292,7 +292,6 @@ export default function LinkView() {
             label="Comment"
             name="commentInput"
             autoComplete="Comment"
-            autoFocus
             size="small"
             onChange={(e) => setNewComment(e.target.value)}
             onSubmit={handleCommentSubmit}
@@ -302,6 +301,7 @@ export default function LinkView() {
                 handleCommentSubmit(e);
               }
             }}
+            sx={{ zIndex: 1 }}
           />
           {comments &&
             comments.map((comment) => (

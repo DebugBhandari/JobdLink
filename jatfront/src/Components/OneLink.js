@@ -14,7 +14,8 @@ import { loadLocal } from "./Job";
 import useJLStore from "../useStore";
 import Link from "@mui/material/Link";
 import { baseUrl } from "../App";
-import captureScreenshot from "../utils/LinkedinApi";
+import { uploadScreenshot, shareOnLinkedIn } from "../utils/LinkedinApi";
+import html2canvas from "html2canvas";
 
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 //import { JLStoreContext } from "../App";
@@ -23,6 +24,7 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 
 import CommentIcon from "@mui/icons-material/Comment";
+import LinkShareModal from "./Modals/LinkShareModal";
 
 export default function OneLink({
   job,
@@ -76,10 +78,12 @@ export default function OneLink({
     ? true
     : false;
   const [userLiked, setUserLiked] = useState(isLikeInStore);
-  console.log("userLiked", userLiked);
   //const { contextData, setContextData } = useContext(JLStoreContext);
   const user_id_JSON = parseInt(zUser.id);
   const { linkedinId, token } = zUser;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+
   const buttonHover = {
     "&:hover": {
       bgcolor: "success.main",
@@ -152,14 +156,35 @@ export default function OneLink({
       });
   };
 
-  const shareToLinkedin = async (job_id) => {
-    const postComment = prompt(
-      `Are you sure you want to share post ${job_id} to Linkedin? Insert a linkedin caption below.`
-    ); // Display an alert to get user's comment
-    if (postComment) {
-      setTimeout(() => {
-        captureScreenshot(ref, linkedinId, token, job_id, postComment);
-      }, 1000);
+  const captureScreenshot = async () => {
+    try {
+      
+      const canvas = await html2canvas(ref.current, {
+        width: window.scrollWidth,
+        height: window.scrollHeight,
+        backgroundColor: "white", // Ensure background is not transparent
+        useCORS: true, // Handle cross-origin images
+        logging: true, // Enable logging for debugging
+        scale: 2, // Scale the image up by 2x
+      });
+      const imgData = canvas.toDataURL("image/png");
+
+      // Convert the base64 string to a file
+      const blob = await fetch(imgData).then((res) => res.blob());
+      const file = new File([blob], "screenshot.png", { type: "image/png" });
+
+      // Upload the file
+      await uploadScreenshot(
+        file,
+        linkedinId,
+        token,
+        job.id,
+
+        setIsModalOpen,
+        setUploadedImageUrl
+      );
+    } catch (error) {
+      console.error("Error capturing screenshot:", error);
     }
   };
 
@@ -173,6 +198,15 @@ export default function OneLink({
 
   return (
     <div className="linkViewCard" ref={ref}>
+      <LinkShareModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+       
+        imageUrl={uploadedImageUrl}
+        linkedinId={linkedinId}
+        token={token}
+        jobId={job.id}
+      />
       <div
         className="linkViewCardHeader"
         onClick={() => {
@@ -269,7 +303,6 @@ export default function OneLink({
           style={{
             textDecoration: "none",
             fontSize: 24,
-            zIndex: 5,
             fontWeight: "bolder",
             borderRadius: 10,
             maxHeight: 50,
@@ -340,7 +373,7 @@ export default function OneLink({
         <Button
           size="small"
           data-html2canvas-ignore
-          onClick={() => shareToLinkedin(job.id)}
+          onClick={() => captureScreenshot()}
           sx={{
             fontSize: "14px",
             textTransform: "none",
@@ -355,7 +388,7 @@ export default function OneLink({
           style={{
             textDecoration: "none",
             fontSize: 24,
-            zIndex: 5,
+
             fontWeight: "bolder",
             borderRadius: 10,
             maxHeight: 50,

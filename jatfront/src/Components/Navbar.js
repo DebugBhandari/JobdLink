@@ -292,7 +292,7 @@ export default function SearchAppBar() {
                       },
                     }}
                   >
-                    My Private Jobs
+                    My Jobs
                   </Link>
                   <Button
                     href="/logout"

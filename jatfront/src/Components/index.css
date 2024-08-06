@@ -225,7 +225,7 @@
 }
 .linkViewCard {
   width: 360px;
-  min-height: 340px;
+  height: 340px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   border-radius: 8px;
@@ -236,9 +236,96 @@
   margin: 16px;
   padding: 16px;
 }
+.shareModal {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  z-index: 1000;
+  height: 80dvh;
+  width: 50dvw;
+  border-radius: 10px;
+  background-color: white;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.shareButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  margin: auto;
+}
+.shareButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 160px;
+  margin: auto;
+  padding: 8px;
+  border-radius: 8px;
+  color: black;
+  margin: 8px;
+  background-color: rgb(220, 220, 220);
+  height: 40px;
+  border: 0;
+}
+.shareButton:hover {
+  background-color:  #2a2e45;
+  color: rgb(255, 255, 255);
+}
+.shareButton:hover .shareSpan {
+  color: rgb(255, 255, 255);
+}
+.captionInput {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 70%;
+  margin: auto;
+  height: 100px;
+  border-radius: 10px;
+  padding: 10px;
+}
+.shareTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 80%;
+  margin: auto;
+  margin-top: 60px;
+}
+.shareSpan {
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1466c2;
+}
 .linkViewCardDetails {
   width: 360px;
-  min-height: 340px;
+  height: 340px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   border-radius: 8px;
@@ -477,6 +564,10 @@
   width: 300px;
   padding: 0;
 }
+.footRightSideText {
+  font-size: 12px;
+  color: grey;
+}
 @media only screen and (max-width: 1400px) {
   .jobdLinkdAddJob {
     width: 40%;
@@ -571,5 +662,10 @@
   .footRightSide {
     font-size: 8px;
     width: 30dvw;
+  }
+  .shareModal {
+    width: 96dvw;
+    height: 70dvh;
+    top:40%;
   }
 }

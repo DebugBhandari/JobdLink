@@ -19,7 +19,7 @@ export default function Footer() {
           <div className="footRightSideDiv">
             <div className="footRightSideText">
               copyright
-              <a href="https://debugbhandari.link">"@debugbhandari.link</a>
+              <a href="https://debugbhandari.link">@debugbhandari.link</a>
             </div>
             <div className="footRightSideText">Job Application Tracker</div>
           </div>
