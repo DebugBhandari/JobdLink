@@ -57,13 +57,9 @@ const LinkShareModal = ({
         </span>
       </h2>
 
-      <div className="linkViewCard">
+      <div className="linkViewShareCard">
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="Screenshot"
-            style={{ width: "100%", opacity: 1 }}
-          />
+          <img src={imageUrl} alt="Screenshot" className="linkViewShareImage" />
         ) : (
           <p>Loading...</p>
         )}
