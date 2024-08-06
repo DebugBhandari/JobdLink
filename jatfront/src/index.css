@@ -32,6 +32,7 @@ code {
   flex-direction: column;
   width: 1400px;
   margin: auto;
+  min-height: 100dvh;
 }
 
 .navDiv {
