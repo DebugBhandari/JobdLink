@@ -139,13 +139,14 @@ const CreateJobComp = () => {
     <Paper
       elevation={3}
       sx={{
-        width: "80%",
+        width: "60%",
         display: "flex",
         justifyContent: "center",
-
         flexDirection: "column",
         boxShadow: 0,
         margin: "auto",
+        marginTop: "2dvh",
+        "@media (max-width: 600px)": { width: "90%" },
       }}
       component="form"
       onSubmit={handleSubmit(onSubmit)}
