@@ -282,19 +282,20 @@
   width: 160px;
   margin: auto;
   padding: 8px;
-  border-radius: 8px;
-  color: black;
+  border-radius: 20px;
+  color: rgb(255, 255, 255);
   margin: 8px;
-  background-color: rgb(220, 220, 220);
+  background-color: #2a2e45;
   height: 40px;
   border: 0;
+  font-weight: 900;
 }
 .shareButton:hover {
-  background-color:  #2a2e45;
-  color: rgb(255, 255, 255);
+  background-color: white;
+  color: #2a2e45;
 }
 .shareButton:hover .shareSpan {
-  color: rgb(255, 255, 255);
+  color: #2a2e45;
 }
 .captionInput {
   display: flex;
@@ -317,7 +318,7 @@
   margin-top: 60px;
 }
 .shareSpan {
-  margin-left: 10px;
+  margin-left: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -666,6 +667,6 @@
   .shareModal {
     width: 96dvw;
     height: 70dvh;
-    top:40%;
+    top: 40%;
   }
 }

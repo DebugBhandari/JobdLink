@@ -293,16 +293,20 @@ const CreateJobComp = () => {
           justify="center"
           type="submit"
           sx={{
-            color: "white",
-            padding: "4px",
-            fontWeight: "bold",
-            backgroundColor: "primary.main",
-            border: "1px solid black",
+            textDecoration: "none",
+            fontSize: 14,
+            fontWeight: "bolder",
+            backgroundColor: "#2a2e45",
             width: "200px",
-            marginTop: "40px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 10,
+            padding: "6px",
+            color: "white",
             "&:hover": {
               backgroundColor: "white",
-              color: "primary.main",
+              color: "#2a2e45",
             },
           }}
           disabled={!zUser}

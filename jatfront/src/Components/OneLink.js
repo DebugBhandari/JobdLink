@@ -95,6 +95,7 @@ export default function OneLink({
     },
   };
   const toggleHover = {
+    borderRadius: 10,
     bgcolor: "success.main",
     ...(job.status === "Rejected" && { bgcolor: "error.main" }),
     ...(job.status === "Not Applied" && {
@@ -158,7 +159,6 @@ export default function OneLink({
 
   const captureScreenshot = async () => {
     try {
-      
       const canvas = await html2canvas(ref.current, {
         width: window.scrollWidth,
         height: window.scrollHeight,
@@ -201,7 +201,6 @@ export default function OneLink({
       <LinkShareModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-       
         imageUrl={uploadedImageUrl}
         linkedinId={linkedinId}
         token={token}
@@ -310,14 +309,26 @@ export default function OneLink({
             color: "#ff00009b",
           }}
         >
-          <Button sx={{ fontSize: "12px", width: "120px", ...buttonHover }}>
+          <Button
+            sx={{
+              fontSize: "12px",
+              width: "120px",
+              borderRadius: 10,
+              ...buttonHover,
+            }}
+          >
             {job.count_comments} Comments
           </Button>
         </Link>
 
         <Button
           onClick={handleMenuClick}
-          sx={{ fontSize: "12px", width: "120px", ...buttonHover }}
+          sx={{
+            fontSize: "12px",
+            width: "120px",
+            borderRadius: 10,
+            ...buttonHover,
+          }}
         >
           {job.count_likes} Likes
         </Button>
@@ -348,6 +359,7 @@ export default function OneLink({
               fontSize: "12px",
               width: "100px",
               textTransform: "none",
+              borderRadius: 10,
               ...buttonHover,
             }}
           >
@@ -362,6 +374,7 @@ export default function OneLink({
               fontSize: "12px",
               width: "100px",
               textTransform: "none",
+              borderRadius: 10,
               ...buttonHover,
             }}
           >
@@ -377,6 +390,7 @@ export default function OneLink({
           sx={{
             fontSize: "14px",
             textTransform: "none",
+            borderRadius: 10,
             ...buttonHover,
           }}
         >
@@ -402,6 +416,7 @@ export default function OneLink({
               fontSize: "12px",
               width: "100px",
               textTransform: "none",
+              borderRadius: 10,
               ...buttonHover,
             }}
           >

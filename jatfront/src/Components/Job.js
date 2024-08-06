@@ -46,6 +46,7 @@ export default function Job({ job, setJobsRefresh }) {
     window.location.href = `/editJob/${job.id}`;
   };
   const buttonHover = {
+    borderRadius: 10,
     textDecoration: "none",
     "&:hover": {
       bgcolor: "success.main",
@@ -181,7 +182,7 @@ export default function Job({ job, setJobsRefresh }) {
               color: "white",
               height: "30px",
               fontSize: "12px",
-
+              borderRadius: 10,
               color: "white",
               ...linkButtonHover,
             }}
