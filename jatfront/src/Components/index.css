@@ -666,10 +666,13 @@
   }
   .shareModal {
     width: 96dvw;
-    height: 80dvh;
+    height: 84dvh;
     top: 40%;
   }
   .shareTitle {
-    margin-top: 20px;
+    margin-top: 10px;
+  }
+  .captionInput {
+    height: 60px;
   }
 }
