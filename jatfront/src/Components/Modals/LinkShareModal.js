@@ -17,7 +17,7 @@ const LinkShareModal = ({
   const [postComment, setPostComment] = useState("");
   const shareFromModal = async () => {
     await shareOnLinkedIn(imageUrl, linkedinId, token, jobId, postComment);
-    console.log("shared");
+    onClose();
   };
   return (
     <Modal
