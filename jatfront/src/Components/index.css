@@ -511,7 +511,7 @@
   flex-direction: row;
   padding: 0px 10px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
 .footTitleDiv {
@@ -531,7 +531,7 @@
 .imageFooterDiv {
   width: 100px;
 }
-.imageFooterDiv:hover {
+.footDiv:hover .footImage {
   animation: footimation 2s 1;
 }
 
@@ -564,6 +564,19 @@
 
   100% {
     transform: translateX(300px) scale(1.6);
+  }
+}
+@keyframes footimationPhone {
+  0% {
+    transform: translateX(50px) scale(1.2);
+  }
+
+  50% {
+    transform: translateX(100px) scale(1.4);
+  }
+
+  100% {
+    transform: translateX(180px) scale(1.6);
   }
 }
 .footTitleText {
@@ -611,8 +624,7 @@
   .jobsRouteDiv {
     flex-direction: column;
   }
-  .linkdJobd {
-  }
+
   .jobdJobd {
     width: 100dvw;
     flex-direction: column;
@@ -668,12 +680,10 @@
     bottom: 0;
   }
   .footTitleDiv {
-    width: 45dvw;
+    width: 46dvw;
   }
   .footTitle {
     width: 100dvw;
-    justify-content: center;
-    padding: 0;
   }
   .footRightSide {
     font-size: 8px;
@@ -690,5 +700,8 @@
   .captionInput {
     min-height: 60px;
     width: 80%;
+  }
+  .footDiv:hover .footImage {
+    animation: footimationPhone 2s 1;
   }
 }

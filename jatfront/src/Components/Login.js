@@ -62,12 +62,12 @@ export default function SignInSide() {
           alignItems: "center",
           margin: "auto",
           marginTop: "10dvh",
+          marginBottom: "10dvh",
           "@media (max-width: 1000px)": {
             flexDirection: "column",
           },
         }}
       >
-       
         <Box
           sx={{
             display: "flex",
@@ -75,13 +75,12 @@ export default function SignInSide() {
             alignItems: "center",
             justifyContents: "center",
 
-            padding: 4,
-
-            width: "400px",
+            width: "50%",
 
             textAlign: "center",
             "@media (max-width: 1000px)": {
               marginTop: 6,
+              width: "100%",
             },
           }}
         >
@@ -89,10 +88,13 @@ export default function SignInSide() {
             component="h1"
             sx={{ fontWeight: "bold", fontSize: "36px" }}
           >
+            JobdLink
+          </Typography>
+          <Typography component="h1" variant="h5" sx={{ color: "grey" }}>
             Job Application Tracker
           </Typography>
           <br></br>
-          <br></br>
+          
           <Typography component="h1" variant="h5">
             For Jobseekers, By Jobseekers
           </Typography>
@@ -105,33 +107,43 @@ export default function SignInSide() {
               sx={{
                 mt: 3,
                 mb: 2,
-                bgcolor: "white",
-                color: "#2a2e45",
+                backgroundColor: "#2a2e45",
+                color: "white",
+                borderRadius: 10,
                 "&:hover": {
-                  bgcolor: "#2a2e45",
-                  color: "white",
+                  backgroundColor: "white",
+                  color: "#2a2e45",
                 },
               }}
             >
               Sign In With{" "}
-              <LinkedInIcon sx={{ marginBottom: "4px", marginLeft: "4px" }} />
+              <LinkedInIcon
+                sx={{
+                  marginBottom: "4px",
+                  marginLeft: "4px",
+                  color: " #1466c2",
+                }}
+              />
             </Button>
 
             <Copyright sx={{ mt: 5 }} />
           </Box>
-        </Box> <Box
+        </Box>{" "}
+        <Box
           sx={{
             display: "flex",
             justifyContents: "center",
             alignItems: "center",
-            margin: "auto",
-            width: "400px",
+            width: "50%",
+            "@media (max-width: 1000px)": {
+              width: "100%",
+            },
           }}
         >
           <img
             src={JobdLanding}
             alt="landingImage"
-            style={{ width: "400px", height: "400px" }}
+            style={{ width: "400px" }}
           />
         </Box>
       </Box>
