@@ -295,7 +295,7 @@ export default function SearchAppBar() {
                     My Jobs
                   </Link>
                   <Button
-                    href="/logout"
+                    href="/"
                     variant="body"
                     onClick={handleLogout}
                     sx={{
