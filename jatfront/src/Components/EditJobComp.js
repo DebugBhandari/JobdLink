@@ -97,6 +97,7 @@ const EditJobComp = () => {
         boxShadow: 0,
         margin: "auto",
         marginTop: "10dvh",
+        marginBottom: "20dvh",
         "@media (max-width: 600px)": { width: "90%" },
       }}
       component="form"
