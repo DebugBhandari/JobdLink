@@ -62,7 +62,7 @@ export default function SignInSide() {
           alignItems: "center",
           margin: "auto",
           marginTop: "10dvh",
-          marginBottom: "10dvh",
+          marginBottom: "20dvh",
           "@media (max-width: 1000px)": {
             flexDirection: "column",
           },
@@ -94,7 +94,7 @@ export default function SignInSide() {
             Job Application Tracker
           </Typography>
           <br></br>
-          
+
           <Typography component="h1" variant="h5">
             For Jobseekers, By Jobseekers
           </Typography>
@@ -135,6 +135,7 @@ export default function SignInSide() {
             justifyContents: "center",
             alignItems: "center",
             width: "50%",
+            height: "60dvh",
             "@media (max-width: 1000px)": {
               width: "100%",
             },
