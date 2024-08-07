@@ -211,7 +211,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 80%;
+  width: 100%;
   min-height: 120dvh;
   margin-bottom: 16dvh;
 }
@@ -219,8 +219,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60dvh;
-  width: 80%;
+  height: 46dvh;
+  width: 60%;
   margin-top: 8dvh;
 }
 .linkViewCard {
@@ -640,7 +640,7 @@
     top: 0;
   }
   .linkViewSections {
-    width: 120dvw;
+    width: 100dvw;
   }
   .rowDivProfile {
     flex-direction: column;
