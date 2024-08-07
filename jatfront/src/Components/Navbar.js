@@ -26,7 +26,6 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.black, 0.25),
   },
-  marginLeft: 6,
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(1),
     width: "auto",
@@ -76,7 +75,7 @@ export default function SearchAppBar() {
 
   const logoStyleJobd = {
     textDecoration: "none",
-    fontSize: params === "/JAT" ? 28 : 16,
+    fontSize: params === "/JAT" ? 28 : 20,
     zIndex: 5,
     fontWeight: params === "/JAT" ? 1200 : 700,
     borderRadius: 6,
@@ -90,7 +89,7 @@ export default function SearchAppBar() {
   };
   const logoStyleLink = {
     textDecoration: "none",
-    fontSize: params === "/" ? 28 : 16,
+    fontSize: params === "/" ? 28 : 20,
     fontWeight: params === "/" ? 1200 : 700,
     borderRadius: 6,
     width: "100px",
@@ -190,14 +189,17 @@ export default function SearchAppBar() {
                   textDecoration: "none",
                   color: "black",
                   backgroundColor: "#2a2e45",
-                  padding: "10px 30px",
-                  fontSize: "16px",
+                  padding: "6px 20px",
+                  fontSize: "12px",
                   borderRadius: "20px",
                   color: "white",
                   fontWeight: "bold",
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop:"8px"
                 }}
               >
-                Login
+                Login <LoginIcon sx={{ fontSize: "14px" }} />
               </Link>
             ) : (
               <div className="navDropDown">
