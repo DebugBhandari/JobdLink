@@ -204,7 +204,7 @@ export default function LinkView() {
           .catch((error) => {
             console.log(error);
           })
-      : alert("Please login to comment.");
+      : alert("Please login to comment on this Link.");
   };
 
   const getUsersLikes = async () => {

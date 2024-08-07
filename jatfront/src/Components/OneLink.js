@@ -143,7 +143,7 @@ export default function OneLink({
             addZJobLike({ job_id: job.id, user_id: user_id_JSON });
             setLikeCommentRefresh((prevState) => !prevState);
           })
-      : alert("Please login to like");
+      : alert("Please login to like this Link.");
   };
   const handleUnlikeClick = async () => {
     axios
@@ -386,7 +386,11 @@ export default function OneLink({
         <Button
           size="small"
           data-html2canvas-ignore
-          onClick={() => captureScreenshot()}
+          onClick={() => {
+            user_id_JSON
+              ? captureScreenshot()
+              : alert("Please login to Share this to your Linkedin profile.");
+          }}
           sx={{
             fontSize: "14px",
             textTransform: "none",
