@@ -263,7 +263,10 @@ export default function LinkView() {
 
   return (
     <div className="linkView">
-      <div className="linkViewSections">
+      <div
+        className="linkViewSections"
+        style={{ height: "500px", flexDirection: "column" }}
+      >
         <OneLink
           job={job}
           likeCommentRefresh={likeCommentRefresh}
@@ -271,8 +274,27 @@ export default function LinkView() {
           fromJobd={false}
           key={job.id}
         />
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="commentInput"
+          label="Comment"
+          name="commentInput"
+          autoComplete="Comment"
+          size="small"
+          onChange={(e) => setNewComment(e.target.value)}
+          onSubmit={handleCommentSubmit}
+          value={newComment}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              handleCommentSubmit(e);
+            }
+          }}
+          sx={{ zIndex: 1 }}
+        />
       </div>
-      <div className="linkViewSections">
+      <div className="linkViewSections" style={{ marginTop: "2dvh" }}>
         <div
           style={{
             display: "flex",
@@ -284,25 +306,6 @@ export default function LinkView() {
             height: "100%",
           }}
         >
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="commentInput"
-            label="Comment"
-            name="commentInput"
-            autoComplete="Comment"
-            size="small"
-            onChange={(e) => setNewComment(e.target.value)}
-            onSubmit={handleCommentSubmit}
-            value={newComment}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                handleCommentSubmit(e);
-              }
-            }}
-            sx={{ zIndex: 1 }}
-          />
           {comments &&
             comments.map((comment) => (
               <Comment
