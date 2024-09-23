@@ -79,7 +79,7 @@ export default function Job({ job, setJobsRefresh }) {
       <div className="linkViewCard">
         <CardContent
           sx={{
-            height: 60,
+            height: 70,
             width: "90%",
             bgcolor: "success.main",
             ...(job.status === "Rejected" && { bgcolor: "error.main" }),
@@ -92,7 +92,7 @@ export default function Job({ job, setJobsRefresh }) {
             alignItems: "center",
             flexDirection: "column",
             position: "relative",
-
+            padding: 1,
             borderRadius: 4,
           }}
         >
@@ -100,6 +100,7 @@ export default function Job({ job, setJobsRefresh }) {
           <Typography
             sx={{
               fontSize: 28,
+              overflow: "auto",
             }}
             title={job.jobTitle}
           >
