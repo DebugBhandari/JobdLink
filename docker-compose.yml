@@ -12,7 +12,8 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      sharedDatabase: {}
+      - sharedDatabase
+
   jobdlink:
     image: jobdlinkdocker:latest
     ports:
@@ -34,11 +35,11 @@ services:
     volumes:
       - ./uploads:/app/uploads
     networks:
-      sharedDatabase: {}
+      - sharedDatabase
 
 volumes:
   mysql_data:
+
 networks:
-  default:
-    name: sharedDatabase
-    attachable: true
+  sharedDatabase:
+    external: true   # Reference to the external network
