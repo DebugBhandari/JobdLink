@@ -11,6 +11,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      sharedDatabase: {}
   jobdlink:
     image: jobdlinkdocker:latest
     ports:
@@ -31,6 +33,12 @@ services:
       - jatDatabase
     volumes:
       - ./uploads:/app/uploads
+    networks:
+      sharedDatabase: {}
 
 volumes:
   mysql_data:
+networks:
+  default:
+    name: database
+    attachable: true
