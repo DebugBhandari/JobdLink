@@ -40,5 +40,5 @@ volumes:
   mysql_data:
 networks:
   default:
-    name: database
+    name: sharedDatabase
     attachable: true
