@@ -21,8 +21,8 @@ services:
     environment:
       SECRET_KEY: secretkeyforjwt
       SESSION_SECRET: mustbeasecret
-      LINKEDIN_CLIENT_ID: secrets.LINKEDIN_CLIENT_ID
-      LINKEDIN_CLIENT_SECRET: secrets.LINKEDIN_CLIENT_SECRET
+      LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
+      LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET}
       MYSQL_DATABASE: jatdb
       MYSQL_PORT: 3306
       MYSQL_USER: root
