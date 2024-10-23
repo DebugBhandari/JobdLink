@@ -68,3 +68,6 @@ jobs:
 
             # Start new containers with the updated images
             docker-compose up -d --force-recreate
+        env:
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
