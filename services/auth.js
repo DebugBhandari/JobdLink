@@ -30,6 +30,19 @@ export const createUser = async (name, email, imageUrl, linkedinId) => {
   }
 };
 
+export const updateUser = async (name, email, imageUrl, linkedinId) => {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `UPDATE Users SET name = ?, imageUrl = ? WHERE email = ?`;
+    const values = [name, imageUrl, email];
+    const [result] = await connection.query(query, values);
+    connection.end();
+    return result.affectedRows;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const findUserByEmail = async (email) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
@@ -46,6 +59,14 @@ export const findOrCreate = async (parsedToken) => {
   try {
     const userExisting = await findUserByEmail(parsedToken.payload.email);
     if (userExisting) {
+      if (userExisting.imageUrl !== parsedToken.payload.imageUrl) {
+        await updateUser(
+          parsedToken.payload.name,
+          parsedToken.payload.email,
+          parsedToken.payload.imageUrl,
+          parsedToken.payload.linkedinId
+        );
+      }
       return userExisting;
     } else {
       console.log("Creating new user");

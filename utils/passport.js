@@ -43,12 +43,36 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        console.log("linkdin id", profile.id);
+        const linkedinApiUrl = `https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))`;
+
+        const headers = {
+          Authorization: `Bearer ${accessToken}`,
+        };
+
+        // Fetch user profile with picture details
+        const response = await fetch(linkedinApiUrl, { headers });
+        const linkedinProfile = await response.json();
+
+        // Extract the picture from the response
+        const profilePictureElements =
+          linkedinProfile.profilePicture?.["displayImage~"]?.elements;
+        let profilePictureUrl = "";
+
+        // Get the highest resolution image from the elements array
+        if (profilePictureElements && profilePictureElements.length > 0) {
+          profilePictureUrl =
+            profilePictureElements[profilePictureElements.length - 1]
+              .identifiers[0].identifier;
+        }
+
+        console.log("LinkedIn ID:", linkedinProfile.id);
+        console.log("Profile Picture URL:", profilePictureUrl);
+
         const parsedToken = {
           payload: {
             name: profile.displayName,
             email: profile.email,
-            imageUrl: profile.picture,
+            imageUrl: profilePictureUrl,
             linkedinId: profile.id,
           },
         };
