@@ -63,15 +63,10 @@ jobs:
             # Stop and remove old containers if they exist
             docker-compose down
 
-            # Set environment variables using GitHub Secrets
-            echo "Setting environment variables"
-            export LINKEDIN_CLIENT_ID=${{ secrets.LINKEDIN_CLIENT_ID }}
-            export LINKEDIN_CLIENT_SECRET=${{ secrets.LINKEDIN_CLIENT_SECRET }}
-
             # Debugging: Print environment variables
-            echo "LINKEDIN_CLIENT_ID: $LINKEDIN_CLIENT_ID"
-            echo "LINKEDIN_CLIENT_SECRET: $LINKEDIN_CLIENT_SECRET"
+            echo "LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}"
+            echo "LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET}"
 
-            # Start new containers with the updated images
-            docker-compose up -d --force-recreate
+            # Start new containers with the updated images and pass environment variables
+            LINKEDIN_CLIENT_ID=${{ secrets.LINKEDIN_CLIENT_ID }} LINKEDIN_CLIENT_SECRET=${{ secrets.LINKEDIN_CLIENT_SECRET }} docker-compose up -d --force-recreate
           
