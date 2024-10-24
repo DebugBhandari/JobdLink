@@ -59,15 +59,14 @@ export const findOrCreate = async (parsedToken) => {
   try {
     const userExisting = await findUserByEmail(parsedToken.payload.email);
     if (userExisting) {
-      if (userExisting.imageUrl !== parsedToken.payload.imageUrl) {
-        await updateUser(
-          parsedToken.payload.name,
-          parsedToken.payload.email,
-          parsedToken.payload.imageUrl,
-          parsedToken.payload.linkedinId
-        );
-      }
-      return userExisting;
+      console.log("User already exists");
+      const updatedUser = await updateUser(
+        parsedToken.payload.name,
+        parsedToken.payload.email,
+        parsedToken.payload.imageUrl,
+        parsedToken.payload.linkedinId
+      );
+      return updatedUser;
     } else {
       console.log("Creating new user");
       const newUser = {
