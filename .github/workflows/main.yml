@@ -63,9 +63,10 @@ jobs:
             # Stop and remove old containers if they exist
             docker-compose down
 
-             # Load Docker Images
-            docker load -i /var/www/jobd.link/jobdlinkdocker.tar
+            # Set environment variables using GitHub Secrets
+            export LINKEDIN_CLIENT_ID=${{ secrets.LINKEDIN_CLIENT_ID }}
+            export LINKEDIN_CLIENT_SECRET=${{ secrets.LINKEDIN_CLIENT_SECRET }}
 
             # Start new containers with the updated images
             docker-compose up -d --force-recreate
-       
+          
