@@ -58,31 +58,34 @@ export const findUserByEmail = async (email) => {
 export const findOrCreate = async (parsedToken) => {
   try {
     const userExisting = await findUserByEmail(parsedToken.payload.email);
+    const returnedUser = {
+      name: parsedToken.payload.name,
+      email: parsedToken.payload.email,
+      imageUrl: parsedToken.payload.imageUrl,
+      linkedinId: parsedToken.payload.linkedinId,
+    };
     if (userExisting) {
       console.log("User already exists");
-      const updatedUser = await updateUser(
-        parsedToken.payload.name,
-        parsedToken.payload.email,
-        parsedToken.payload.imageUrl,
-        parsedToken.payload.linkedinId
+      //Updating user each login to get a fresh image
+      const updatedUserId = await updateUser(
+        returnedUser.name,
+        returnedUser.email,
+        returnedUser.imageUrl,
+        returnedUser.linkedinId
       );
-      return updatedUser;
+      returnedUser.id = updatedUserId;
+      return returnedUser;
     } else {
       console.log("Creating new user");
-      const newUser = {
-        name: parsedToken.payload.name,
-        email: parsedToken.payload.email,
-        imageUrl: parsedToken.payload.imageUrl,
-        linkedinId: parsedToken.payload.linkedinId,
-      };
+
       const newUserId = await createUser(
-        newUser.name,
-        newUser.email,
-        newUser.imageUrl,
-        newUser.linkedinId
+        returnedUser.name,
+        returnedUser.email,
+        returnedUser.imageUrl,
+        returnedUser.linkedinId
       );
-      newUser.id = newUserId;
-      return newUser;
+      returnedUser.id = newUserId;
+      return returnedUser;
     }
   } catch (error) {
     throw error;
