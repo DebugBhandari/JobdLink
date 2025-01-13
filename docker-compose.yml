@@ -19,7 +19,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      SECRET_KEY: secretkeyforjwt
+      SECRET_KEY: letskeeparandomsecretkeyforjwttoken
       SESSION_SECRET: mustbeasecret
       LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
       LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET}
@@ -30,6 +30,7 @@ services:
       MYSQL_HOST: jatDatabase
       PORT: 3001
       NODE_ENV: production
+      REACT_APP_NODE_ENV: production
       REACT_APP_LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID}
     depends_on:
       - jatDatabase

@@ -42,17 +42,19 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
+const redirectUriConditional =
+  process.env.REACT_APP_NODE_ENV === "development"
+    ? "http://localhost:3001/auth/linkedin/callback"
+    : "https://jobd.link/auth/linkedin/callback";
+
 export default function SignInSide() {
   const [user, setUser] = useState(null);
   const location = useLocation();
 
   //Redirect to Linkedin Auth
   const handleLogin = () => {
-    const clientId =
-      process.env.REACT_APP_LINKEDIN_CLIENT_ID || "774ljrrsimfvgv"; // Replace with your LinkedIn client ID
-    const redirectUri = encodeURIComponent(
-      "http://localhost:3001/auth/linkedin/callback"
-    );
+    const clientId = process.env.REACT_APP_LINKEDIN_CLIENT_ID; // Replace with your LinkedIn client ID
+    const redirectUri = encodeURIComponent(redirectUriConditional);
     const state = "no_csrf_safer_internet"; // Use a secure random string
     const scope = encodeURIComponent("openid email profile w_member_social");
 
