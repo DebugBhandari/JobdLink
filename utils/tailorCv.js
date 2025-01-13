@@ -77,7 +77,7 @@ on My CV's data.
     const llamaResponse = await axios.post(
       dockerUrl, // Correct endpoint for your Llama2 API
       {
-        model: "llama3.2", // Adjust model if necessary
+        model: "llama3.2:3b", // Adjust model if necessary
         prompt: prompt,
         temperature: 0.7,
         max_tokens: 1500,
