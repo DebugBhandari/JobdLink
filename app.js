@@ -44,7 +44,7 @@ export const baseUrl =
     ? "http://localhost:3000"
     : "https://jobd.link";
 
-const redirectUri =
+const redirectUriConditional =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3001/auth/linkedin/callback"
     : "https://jobd.link/auth/linkedin/callback";
@@ -120,7 +120,7 @@ app.get("/auth/linkedin/callback", async (req, res) => {
       new URLSearchParams({
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: process.env.LINKEDIN_REDIRECT_URI, // Use the same redirect URI
+        redirect_uri: redirectUriConditional,
         client_id: process.env.LINKEDIN_CLIENT_ID,
         client_secret: process.env.LINKEDIN_CLIENT_SECRET,
       }).toString(),
