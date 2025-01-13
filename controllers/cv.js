@@ -21,7 +21,7 @@ export const uploadCv = async (req, res, next) => {
 
     // Check if the user already has an existing CV
     const [rows] = await connection.execute(
-      "SELECT cv_file FROM users WHERE id = ?",
+      "SELECT cv_file FROM Users WHERE id = ?",
       [userId]
     );
     const oldFileName = rows[0]?.cv_file;
@@ -36,7 +36,7 @@ export const uploadCv = async (req, res, next) => {
     }
 
     // Save the new CV filename in the database
-    await connection.execute("UPDATE users SET cv_file = ? WHERE id = ?", [
+    await connection.execute("UPDATE Users SET cv_file = ? WHERE id = ?", [
       newFileName,
       userId,
     ]);
@@ -60,7 +60,7 @@ export const getCv = async (req, res, next) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
     const [rows] = await connection.execute(
-      "SELECT cv_file FROM users WHERE id = ?",
+      "SELECT cv_file FROM Users WHERE id = ?",
       [userId]
     );
     await connection.end();
@@ -88,7 +88,7 @@ export const deleteCv = async (req, res, next) => {
 
     // Fetch existing CV filename
     const [rows] = await connection.execute(
-      "SELECT cv_file FROM users WHERE id = ?",
+      "SELECT cv_file FROM Users WHERE id = ?",
       [userId]
     );
     if (rows.length === 0 || !rows[0].cv_file) {
@@ -103,7 +103,7 @@ export const deleteCv = async (req, res, next) => {
     }
 
     // Remove CV reference from database
-    await connection.execute("UPDATE users SET cv_file = NULL WHERE id = ?", [
+    await connection.execute("UPDATE Users SET cv_file = NULL WHERE id = ?", [
       userId,
     ]);
     await connection.end();

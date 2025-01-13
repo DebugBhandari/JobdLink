@@ -1,14 +1,14 @@
 import fs from "fs";
 import path from "path";
 import axios from "axios";
-
+import { dockerUrl } from "./tailorCv";
 const aichat = async (req, res) => {
   const { message } = req.body;
 
   try {
     // Make the API request to Llama2 with streaming response
     const llamaResponse = await axios.post(
-      "http://localhost:11434/api/generate", // Correct endpoint for your Llama2 API
+      dockerUrl, // Correct endpoint for your Llama2 API
       {
         model: "llama3.2", // Adjust model if necessary
         prompt: message,

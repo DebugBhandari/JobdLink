@@ -9,6 +9,10 @@ import { dirname } from "path";
 // Get the current directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+export const dockerUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:11434/api/generate"
+    : "http://172.17.0.2:11434/api/generate";
 
 const tailorCv = async (req, res) => {
   const { userId, jobDescription } = req.body;
@@ -71,7 +75,7 @@ on My CV's data.
 
     // Make the API request to Llama2 with streaming response
     const llamaResponse = await axios.post(
-      "http://localhost:11434/api/generate", // Correct endpoint for your Llama2 API
+      dockerUrl, // Correct endpoint for your Llama2 API
       {
         model: "llama3.2", // Adjust model if necessary
         prompt: prompt,
