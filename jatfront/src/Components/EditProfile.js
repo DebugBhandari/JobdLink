@@ -14,6 +14,8 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import "./index.css";
 
+import UserAvatar from "./UserAvatar";
+
 const EditProfile = ({ handleOpen }) => {
   const {
     control,
@@ -25,10 +27,10 @@ const EditProfile = ({ handleOpen }) => {
   const [editing, setEditing] = useState(false); // Add editing state
 
   const zUser = useJLStore((state) => state.zUser);
-  const zProfile = useJLStore((state) => state.zProfile);
-  const setZProfile = useJLStore((state) => state.setZProfile);
-  const zGuestProfile = useJLStore((state) => state.zGuestProfile);
-  const setZGuestProfile = useJLStore((state) => state.setZGuestProfile);
+  const activeProfile = useJLStore((state) => state.activeProfile);
+  const setActiveProfile = useJLStore((state) => state.setActiveProfile);
+  //const zGuestProfile = useJLStore((state) => state.zGuestProfile);
+  //const setZGuestProfile = useJLStore((state) => state.setZGuestProfile);
 
   const locationPath = useLocation();
   const paramsId = parseInt(locationPath.pathname.split("/")[2]);
@@ -42,34 +44,35 @@ const EditProfile = ({ handleOpen }) => {
   };
 
   useEffect(() => {
-    setZProfile(paramsId);
-    setZGuestProfile(paramsId);
-  }, [paramsId, setZProfile]);
+    setActiveProfile(paramsId);
+    //setZGuestProfile(paramsId);
+  }, [paramsId]);
 
   useEffect(() => {
-    if (zGuestProfile) {
+    if (activeProfile) {
       reset({
-        bio: zGuestProfile.bio || "",
-        location: zGuestProfile.location || "",
-        website: zGuestProfile.website || "",
-        github: zGuestProfile.github || "",
-        linkedin: zGuestProfile.linkedin || "",
-        partialView: zGuestProfile.partialView || "",
+        bio: activeProfile.bio || "",
+        location: activeProfile.location || "",
+        website: activeProfile.website || "",
+        github: activeProfile.github || "",
+        linkedin: activeProfile.linkedin || "",
+        partialView: activeProfile.partialView || "",
       });
     }
-  }, [zProfile, reset]);
+  }, [activeProfile, reset]);
 
   const onSubmit = async (data) => {
     try {
-      const url = zProfile
-        ? `${baseUrl}/profile/${zProfile.id}`
+      const url = activeProfile
+        ? `${baseUrl}/profile/${activeProfile.id}`
         : `${baseUrl}/profile`;
-      const method = zProfile ? "PUT" : "POST";
+      const method = activeProfile ? "PUT" : "POST";
 
       await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${zUser.token}`,
         },
         body: JSON.stringify({
           ...data,
@@ -78,7 +81,7 @@ const EditProfile = ({ handleOpen }) => {
       });
 
       setEditing(false); // Exit edit mode after saving
-      setZProfile(paramsId); // Refresh profile data
+      setActiveProfile(paramsId); // Refresh profile data
       window.location.href = `/userProfile/${zUser.id}`;
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -86,41 +89,57 @@ const EditProfile = ({ handleOpen }) => {
   };
 
   const handleCancel = () => {
-    if (zProfile) {
+    if (activeProfile) {
       reset({
-        bio: zProfile.bio || "",
-        location: zProfile.location || "",
-        website: zProfile.website || "",
-        github: zProfile.github || "",
-        linkedin: zProfile.linkedin || "",
-        partialView: zProfile.partialView ? 1 : 0,
+        bio: activeProfile.bio || "",
+        location: activeProfile.location || "",
+        website: activeProfile.website || "",
+        github: activeProfile.github || "",
+        linkedin: activeProfile.linkedin || "",
+        partialView: activeProfile.partialView ? 1 : 0,
       });
     }
     window.location.href = `/userProfile/${zUser.id}`;
     setEditing(false); // Exit edit mode on cancel
   };
-  console.log("zProfile", zGuestProfile);
 
   return (
-    <div className="profileMainDiv">
-      {zGuestProfile?.name ? (
+    <div
+      className="editProfileMainDiv"
+      style={{ backgroundColor: "#f5f5f5", padding: "8px" }}
+    >
+      {activeProfile?.name ? (
         <div className="profileCard">
           <div className="profileAvatar">
-            <Avatar
-              alt={zGuestProfile.name}
-              src={zGuestProfile.imageUrl}
-              sx={{ width: 52, height: 52 }}
-            />
-            <Typography
-              sx={{ fontSize: "18px", fontWeight: "bold", margin: 2 }}
-            >
-              {zGuestProfile.name}
-            </Typography>
+            <div className="profileAvatarCard">
+              <UserAvatar
+                name={activeProfile.name}
+                imageUrl={activeProfile.imageUrl}
+                profileAvatar={1}
+              />
+              <div className="profileAvatarDiv">
+                <Typography
+                  sx={{
+                    fontSize: { sx: "24px", md: "36px", lg: "44px" },
+                    fontWeight: "bold",
+                  }}
+                >
+                  {activeProfile.name}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: { sx: "20px", md: "28px", lg: "32px" },
+                    color: "grey",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {activeProfile.email}
+                </Typography>
+              </div>
+            </div>
           </div>
           <div className="profileContentDiv">
-            <div className="rowDivProfile">
-              <h1 className="avatarTitle">{zGuestProfile.email}</h1>
-            </div>
+            <div className="rowDivProfile"></div>
             <br />
             <Controller
               name="location"
@@ -197,32 +216,54 @@ const EditProfile = ({ handleOpen }) => {
               />
             </div>
             <br />
-            <div className="rowDivProfile">
-              <h1 className="headerNormalText">
-                Linked:{" "}
-                {zGuestProfile.partialView
-                  ? "Hidden"
-                  : zGuestProfile.count_jobs_linkd}
-              </h1>
-              <h1 className="headerNormalText">
-                Total:{" "}
-                {zGuestProfile.partialView
-                  ? "Hidden"
-                  : zGuestProfile.count_jobs}
-              </h1>
-            </div>
 
             <br />
             <div className="centreDiv">
-              <div>
-                <Button
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={isSubmitting}
-                >
-                  Save
-                </Button>
-                <Button onClick={handleCancel}>Cancel</Button>
-              </div>
+              <Button
+                onClick={handleSubmit(onSubmit)}
+                disabled={isSubmitting}
+                sx={{
+                  textDecoration: "none",
+                  fontSize: 14,
+                  fontWeight: "bolder",
+                  backgroundColor: "#2a2e45",
+                  width: "120px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 10,
+                  padding: "6px",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "white",
+                    color: "#2a2e45",
+                  },
+                }}
+              >
+                Save
+              </Button>
+              <Button
+                onClick={handleCancel}
+                sx={{
+                  textDecoration: "none",
+                  fontSize: 14,
+                  fontWeight: "bolder",
+                  backgroundColor: "#2a2e45",
+                  width: "120px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 10,
+                  padding: "6px",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "white",
+                    color: "#2a2e45",
+                  },
+                }}
+              >
+                Cancel
+              </Button>
             </div>
           </div>
         </div>

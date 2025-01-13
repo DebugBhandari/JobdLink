@@ -98,6 +98,9 @@ const EditJobComp = () => {
         margin: "auto",
         marginTop: "10dvh",
         marginBottom: "20dvh",
+        backgroundColor: "#f5f5f5",
+        padding: "20px",
+        borderRadius: 10,
         "@media (max-width: 600px)": { width: "90%" },
       }}
       component="form"

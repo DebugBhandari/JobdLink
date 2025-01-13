@@ -25,6 +25,7 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 
 import CommentIcon from "@mui/icons-material/Comment";
 import LinkShareModal from "./Modals/LinkShareModal";
+import UserAvatar from "./UserAvatar";
 
 export default function OneLink({
   job,
@@ -206,12 +207,7 @@ export default function OneLink({
         token={token}
         jobId={job.id}
       />
-      <div
-        className="linkViewCardHeader"
-        onClick={() => {
-          window.location.href = `/userProfile/${job.user_id}`;
-        }}
-      >
+      <div className="linkViewCardHeader">
         {" "}
         {job.user_id === user_id_JSON ? (
           <Button
@@ -245,12 +241,13 @@ export default function OneLink({
             Unlink
           </Button>
         ) : null}
-        <div className="avatarDiv">
-          <Avatar
-            alt={job.imageUrl}
-            src={job.imageUrl}
-            sx={{ width: 44, height: 44 }}
-          />
+        <div
+          className="avatarDiv"
+          onClick={() => {
+            window.location.href = `/userProfile/${job.user_id}`;
+          }}
+        >
+          <UserAvatar name={job.name} imageUrl={job.imageUrl} />
           <div className="profileAvatarDiv">
             <Typography
               sx={{

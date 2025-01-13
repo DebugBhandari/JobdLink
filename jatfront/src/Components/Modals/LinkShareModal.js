@@ -52,7 +52,7 @@ const LinkShareModal = ({
     >
       <h2 className="shareTitle">
         Share Job to
-        <span className="shareSpan">
+        <span className="shareHeaderSpan">
           Linkedin <LinkedInIcon />
         </span>
       </h2>

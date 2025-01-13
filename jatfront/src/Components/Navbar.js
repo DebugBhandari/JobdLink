@@ -16,6 +16,7 @@ import useJLStore from "../useStore";
 import Button from "@mui/material/Button";
 import { useLocation } from "react-router-dom";
 import { baseUrl } from "../App";
+import UserAvatar from "./UserAvatar";
 
 import Avatar from "@mui/material/Avatar";
 
@@ -140,23 +141,41 @@ export default function SearchAppBar() {
             }}
           >
             {" "}
-            <Link
-              href="/JAT"
-              variant="body"
-              // style={{
-              //   textDecoration: "none",
-              //   fontSize: 24,
-              //   zIndex: 5,
-              //   fontWeight: "bolder",
-              //   borderRadius: 10,
-              //   maxHeight: 50,
-              //   padding: 5,
-              //   color: "#ff00009b",
-              // }}
-              sx={{ ...logoStyleJobd }}
-            >
-              JOBD.
-            </Link>{" "}
+            {zUser.id ? (
+              <Link
+                href="/JAT"
+                variant="body"
+                // style={{
+                //   textDecoration: "none",
+                //   fontSize: 24,
+                //   zIndex: 5,
+                //   fontWeight: "bolder",
+                //   borderRadius: 10,
+                //   maxHeight: 50,
+                //   padding: 5,
+                //   color: "#ff00009b",
+                // }}
+                sx={{ ...logoStyleJobd }}
+              >
+                JOBD.
+              </Link>
+            ) : (
+              <Link
+                href="/"
+                variant="body"
+                // style={{
+                //   textDecoration: "none",
+                //   fontSize: 24,
+                //   fontWeight: "bolder",
+                //   borderRadius: 10,
+                //   padding: 5,
+                //   color: "#388e3c",
+                // }}
+                sx={{ ...logoStyleLink }}
+              >
+                JOBD.
+              </Link>
+            )}{" "}
             <Link
               href="/"
               variant="body"
@@ -181,44 +200,48 @@ export default function SearchAppBar() {
             color="inherit"
             aria-label="open drawer"
           >
-            {!zUser.imageUrl ? (
+            {!zUser.id ? (
               <Link
                 href="/login"
                 variant="body"
-                style={{
+                sx={{
                   textDecoration: "none",
-                  color: "black",
+                  fontSize: 14,
+                  fontWeight: "bolder",
                   backgroundColor: "#2a2e45",
-                  padding: "6px 20px",
-                  fontSize: "12px",
-                  borderRadius: "20px",
-                  color: "white",
-                  fontWeight: "bold",
+                  width: "60px",
                   display: "flex",
+                  justifyContent: "center",
                   alignItems: "center",
-                  marginTop:"8px"
+                  borderRadius: 10,
+                  padding: "8px",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "white",
+                    color: "#2a2e45",
+                  },
                 }}
               >
                 Login <LoginIcon sx={{ fontSize: "14px" }} />
               </Link>
             ) : (
               <div className="navDropDown">
-                <Avatar
-                  alt={zUser.name}
-                  src={zUser.imageUrl}
-                  sx={{ width: 32, height: 32 }}
+                <UserAvatar
+                  name={zUser.name}
+                  imageUrl={zUser.imageUrl}
+                  onClick={() => {
+                    window.location.href = `/userProfile/${zUser.id}`;
+                  }}
                 />
 
                 <div className="navDropDownContent">
                   <div className="navDropDownCard">
                     <div className="avatarDropDown">
-                      <Avatar
-                        alt={zUser.name}
-                        src={zUser.imageUrl}
-                        sx={{
-                          width: 60,
-                          height: 60,
-                          border: "2px solid white",
+                      <UserAvatar
+                        name={zUser.name}
+                        imageUrl={zUser.imageUrl}
+                        onClick={() => {
+                          window.location.href = `/userProfile/${zUser.id}`;
                         }}
                       />
                     </div>
@@ -244,6 +267,37 @@ export default function SearchAppBar() {
                       </Typography>
                     </div>
                   </div>
+                  <Link
+                    href="/createJob"
+                    variant="body"
+                    className="pulsatingLink"
+                    sx={{
+                      textDecoration: "none",
+                      fontSize: 16,
+                      fontWeight: "bolder",
+                      color: "#2a2e45",
+                      padding: "8px 8px",
+                      animation: "pulsate 1.5s infinite",
+                      "@keyframes pulsate": {
+                        "0%": {
+                          backgroundColor: "rgba(1, 0, 0, 0.2)",
+                        },
+                        "50%": {
+                          backgroundColor: "rgba(1, 0, 0, 0.4)",
+                        },
+                        "100%": {
+                          backgroundColor: "rgba(1, 0, 0, 0.2)",
+                        },
+                      },
+                      "&:hover": {
+                        backgroundColor: "rgba(1, 0, 0, 0.2)",
+                        color: "#2a2e45",
+                        animation: "none", // Stops pulsating on hover
+                      },
+                    }}
+                  >
+                    Create Job
+                  </Link>
 
                   <Link
                     href={`/userProfile/${zUser.id}`}
@@ -260,10 +314,10 @@ export default function SearchAppBar() {
                       },
                     }}
                   >
-                    Profile
+                    My Profile
                   </Link>
                   <Link
-                    href="/createJob"
+                    href="/"
                     variant="body"
                     sx={{
                       textDecoration: "none",
@@ -277,8 +331,9 @@ export default function SearchAppBar() {
                       },
                     }}
                   >
-                    Add Job
+                    LinkFeed
                   </Link>
+
                   <Link
                     href="/JAT"
                     variant="body"
@@ -295,6 +350,40 @@ export default function SearchAppBar() {
                     }}
                   >
                     My Jobs
+                  </Link>
+                  <Link
+                    href="/tailor"
+                    variant="body"
+                    sx={{
+                      textDecoration: "none",
+                      fontSize: 16,
+                      fontWeight: "bolder",
+
+                      padding: "8px 8px",
+                      color: "#2a2e45",
+                      "&:hover": {
+                        backgroundColor: "rgba(1, 0, 0, 0.2)",
+                      },
+                    }}
+                  >
+                    Tailor Resume
+                  </Link>
+                  <Link
+                    href="/ai-chat"
+                    variant="body"
+                    sx={{
+                      textDecoration: "none",
+                      fontSize: 16,
+                      fontWeight: "bolder",
+
+                      padding: "8px 8px",
+                      color: "#2a2e45",
+                      "&:hover": {
+                        backgroundColor: "rgba(1, 0, 0, 0.2)",
+                      },
+                    }}
+                  >
+                    Llama3.2
                   </Link>
                   <Button
                     href="/"

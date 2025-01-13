@@ -7,7 +7,6 @@ import DashBoard from "./Components/DashBoard"; // Import the 'DashBoard' compon
 import Jobs from "./Components/Jobs";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
-import { Container } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Login from "./Components/Login";
 import Links from "./Components/Links";
@@ -15,7 +14,9 @@ import LinkView from "./Components/LinkView";
 import EditProfile from "./Components/EditProfile";
 import CreateJobComp from "./Components/CreateJobComp";
 import EditJobComp from "./Components/EditJobComp";
-import { EditJobPage } from "./Components/EditJobPage";
+import TailorCV from "./Components/TailorCV";
+import AiPlayground from "./Components/AiPlayground";
+
 export const baseUrl =
   process.env.REACT_APP_NODE_ENV === "development"
     ? "http://localhost:3001"
@@ -70,7 +71,9 @@ function App() {
                 element={<Login render={(params) => ({ ...params })} />}
               />
               <Route path="/register" element={<Register key="2" />} />
+
               <Route path="/JAT" element={<Jobs key="3" />} />
+
               <Route path="/links/:id" element={<LinkView key="4" />} />
               <Route path="/userProfile/:id" element={<DashBoard key="5" />} />
               <Route
@@ -80,6 +83,8 @@ function App() {
               <Route path="/createJob" element={<CreateJobComp />} />
               <Route path="/editJob/:id" element={<EditJobComp />} />
               {/* <Route path="/editJob/:id" element={<EditJobPage />} /> */}
+              <Route path="/tailor" element={<TailorCV />} />
+              <Route path="/ai-chat" element={<AiPlayground />} />
             </Routes>
           </div>
           <Footer />

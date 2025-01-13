@@ -75,7 +75,7 @@ async function findById(jobId) {
     const connection = await mysql.createConnection(dbConfig);
     try {
       const [results] = await connection.execute(query, [jobId]);
-      console.log(results);
+
       if (results.length === 0) {
         reject(new Error(`Job ${jobId} not found`));
       } else {
@@ -200,6 +200,28 @@ async function toggleJobdLink(jobId) {
   });
 }
 
+async function findJobByUser(userId) {
+  return new Promise(async (resolve, reject) => {
+    const query = `select Jobs.id, Jobs.jobTitle, Jobs.description, Jobs.created_at, Jobs.user_id, Jobs.company, Jobs.jobUrl, Jobs.status, Jobs.location, Jobs.username, Jobs.private, Jobs.caption, COUNT(DISTINCT JobLikes.id) AS count_likes, COUNT(DISTINCT JobComments.id) AS count_comments, Users.name, Users.imageUrl from Jobs
+    left join JobLikes on JobLikes.job_id = Jobs.id
+    left join JobComments on JobComments.job_id = Jobs.id
+    left join Users on Users.id=Jobs.user_id
+    WHERE Jobs.user_id = ?
+    GROUP BY Jobs.id
+    order by Jobs.created_at desc`;
+
+    const connection = await mysql.createConnection(dbConfig);
+    try {
+      const [results] = await connection.execute(query, [userId]);
+      resolve(results);
+    } catch (error) {
+      reject(error);
+    } finally {
+      await connection.end();
+    }
+  });
+}
+
 export default {
   create,
   findById,
@@ -208,4 +230,5 @@ export default {
   deleteJob,
   findJobOwner,
   toggleJobdLink,
+  findJobByUser,
 };

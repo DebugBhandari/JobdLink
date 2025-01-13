@@ -5,18 +5,21 @@ const { req, res, next } = pkg;
 import { dbConfig } from "../server.js";
 import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
+import axios from "axios";
+import { findUserById } from "../controllers/user.js";
 
-// export const generateToken = (user) => {
-//   return JWT.sign(
-//     {
-//       id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       imageUrl: user.picture,
-//     },
-//     process.env.SECRET_KEY
-//   );
-// };
+export const generateToken = (user) => {
+  return JWT.sign(
+    {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      imageUrl: user.imageUrl,
+    },
+    process.env.SECRET_KEY,
+    { algorithm: "HS256" }
+  );
+};
 export const createUser = async (name, email, imageUrl, linkedinId) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
@@ -57,12 +60,12 @@ export const findUserByEmail = async (email) => {
 
 export const findOrCreate = async (parsedToken) => {
   try {
-    const userExisting = await findUserByEmail(parsedToken.payload.email);
+    const userExisting = await findUserByEmail(parsedToken.email);
     const returnedUser = {
-      name: parsedToken.payload.name,
-      email: parsedToken.payload.email,
-      imageUrl: parsedToken.payload.imageUrl,
-      linkedinId: parsedToken.payload.linkedinId,
+      name: parsedToken.name,
+      email: parsedToken.email,
+      imageUrl: parsedToken.imageUrl,
+      linkedinId: parsedToken.linkedinId,
     };
     if (userExisting) {
       console.log("User already exists");
@@ -92,16 +95,38 @@ export const findOrCreate = async (parsedToken) => {
   }
 };
 
-export const isAuth = (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    res.status(401).send("No token provided");
-  }
+// Middleware to check if user is authenticated
+export const isAuth = async (req, res, next) => {
   try {
-    const decoded = JWT.verify(token, process.env.SECRET_KEY);
-    req.user = decoded;
+    const authHeader = req.headers.authorization || req.query.token;
+    const token =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.split(" ")[1]
+        : authHeader;
+
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized access: No token" });
+    }
+
+    // Validate token (Here we assume JWT token for example)
+    const decoded = JWT.verify(token, process.env.SECRET_KEY, {
+      algorithms: ["HS256"],
+    });
+    console.log("Decoded token:", decoded);
+
+    // Optionally, you could check if the user exists in the DB
+    const user = await findUserByEmail(decoded.email); // Assuming decoded contains user info
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Attach user information to the request object for further use in protected routes
+    req.user = user;
+
     next();
   } catch (error) {
-    res.status(401).send("Unauthorized");
+    console.error("Authentication failed:", error);
+    res.status(500).json({ error: "Failed to authenticate token" });
   }
 };

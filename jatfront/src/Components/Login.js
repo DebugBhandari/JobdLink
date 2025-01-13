@@ -46,8 +46,19 @@ export default function SignInSide() {
   const [user, setUser] = useState(null);
   const location = useLocation();
 
-  const handleLogin = async () => {
-    window.open(`${baseUrl}/auth/linkedin`, "_self");
+  //Redirect to Linkedin Auth
+  const handleLogin = () => {
+    const clientId =
+      process.env.REACT_APP_LINKEDIN_CLIENT_ID || "774ljrrsimfvgv"; // Replace with your LinkedIn client ID
+    const redirectUri = encodeURIComponent(
+      "http://localhost:3001/auth/linkedin/callback"
+    );
+    const state = "no_csrf_safer_internet"; // Use a secure random string
+    const scope = encodeURIComponent("openid email profile w_member_social");
+
+    const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`;
+
+    window.location.href = linkedInAuthUrl;
   };
 
   return (
@@ -55,10 +66,11 @@ export default function SignInSide() {
       <Box
         sx={{
           height: "80dvh",
-
+          backgroundColor: "#f5f5f5",
           display: "flex",
           flexDirection: "row",
           justifyContents: "center",
+          padding: "20px",
           alignItems: "center",
           margin: "auto",
           marginTop: "10dvh",
@@ -77,18 +89,20 @@ export default function SignInSide() {
 
             width: "50%",
 
-            textAlign: "center",
+            textAlign: "left",
             "@media (max-width: 1000px)": {
               marginTop: 6,
               width: "100%",
+              alignItems: "center",
+              textAlign: "center",
             },
           }}
         >
           <Typography
             component="h1"
-            sx={{ fontWeight: "bold", fontSize: "36px" }}
+            sx={{ fontWeight: "bold", fontSize: "40px" }}
           >
-            JobdLink
+            Jobd.Link
           </Typography>
           <Typography component="h1" variant="h5" sx={{ color: "grey" }}>
             Job Application Tracker
@@ -99,7 +113,16 @@ export default function SignInSide() {
             For Jobseekers, By Jobseekers
           </Typography>
 
-          <Box noValidate sx={{ mt: 1 }}>
+          <Box
+            noValidate
+            sx={{
+              mt: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContents: "center",
+              alignItems: "center",
+            }}
+          >
             <Button
               onClick={handleLogin}
               fullWidth
@@ -110,19 +133,22 @@ export default function SignInSide() {
                 backgroundColor: "#2a2e45",
                 color: "white",
                 borderRadius: 10,
+                width: "200px",
                 "&:hover": {
                   backgroundColor: "white",
                   color: "#2a2e45",
                 },
               }}
+              className="linkedinLoginButton"
             >
               Sign In With{" "}
               <LinkedInIcon
                 sx={{
                   marginBottom: "4px",
                   marginLeft: "4px",
-                  color: " #1466c2",
+                  color: "white",
                 }}
+                className="linkedinLoginIcon"
               />
             </Button>
 
@@ -135,9 +161,11 @@ export default function SignInSide() {
             justifyContents: "center",
             alignItems: "center",
             width: "50%",
+            marginTop: "-140px",
             height: "60dvh",
             "@media (max-width: 1000px)": {
               width: "100%",
+              marginTop: "0px",
             },
           }}
         >
@@ -145,6 +173,7 @@ export default function SignInSide() {
             src={JobdLanding}
             alt="landingImage"
             style={{ width: "400px" }}
+            className="loginMVPimage"
           />
         </Box>
       </Box>

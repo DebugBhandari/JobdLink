@@ -13,11 +13,30 @@ const useJLStore = create(
         // id: 9999,
         // name: "Test User",
         // email: "test@user.com",
-        // imageUrl: "https://eu.ui-avatars.com/api/?name=Jobd+Link&size=250",
+        // imageUrl:
+        //   "httpss://ui-avatars.com/api/?name=Test+User&size=300&background=random&color=random&length=2",
         // linkedinId: "notarealuser",
         // token: "thisisafaketokenforthetestuser",
       },
       setZUser: (user) => set(() => ({ zUser: user })),
+      localUserJobs: [],
+      setLocalUserJobs: async () => {
+        try {
+          const response = await axios.get(
+            `${baseUrl}/jobs/user/${get().zUser.id}`,
+            {
+              "content-type": "application/json",
+              // headers: {
+              //   Authorization: "Bearer " + get().zUser.token,
+              // },
+            }
+          );
+          set({ localUserJobs: response.data[0].id ? response.data : [] });
+        } catch (error) {
+          console.error("Error fetching your jobs:", error);
+          console.error("Token:", get().zUser.token);
+        }
+      },
 
       zJobs: [
         // {
@@ -109,40 +128,43 @@ const useJLStore = create(
         try {
           const response = await axios.put(`${baseUrl}/jobs/toggle/${jobId}`);
           get().setZJobs();
+          get().setLocalUserJobs();
         } catch (error) {
           console.error("Error toggling job:", error);
         }
       },
-      zProfile: {},
-      setZProfile: async (user_id) => {
+      activeProfile: {},
+      setActiveProfile: async (user_id) => {
         try {
           const response = await axios.get(`${baseUrl}/profile/${user_id}`, {
             headers: {
               Authorization: "Bearer " + get().zUser.token,
             },
           });
-          set({ zProfile: response.data });
+          set({ activeProfile: response.data });
         } catch (error) {
           console.error("Error fetching profile:", error);
         }
       },
       toggleProfilePartial: async (user_id) => {
         try {
-          const response = await axios.put(`${baseUrl}/profile/toggle/${user_id}`);
+          const response = await axios.put(
+            `${baseUrl}/profile/toggle/${user_id}`
+          );
           get().setZProfile(user_id);
         } catch (error) {
           console.error("Error toggling profile:", error);
         }
       },
-      zGuestProfile: {},
-      setZGuestProfile: async (id) => {
-        try {
-          const response = await axios.get(`${baseUrl}/user/${id}`);
-          set({ zGuestProfile: response.data });
-        } catch (error) {
-          console.error("Error fetching guest user:", error);
-        }
-      },
+      // zGuestProfile: {},
+      // setZGuestProfile: async (id) => {
+      //   try {
+      //     const response = await axios.get(`${baseUrl}/user/${id}`);
+      //     set({ zGuestProfile: response.data });
+      //   } catch (error) {
+      //     console.error("Error fetching guest user:", error);
+      //   }
+      // },
       jobSearchQuery: "",
       updateJobSearchQuery: (query) =>
         set((state) => ({ jobSearchQuery: query })),

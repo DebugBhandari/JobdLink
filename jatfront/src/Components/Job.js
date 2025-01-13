@@ -22,7 +22,7 @@ export default function Job({ job, setJobsRefresh }) {
   const locale_date = created_at.toLocaleDateString();
 
   const [content, setContent] = useState("This is a test post from JobdLink.");
-  const setZJobs = useJLStore((state) => state.setZJobs);
+  const setLocalUserJobs = useJLStore((state) => state.setLocalUserJobs);
   const toggleJobdLink = useJLStore((state) => state.toggleJobdLink);
   //For modal
   const [open, setOpen] = useState(false);
@@ -35,11 +35,16 @@ export default function Job({ job, setJobsRefresh }) {
   };
 
   const handleDeleteClick = () => {
-    axios.delete(`${baseUrl}/jobs/${job.id}`).then((response) => {
-      setJobsRefresh((prevState) => !prevState);
-      setZJobs();
-      console.log("Job deleted successfully");
-    });
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
+    if (confirmDelete) {
+      axios.delete(`${baseUrl}/jobs/${job.id}`).then((response) => {
+        setJobsRefresh((prevState) => !prevState);
+        setLocalUserJobs();
+        console.log("Job deleted successfully");
+      });
+    }
   };
 
   const handleEditJob = () => {
@@ -170,7 +175,7 @@ export default function Job({ job, setJobsRefresh }) {
           <Button
             onClick={() => {
               toggleJobdLink(job.id);
-              setZJobs();
+              setLocalUserJobs();
             }}
             sx={{
               fontWeight: 800,

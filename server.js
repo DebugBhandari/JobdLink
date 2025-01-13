@@ -19,6 +19,7 @@ export const dbConfig = {
   maxIdle: 10,
   idleTimeout: 60000,
   queueLimit: 0,
+  ssl: false,
 };
 
 const initializeDb = async () => {
@@ -31,7 +32,11 @@ const initializeDb = async () => {
           name VARCHAR(255) NOT NULL,
           email VARCHAR(255) NOT NULL UNIQUE,
           imageUrl VARCHAR(255),
-          linkedinId VARCHAR(255)
+          linkedinId VARCHAR(255),
+          cv_file VARCHAR(255),
+          accessToken Text,
+         
+          tokenExpiresAt DateTime
         )
       `);
     await connection.query(`

@@ -101,7 +101,24 @@
   border-radius: 40px;
   display: flex;
   justify-content: center;
-  height: 50dvh;
+  align-items: center;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  background-color: #f5f5f5;
+  padding: 8px;
+}
+
+.editProfileMainDiv {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  height: 100dvh;
 }
 .profileCard {
   display: flex;
@@ -116,19 +133,92 @@
 .profileContentDiv {
   width: 100%;
 }
+input[type="file"] {
+  display: none;
+}
+.uploadCv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 140px;
+  height: 38px;
+  cursor: pointer;
+  background-color: #2a2e45;
+  color: white;
+  border-radius: 20px;
+  font-weight: 500;
+  margin: 10px 0;
+}
+
+.uploadCv:hover {
+  background-color: grey;
+  color: #2a2e45;
+}
+
+.resumeButton a {
+  text-decoration: none;
+  color: white;
+  font-weight: 800;
+}
+.resumeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.resumeRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 160px;
+  word-break: break-word;
+  background-color: #2a2e45;
+  border-radius: 20px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+.resumeRow:hover {
+  background-color: grey;
+  color: #2a2e45;
+}
+.resumeRow:hover a {
+  background-color: grey;
+  color: #2a2e45;
+}
+
+Button:disabled {
+  background-color: white;
+}
+
+.deleteResume {
+  margin: 0px;
+  margin-right: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+}
+.deleteResume:hover {
+  color: red;
+}
 
 /* Avatarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr */
 .profileAvatar {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: left;
+  justify-content: space-between;
+  align-items: center;
 }
 .profileAvatarCard {
   display: flex;
   flex-direction: row;
   justify-content: left;
-  align-items: center;
+  align-items: top;
   color: #2a2e45;
   border-radius: 16px;
   padding: 4px;
@@ -146,9 +236,10 @@
 }
 .profileButton {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  width: 30%;
+  width: 200px;
+  flex-direction: column;
 }
 
 .rowDiv {
@@ -203,6 +294,31 @@
 .addButton:hover {
   background-color: #2a2e45;
   color: white;
+}
+
+.loginMVPimage {
+  animation: loginMVP 2s infinite;
+}
+
+.user {
+  color: grey;
+}
+
+@keyframes loginMVP {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(20deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+.linkedinLoginButton:hover .linkedinLoginIcon {
+  color: #1466c2;
 }
 
 /* LinkView..................................................................... */
@@ -276,6 +392,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin-bottom: 20px;
 }
 .linkViewShareImage {
   opacity: 1;
@@ -310,7 +427,7 @@
   color: #2a2e45;
 }
 .shareButton:hover .shareSpan {
-  color: #2a2e45;
+  color: #1466c2;
 }
 .captionInput {
   display: flex;
@@ -333,6 +450,13 @@
   margin-top: 60px;
 }
 .shareSpan {
+  margin-left: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+.shareHeaderSpan {
   margin-left: 4px;
   display: flex;
   justify-content: center;
@@ -416,6 +540,7 @@
   align-items: center;
   height: 50px;
   width: 100%;
+  cursor: pointer;
 }
 .avatarTitle {
   font-size: 16px;
@@ -427,12 +552,13 @@
 .profileAvatarDiv {
   display: flex;
   flex-direction: column;
+  justify-content: left;
+  text-align: left;
 
   width: 100%;
   margin-left: 20px;
 }
 .profileAvatarTitle {
-  font-size: 16px;
   color: grey;
   word-break: break-word;
   margin: 0;
@@ -606,11 +732,14 @@
 @media only screen and (max-width: 1000px) {
   .profileMainDiv {
     position: relative;
-    width: 90%;
+    width: 96%;
     margin-bottom: 8dvh;
+    padding: 8px;
   }
   .profileCard {
     flex-direction: column;
+    width: 100%;
+    padding: 40px;
   }
   .profileContentDiv {
     width: 100%;
@@ -664,11 +793,15 @@
   }
   .profileCard {
     padding: 0;
-    height: 50dvh;
+    min-height: 50dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .profileAvatar {
     flex-direction: column;
     padding: 0;
+    margin-left: 80px;
   }
   .profileAvatarCard {
     padding: 0;
@@ -678,6 +811,9 @@
     width: 100%;
     position: absolute;
     bottom: 0;
+    right: 0;
+    flex-direction: row;
+    justify-content: space-between;
   }
   .footTitleDiv {
     width: 46dvw;
@@ -703,5 +839,8 @@
   }
   .footDiv:hover .footImage {
     animation: footimationPhone 2s 1;
+  }
+  .uploadCv {
+    width: 120px;
   }
 }

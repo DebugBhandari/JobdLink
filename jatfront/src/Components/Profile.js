@@ -17,6 +17,7 @@ import "./index.css";
 import Link from "@mui/material/Link";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import axios from "axios";
+import UserAvatar from "./UserAvatar";
 const Profile = ({ partialToggle, setPartialToggle }) => {
   const {
     control,
@@ -28,10 +29,15 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
   const [editing, setEditing] = useState(false); // Add editing state
 
   const zUser = useJLStore((state) => state.zUser);
-  const zProfile = useJLStore((state) => state.zProfile);
-  const setZProfile = useJLStore((state) => state.setZProfile);
-  const zGuestProfile = useJLStore((state) => state.zGuestProfile);
-  const setZGuestProfile = useJLStore((state) => state.setZGuestProfile);
+  const activeProfile = useJLStore((state) => state.activeProfile);
+  const setActiveProfile = useJLStore((state) => state.setActiveProfile);
+  // const zGuestProfile = useJLStore((state) => state.zGuestProfile);
+  // const setZGuestProfile = useJLStore((state) => state.setZGuestProfile);
+  const userId = activeProfile?.user_id;
+
+  const [cvUrl, setCvUrl] = useState("");
+  const [cvFileName, setCvFileName] = useState("");
+
   const toggleProfilePartial = useJLStore(
     (state) => state.toggleProfilePartial
   );
@@ -41,8 +47,15 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
 
   const setProfilePartial = async (user_id) => {
     try {
-      const response = await axios.put(`${baseUrl}/profile/toggle/${user_id}`);
-      setZProfile(response.data);
+      const response = await fetch(`${baseUrl}/profile/toggle/${user_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${zUser.token}`,
+        },
+      });
+
+      setActiveProfile(response.data);
       setPartialToggle((prev) => !prev);
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -50,29 +63,25 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
   };
 
   useEffect(() => {
-    setZProfile(paramsId);
-    setZGuestProfile(paramsId);
-  }, [paramsId, setZProfile, setZGuestProfile, partialToggle]);
-
-  useEffect(() => {
-    if (zProfile) {
+    setActiveProfile(paramsId);
+    if (activeProfile) {
       reset({
-        bio: zProfile.bio || "",
-        location: zProfile.location || "",
-        website: zProfile.website || "",
-        github: zProfile.github || "",
-        linkedin: zProfile.linkedin || "",
-        partialView: zProfile.partialView ? true : false,
+        bio: activeProfile.bio || "",
+        location: activeProfile.location || "",
+        website: activeProfile.website || "",
+        github: activeProfile.github || "",
+        linkedin: activeProfile.linkedin || "",
+        partialView: activeProfile.partialView ? true : false,
       });
     }
-  }, [reset]);
+  }, [reset, paramsId, setActiveProfile, partialToggle]);
 
   const onSubmit = async (data) => {
     try {
-      const url = zProfile
-        ? `${baseUrl}/profile/${zProfile.id}`
+      const url = activeProfile
+        ? `${baseUrl}/profile/${activeProfile.id}`
         : `${baseUrl}/profile`;
-      const method = zProfile ? "PUT" : "POST";
+      const method = activeProfile ? "PUT" : "POST";
 
       await fetch(url, {
         method,
@@ -85,23 +94,84 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
         }),
       });
 
-      setZProfile(paramsId); // Refresh profile data
+      setActiveProfile(paramsId); // Refresh profile data
     } catch (error) {
       console.error("Error saving profile:", error);
     }
   };
 
   const handleCancel = () => {
-    if (zProfile) {
+    if (activeProfile) {
       reset({
-        bio: zProfile.bio || "",
-        location: zProfile.location || "",
-        website: zProfile.website || "",
-        github: zProfile.github || "",
-        linkedin: zProfile.linkedin || "",
-        partialView: zProfile.partialView ? "true" : "false",
+        bio: activeProfile.bio || "",
+        location: activeProfile.location || "",
+        website: activeProfile.website || "",
+        github: activeProfile.github || "",
+        linkedin: activeProfile.linkedin || "",
+        partialView: activeProfile.partialView ? "true" : "false",
       });
-      setZProfile(paramsId);
+      setActiveProfile(paramsId);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch the user's CV on component load
+    const fetchCv = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/cv/${userId}`);
+        setCvUrl(response.data.url);
+        setCvFileName(response.data.fileName);
+      } catch (error) {
+        console.error("Error fetching CV:", error.response.data.error);
+      }
+    };
+
+    fetchCv();
+  }, [userId]);
+  // Upload CV
+  const uploadCv = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("cv", file);
+    formData.append("userId", userId);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/cv/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${zUser.token}`, // Move Authorization here
+          },
+        }
+      );
+      setCvUrl(response.data.url);
+      setCvFileName(response.data.fileName);
+      alert("CV uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading CV:", error);
+    }
+  };
+
+  // Delete CV
+  const deleteCv = async () => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this CV?"
+      );
+      if (!confirmDelete) return;
+      await axios.delete(`http://localhost:3001/cv/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${zUser.token}`,
+        },
+      });
+
+      setCvUrl("");
+      setCvFileName("");
+      alert("CV deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting CV:", error);
     }
   };
 
@@ -110,28 +180,25 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
       <div className="profileCard">
         <div className="profileAvatar">
           <div className="profileAvatarCard">
-            <Avatar
-              alt={zGuestProfile?.name}
-              src={zGuestProfile?.imageUrl}
-              sx={{
-                width: { xs: 60, md: 80, lg: 100 },
-                height: { xs: 60, md: 80, lg: 100 },
-              }}
+            <UserAvatar
+              name={activeProfile?.name}
+              imageUrl={activeProfile?.imageUrl}
+              profileAvatar={1}
             />
             <div className="profileAvatarDiv">
               <Typography
                 sx={{ fontSize: "18px", fontWeight: "bold", padding: 0 }}
               >
-                {zGuestProfile?.name}
+                {activeProfile?.name}
               </Typography>
-              <p className="profileAvatarTitle">{zGuestProfile?.email}</p>
+              <p className="profileAvatarTitle">{activeProfile?.email}</p>
 
               <p className="profileAvatarLocation">
                 <LocationOnIcon sx={{ marginTop: "4px" }} />
-                {zGuestProfile?.location}
+                {activeProfile?.location}
               </p>
 
-              {zGuestProfile.count_jobs ? (
+              {activeProfile?.count_jobs ? (
                 <div className="profileLinks">
                   <Typography
                     sx={{
@@ -146,11 +213,11 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
                       margin: "0 2px",
                     }}
                   >
-                    {zGuestProfile.partialView ? (
+                    {activeProfile?.partialView || !activeProfile?.github ? (
                       <GitHubIcon sx={{ opacity: 0.2 }} />
                     ) : (
                       <a
-                        href={zProfile?.github}
+                        href={activeProfile?.github}
                         rel="noreferrer"
                         className="profileLinkIcon"
                         target="_blank"
@@ -173,11 +240,11 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
                       margin: "0 2px",
                     }}
                   >
-                    {zGuestProfile.partialView ? (
+                    {activeProfile.partialView || !activeProfile.linkedin ? (
                       <LinkedInIcon sx={{ opacity: 0.2 }} />
                     ) : (
                       <a
-                        href={zProfile?.linkedin}
+                        href={activeProfile?.linkedin}
                         rel="noreferrer"
                         className="profileLinkIcon"
                         target="_blank"
@@ -200,11 +267,11 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
                       margin: "0 2px",
                     }}
                   >
-                    {zGuestProfile.partialView ? (
+                    {activeProfile.partialView || !activeProfile.website ? (
                       <LanguageIcon sx={{ opacity: 0.2 }} />
                     ) : (
                       <a
-                        href={zGuestProfile?.website}
+                        href={activeProfile?.website}
                         rel="noreferrer"
                         className="profileLinkIcon"
                         target="_blank"
@@ -216,7 +283,7 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
                   </Typography>
                 </div>
               ) : (
-                <div>{zGuestProfile.name} has not created a profile.</div>
+                <div>{activeProfile?.name} has not created a profile.</div>
               )}
             </div>
           </div>
@@ -242,70 +309,98 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
                   fontSize: 14,
                   fontWeight: "bolder",
                   backgroundColor: "#2a2e45",
-                  width: "160px",
+                  width: "140px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                   borderRadius: 10,
                   padding: "6px",
                   color: "white",
+                  margin: "10px 0",
                   "&:hover": {
-                    backgroundColor: "white",
+                    backgroundColor: "grey",
                     color: "#2a2e45",
                   },
                 }}
               >
-                Edit Profile
-              </Button>
-              {zGuestProfile.partialView !== null ? (
+                Edit
+              </Button>{" "}
+              <label htmlFor="cv" className="uploadCv">
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={uploadCv}
+                  id="cv"
+                  style={{ marginBottom: "20px" }}
+                />
+                {cvFileName ? "Update" : "Upload"} CV
+              </label>
+              {activeProfile?.partialView !== null ? (
                 <Button
-                  onClick={() => setProfilePartial(zGuestProfile.id)}
+                  onClick={() => setProfilePartial(activeProfile.user_id)}
                   sx={{
                     textDecoration: "none",
                     fontSize: 14,
                     fontWeight: "bolder",
                     backgroundColor: "#2a2e45",
-                    width: "120px",
+                    width: "140px",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     borderRadius: 10,
                     padding: "6px",
                     color: "white",
+                    margin: "10px 0",
                     "&:hover": {
-                      backgroundColor: "white",
+                      backgroundColor: "grey",
                       color: "#2a2e45",
                     },
                   }}
                 >
-                  {zProfile?.partialView ? "Partial" : "FullView"}
+                  {activeProfile?.partialView ? "Partial" : "FullView"}
                 </Button>
               ) : null}
-
               {/* </Button> */}
             </div>
           ) : null}
         </div>
         <div className="profileContentDiv">
           <div className="profileCentreText">
-            <p className="headerGreyText">{zGuestProfile?.bio}</p>
+            <p className="headerGreyText">{activeProfile?.bio}</p>
           </div>
           <div className="rowDivProfile">
             <h1 className="headerNormalText">
               Linked Jobs:{" "}
-              {zGuestProfile?.partialView
+              {activeProfile?.partialView
                 ? "Hidden"
-                : zGuestProfile?.count_jobs_linkd}
+                : activeProfile?.count_jobs_linkd}
             </h1>
             <h1 className="headerNormalText">
               Applied Jobs:{" "}
-              {zGuestProfile?.partialView
+              {activeProfile?.partialView
                 ? "Hidden"
-                : zGuestProfile?.count_jobs}
+                : activeProfile?.count_jobs}
             </h1>
           </div>
         </div>
       </div>
+      {/* Upload CV */}
+
+      {/* View and Delete CV */}
+      {cvUrl && (
+        <div className="resumeRow">
+          <div className="resumeButton" title={cvFileName}>
+            <a href={cvUrl} target="_blank" rel="noopener noreferrer">
+              Resume
+            </a>
+          </div>
+          {zUser?.id === activeProfile?.user_id ? (
+            <p className="deleteResume" onClick={deleteCv}>
+              X
+            </p>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 };

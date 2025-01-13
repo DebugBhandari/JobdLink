@@ -17,6 +17,9 @@ export const uploadScreenshot = async (
     const response = await fetch(`${baseUrl}/upload`, {
       method: "POST",
       body: formData,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
     });
     const result = await response.json();
     setUploadedImageUrl(result.url);
@@ -40,6 +43,7 @@ export const shareOnLinkedIn = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
       },
       body: JSON.stringify({
         imageUrl,

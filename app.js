@@ -9,7 +9,7 @@ import axios from "axios";
 import path from "path";
 import fs from "fs";
 import multer from "multer";
-import cron from "node-cron";
+import pdfParse from "pdf-parse";
 
 const app = express();
 app.use(express.json());
@@ -20,7 +20,16 @@ import jobLikeRouter from "./router/jobLike.js";
 import jobCommentRouter from "./router/jobComments.js";
 import profileRouter from "./router/profile.js";
 import userRouter from "./router/user.js";
+import cvRouter from "./router/cv.js";
 import { dbConfig } from "./server.js";
+import extractResumeData from "./utils/resumeExtractor.js";
+import { storeTokens } from "./services/token.js";
+import { findOrCreate, generateToken, isAuth } from "./services/auth.js";
+import {
+  uploadImageToLinkedIn,
+  shareOnLinkedIn,
+} from "./utils/linkedinHelpers.js";
+import aiChat from "./utils/aiChat.js";
 
 import passport from "passport";
 //import session from "express-session";
@@ -28,10 +37,17 @@ import { v4 as uuidv4 } from "uuid";
 // import passport.js
 import "./utils/passport.js";
 
+import tailorCv from "./utils/tailorCv.js";
+
 export const baseUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
     : "https://jobd.link";
+
+const redirectUri =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3001/auth/linkedin/callback"
+    : "https://jobd.link/auth/linkedin/callback";
 
 app.use(bodyParser.json());
 app.use(express.json());
@@ -49,77 +65,111 @@ app.use(function (req, res, next) {
 });
 app.use(cors());
 
-// //use the session middleware
-// var sess = {
-//   genid: function (req) {
-//     return uuidv4(); // use UUIDs for session IDs
-//   },
-//   secret: process.env.SESSION_SECRET,
-//   cookie: {
-//     maxAge: 24 * 60 * 60 * 1000,
-//   },
-// };
-
-// if (app.get("env") === "production") {
-//   app.set("trust proxy", 1); // trust first proxy
-//   sess.cookie.secure = true; // serve secure cookies
-// }
-
-//app.use(session(sess));
-
-// initialize passport and session
-
-app.use(passport.initialize());
-//app.use(passport.session(sess));
+// app.use(passport.initialize());
 
 // app.get(
-//   "/auth/google",
-//   passport.authenticate("google", { scope: ["profile", "email"] })
+//   "/auth/linkedin",
+//   passport.authenticate("linkedin", { state: "SOME STATE" })
 // );
 
 // app.get(
-//   "/auth/google/callback",
-//   passport.authenticate("google", { session: false }),
+//   "/auth/linkedin/callback",
+//   passport.authenticate("linkedin", { session: false }),
 //   (req, res, next) => {
-//     const { id, name, email, imageUrl } = req.user;
-//     const token = generateToken(req.user);
-//     console.log("Do we have a user??", req.user);
+//     const { id, name, email, imageUrl, linkedinId } = req.user.createdFoundUser;
+//     console.log("req.user", req.user.createdFoundUser);
+//     const { accessToken } = req.user;
+//     // const token = generateToken(req.user);
+//     // console.log("token", token);
+//     //console.log("Do we have a user??", req.user);
 //     res.redirect(
-//       `http://localhost:3000?token=${token}&name=${encodeURIComponent(
-//         name
-//       )}&email=${encodeURIComponent(email)}&imageUrl=${encodeURIComponent(
+//       `${baseUrl}?token=${encodeURIComponent(
+//         accessToken
+//       )}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(
+//         email
+//       )}&imageUrl=${encodeURIComponent(
 //         imageUrl
-//       )}&id=${id}`
+//       )}&id=${id}&linkedinId=${linkedinId}`
 //     );
 
-app.get(
-  "/auth/linkedin",
-  passport.authenticate("linkedin", { state: "SOME STATE" })
-);
+// Redirect to React frontend
+//  }
+//);
+app.get("/auth/linkedin", (req, res) => {
+  const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${
+    process.env.LINKEDIN_CLIENT_ID
+  }&redirect_uri=${encodeURIComponent(
+    process.env.LINKEDIN_REDIRECT_URI
+  )}&state=randomstring&scope=r_liteprofile%20r_emailaddress%20w_member_social`;
+  res.redirect(linkedInAuthUrl);
+});
 
-app.get(
-  "/auth/linkedin/callback",
-  passport.authenticate("linkedin", { session: false }),
-  (req, res, next) => {
-    const { id, name, email, imageUrl, linkedinId } = req.user.createdFoundUser;
-    console.log("req.user", req.user.createdFoundUser);
-    const { accessToken } = req.user;
-    // const token = generateToken(req.user);
-    // console.log("token", token);
-    //console.log("Do we have a user??", req.user);
-    res.redirect(
-      `${baseUrl}?token=${encodeURIComponent(
-        accessToken
-      )}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(
-        email
-      )}&imageUrl=${encodeURIComponent(
-        imageUrl
-      )}&id=${id}&linkedinId=${linkedinId}`
+// LinkedIn callback route
+app.get("/auth/linkedin/callback", async (req, res) => {
+  const { code, state } = req.query;
+
+  if (!code || !state) {
+    return res
+      .status(400)
+      .json({ error: "Authorization code or state missing" });
+  }
+
+  try {
+    const tokenResponse = await axios.post(
+      "https://www.linkedin.com/oauth/v2/accessToken",
+      new URLSearchParams({
+        grant_type: "authorization_code",
+        code: code,
+        redirect_uri: process.env.LINKEDIN_REDIRECT_URI, // Use the same redirect URI
+        client_id: process.env.LINKEDIN_CLIENT_ID,
+        client_secret: process.env.LINKEDIN_CLIENT_SECRET,
+      }).toString(),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
     );
 
-    // Redirect to React frontend
+    const { access_token, expires_in, id_token, scope } = tokenResponse.data;
+
+    const scopes = scope ? scope.split(" ") : [];
+
+    const idTokenPayload = jwt.decode(id_token);
+    const idTokenData = {
+      name: idTokenPayload.name,
+      email: idTokenPayload.email,
+      imageUrl: idTokenPayload.picture,
+      linkedinId: idTokenPayload.sub,
+    };
+    console.log("ID Token Payload:", idTokenData);
+
+    const createdFoundUser = await findOrCreate(idTokenData);
+
+    // Save tokens and inferred expiration in your database
+
+    await storeTokens(createdFoundUser.id, access_token, expires_in);
+    const jwtToken = generateToken(createdFoundUser);
+
+    res.redirect(
+      `${baseUrl}?token=${encodeURIComponent(
+        jwtToken
+      )}&name=${encodeURIComponent(
+        createdFoundUser.name
+      )}&email=${encodeURIComponent(
+        createdFoundUser.email
+      )}&imageUrl=${encodeURIComponent(createdFoundUser.imageUrl)}&id=${
+        createdFoundUser.id
+      }&linkedinId=${createdFoundUser.linkedinId}`
+    );
+  } catch (error) {
+    console.error(
+      "Error exchanging code for token:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({ error: "Failed to obtain access token" });
   }
-);
+});
 
 // Set up storage with Multer
 const storage = multer.diskStorage({
@@ -133,7 +183,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.post("/upload", upload.single("file"), (req, res) => {
+app.post("/upload", isAuth, upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
@@ -146,130 +196,34 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 app.use("/uploads", express.static("uploads"));
+app.use("/uploads/cvs", express.static("cvs"));
 
-const uploadImageToLinkedIn = async (imageUrl, linkedinId, accessToken) => {
-  try {
-    const registerUploadResponse = await axios.post(
-      "https://api.linkedin.com/v2/assets?action=registerUpload",
-      {
-        registerUploadRequest: {
-          recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
-          owner: `urn:li:person:${linkedinId}`,
-          serviceRelationships: [
-            {
-              relationshipType: "OWNER",
-              identifier: "urn:li:userGeneratedContent",
-            },
-          ],
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const uploadUrl =
-      registerUploadResponse.data.value.uploadMechanism[
-        "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"
-      ].uploadUrl;
-    const asset = registerUploadResponse.data.value.asset;
-
-    // Convert imageUrl to a file path
-    const fileName = path.basename(imageUrl);
-    const filePath = path.resolve("uploads", fileName);
-
-    // Read the file from the filesystem
-    const imageData = fs.readFileSync(filePath);
-
-    // Upload the image to LinkedIn
-    await axios.put(uploadUrl, imageData, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "image/png",
-      },
-    });
-
-    return asset;
-  } catch (error) {
-    console.error(
-      "Error uploading image to LinkedIn:",
-      error.response ? error.response.data : error.message
-    );
-    throw new Error("Failed to upload image to LinkedIn.");
-  }
-};
-
-const shareOnLinkedIn = async (
-  imageUrn,
-  linkedinId,
-  accessToken,
-  job_id,
-  postComment
-) => {
-  try {
-    const response = await axios.post(
-      "https://api.linkedin.com/v2/ugcPosts",
-      {
-        author: `urn:li:person:${linkedinId}`,
-        lifecycleState: "PUBLISHED",
-        specificContent: {
-          "com.linkedin.ugc.ShareContent": {
-            shareCommentary: {
-              text: `${postComment}\n\n` + `https://jobd.link/links/${job_id}`,
-            },
-            shareMediaCategory: "IMAGE",
-            media: [
-              {
-                status: "READY",
-                media: imageUrn,
-                description: {
-                  text: "Image description",
-                },
-                title: {
-                  text: "Image Title",
-                },
-              },
-            ],
-          },
-        },
-        visibility: {
-          "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log("Post shared successfully on LinkedIn!", response.data);
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Error sharing on LinkedIn:",
-      error.response ? error.response.data : error.message
-    );
-    throw new Error("Failed to share on LinkedIn.");
-  }
-};
-
-app.post("/share", async (req, res) => {
+app.post("/share", isAuth, async (req, res) => {
   const { imageUrl, linkedinId, token, job_id, postComment } = req.body;
 
   try {
-    const imageUrn = await uploadImageToLinkedIn(imageUrl, linkedinId, token);
+    const imageUrn = await uploadImageToLinkedIn(
+      imageUrl,
+      linkedinId,
+      req.user.accessToken
+    );
     const result = await shareOnLinkedIn(
       imageUrn,
       linkedinId,
-      token,
+      req.user.accessToken,
       job_id,
       postComment
     );
+
+    // Delete the file after sharing
+
+    const fileName = path.basename(imageUrl);
+    const filePath = path.resolve("uploads", fileName);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`Deleted file after sharing: ${fileName}`);
+    }
+
     res.json({ message: "Shared successfully on LinkedIn!", data: result });
   } catch (error) {
     console.error("Error sharing on LinkedIn:", error);
@@ -277,43 +231,17 @@ app.post("/share", async (req, res) => {
   }
 });
 
-// Schedule a cron job to run every day at midnight to delete files older than 14 days
-cron.schedule("0 0 * * *", () => {
-  const directory = path.resolve("uploads");
-  const now = Date.now();
-  const fourteenDaysInMilliseconds = 14 * 24 * 60 * 60 * 1000;
-
-  fs.readdir(directory, (err, files) => {
-    if (err) throw err;
-
-    files.forEach((file) => {
-      const filePath = path.join(directory, file);
-      fs.stat(filePath, (err, stat) => {
-        if (err) throw err;
-
-        if (now - stat.mtimeMs > fourteenDaysInMilliseconds) {
-          fs.unlink(filePath, (err) => {
-            if (err) throw err;
-            console.log(`Deleted old file: ${file}`);
-          });
-        }
-      });
-    });
-  });
-});
-
-// app.use("/profile", (req, res) => {
-//   if (req.session.isAuthenticated) {
-//     res.send(req.session.user);
-//   } else {
-//     res.status(401).send("Unauthorized");
-//   }
-// });
 app.use("/jobs", jobsRouter);
 app.use("/jobLike", jobLikeRouter);
 app.use("/jobComment", jobCommentRouter);
 app.use("/profile", profileRouter);
 app.use("/user", userRouter);
+//Endpoint to upload/delete cv
+app.use("/cv", cvRouter);
+
+// Endpoint to Extract and Tailor CV
+app.post("/tailor-cv", tailorCv);
+app.post("/ai-chat", aiChat);
 
 if (process.env.NODE_ENV || "development") {
   // Serve static files from the React app

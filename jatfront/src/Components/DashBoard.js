@@ -25,7 +25,9 @@ const DashBoard = () => {
     zJobLikes,
     setZJobLikes,
     zUser,
-    setZGuestProfile,
+    // setZGuestProfile,
+    //setActiveProfile,
+    setLocalUserJobs,
     setZUser,
   } = useJLStore((state) => ({
     zJobs: state.zJobs,
@@ -36,7 +38,9 @@ const DashBoard = () => {
     setZJobLikes: state.setZJobLikes,
     zUser: state.zUser,
     setZUser: state.setZUser,
-    setZGuestProfile: state.setZGuestProfile,
+    // setZGuestProfile: state.setZGuestProfile,
+    //setActiveProfile,
+    setLocalUserJobs: state.setLocalUserJobs,
   }));
   //const [user, setUser] = useState(zUser);
   //console.log("user", user);
@@ -63,7 +67,8 @@ const DashBoard = () => {
   useEffect(() => {
     setZJobs();
     getUsersLikes();
-    setZGuestProfile(paramsId);
+
+    setLocalUserJobs(paramsId);
   }, [token, likeCommentRefresh, partialToggle]);
 
   const linkedJobs = zJobs.filter(

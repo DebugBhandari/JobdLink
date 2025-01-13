@@ -15,6 +15,7 @@ async function findById(userId) {
           Users.name,
           Users.imageUrl,
           Users.email,
+          Users.cv_file,
           COUNT(DISTINCT Jobs.id) AS count_jobs, 
           (SELECT COUNT(DISTINCT Jobs.id) FROM Jobs WHERE Jobs.private = 0 AND Jobs.user_id = Users.id) AS count_jobs_linkd 
         FROM Users
@@ -31,7 +32,8 @@ async function findById(userId) {
             Profile.partialView,
           Users.name,
           Users.imageUrl,
-          Users.email;`;
+          Users.email,
+          Users.cv_file;`;
     const connection = await mysql.createConnection(dbConfig);
     try {
       const [results] = await connection.execute(query, [userId]);

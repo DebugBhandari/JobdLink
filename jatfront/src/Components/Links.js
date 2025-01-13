@@ -8,6 +8,7 @@ import Profile from "./Profile.js";
 import LinkView from "./LinkView.js";
 import { loadLocal } from "./Job.js";
 import { baseUrl } from "../App";
+import { set } from "react-hook-form";
 
 const Links = () => {
   //const [jobs, setJobs] = useState([]);
@@ -24,7 +25,9 @@ const Links = () => {
     setZJobLikes,
     zUser,
     setZUser,
-    setZProfile,
+    //setZProfile,
+    setActiveProfile,
+    setLocalUserJobs,
   } = useJLStore((state) => ({
     zJobs: state.zJobs,
     setZJobs: state.setZJobs,
@@ -34,7 +37,9 @@ const Links = () => {
     setZJobLikes: state.setZJobLikes,
     zUser: state.zUser,
     setZUser: state.setZUser,
-    setZProfile: state.setZProfile,
+    //setZProfile: state.setZProfile,
+    setActiveProfile: state.setActiveProfile,
+    setLocalUserJobs: state.setLocalUserJobs,
   }));
   //const [user, setUser] = useState(zUser);
   //console.log("user", user);
@@ -74,7 +79,7 @@ const Links = () => {
       // localStorage.setItem("linkedinIdJL", linkedinId);
 
       setZUser(loggedUser);
-      setZProfile(loggedUser.id);
+      //setZProfile(loggedUser.id);
       window.location.href = "/";
     }
 

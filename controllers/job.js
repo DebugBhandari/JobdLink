@@ -76,3 +76,12 @@ export const toggleJobdLink = async (req, res, next) => {
     next(console.log("Job not found", error));
   }
 };
+
+//Get Jobs by User ID
+export const findJobByUser = async (req, res, next) => {
+  try {
+    res.json(await JobService.findJobByUser(req.params.userId));
+  } catch (error) {
+    next(console.log("Jobs not found", error));
+  }
+};

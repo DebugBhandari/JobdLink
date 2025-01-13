@@ -145,14 +145,17 @@ const CreateJobComp = () => {
         flexDirection: "column",
         boxShadow: 0,
         margin: "auto",
-        marginTop: "2dvh",
+        marginTop: "80px",
         marginBottom: "20dvh",
+        backgroundColor: "#f5f5f5",
+        padding: "20px",
+        borderRadius: 10,
         "@media (max-width: 600px)": { width: "90%" },
       }}
       component="form"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="linkViewCardHeader"></div> <h2>New Job</h2>
+      <h2>New Job</h2>
       <CardContentStyled>
         <TextFieldStyled
           margin="normal"
