@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import axios from "axios";
-import { dockerUrl } from "./tailorCv";
+import { dockerUrl } from "./tailorCv.js";
 const aichat = async (req, res) => {
   const { message } = req.body;
 
