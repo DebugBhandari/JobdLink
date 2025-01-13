@@ -12,12 +12,15 @@ const aichat = async (req, res) => {
       {
         model: "llama3.2:3b", // Adjust model if necessary
         prompt: message,
-        temperature: 0.7,
-        max_tokens: 1500,
+        parameters: {
+            temperature: 0.7,
+            max_tokens: 1500,
+          },
       },
       {
         headers: { "Content-Type": "application/json" },
         responseType: "stream", // Stream to get the response incrementally
+        timeout: 10000, 
       }
     );
 

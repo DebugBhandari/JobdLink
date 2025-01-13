@@ -12,7 +12,7 @@ const __dirname = dirname(__filename);
 export const dockerUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:11434/api/generate"
-    : "http://172.17.0.2:11434/api/generate";
+    : "http://ollama:11434/api/generate";
 
 const tailorCv = async (req, res) => {
   const { userId, jobDescription } = req.body;
