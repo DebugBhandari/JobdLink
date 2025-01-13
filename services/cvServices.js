@@ -2,7 +2,7 @@ import { dbConfig } from "../server.js";
 import mysql from "mysql2/promise";
 
 async function findCvFilename(userId) {
-  const query = "SELECT cv_file FROM users WHERE id = ?";
+  const query = "SELECT cv_file FROM Users WHERE id = ?";
   const values = [userId];
 
   const connection = await mysql.createConnection(dbConfig);

@@ -118,7 +118,7 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
     // Fetch the user's CV on component load
     const fetchCv = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/cv/${userId}`);
+        const response = await axios.get(`${baseUrl}/cv/${userId}`);
         setCvUrl(response.data.url);
         setCvFileName(response.data.fileName);
       } catch (error) {
@@ -136,16 +136,12 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
     formData.append("userId", userId);
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/cv/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${zUser.token}`, // Move Authorization here
-          },
-        }
-      );
+      const response = await axios.post(`${baseUrl}/cv/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${zUser.token}`, // Move Authorization here
+        },
+      });
       setCvUrl(response.data.url);
       setCvFileName(response.data.fileName);
       alert("CV uploaded successfully!");
@@ -161,7 +157,7 @@ const Profile = ({ partialToggle, setPartialToggle }) => {
         "Are you sure you want to delete this CV?"
       );
       if (!confirmDelete) return;
-      await axios.delete(`http://localhost:3001/cv/${userId}`, {
+      await axios.delete(`${baseUrl}/cv/${userId}`, {
         headers: {
           Authorization: `Bearer ${zUser.token}`,
         },

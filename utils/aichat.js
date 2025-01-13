@@ -45,8 +45,8 @@ const aichat = async (req, res) => {
       res.end();
     });
   } catch (error) {
-    console.error("Error tailoring CV:", error.message);
-    res.status(500).json({ error: "Failed to tailor CV." });
+    console.error("Error connecting Llama3.2:", error.message);
+    res.status(500).json({ error: "Failed to connect to Ollama." });
   }
 };
 

@@ -26,7 +26,7 @@ const AiPlayground = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(baseUrl + "/ai-chat", {
+      const response = await fetch(`${baseUrl}/ai-chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
