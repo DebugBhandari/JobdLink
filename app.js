@@ -29,7 +29,7 @@ import {
   uploadImageToLinkedIn,
   shareOnLinkedIn,
 } from "./utils/linkedinHelpers.js";
-import aiChat from "./utils/aiChat.js";
+import aiChat from "./utils/aichat.js";
 
 import passport from "passport";
 //import session from "express-session";
