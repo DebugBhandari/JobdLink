@@ -12,6 +12,7 @@ import EditJobModal from "./Modals/EditJobModal";
 import useJLStore from "../useStore";
 import { baseUrl } from "../App";
 import Link from "@mui/material/Link";
+import { axiosInstance } from "../utils/axiosHandler";
 
 export const loadLocal = async (key) => {
   return await localStorage.getItem(key);
@@ -39,7 +40,7 @@ export default function Job({ job, setJobsRefresh }) {
       "Are you sure you want to delete this post?"
     );
     if (confirmDelete) {
-      axios.delete(`${baseUrl}/jobs/${job.id}`).then((response) => {
+      axiosInstance.delete(`${baseUrl}/jobs/${job.id}`).then((response) => {
         setJobsRefresh((prevState) => !prevState);
         setLocalUserJobs();
         console.log("Job deleted successfully");

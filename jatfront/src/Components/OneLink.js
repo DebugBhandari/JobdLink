@@ -26,6 +26,7 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import CommentIcon from "@mui/icons-material/Comment";
 import LinkShareModal from "./Modals/LinkShareModal";
 import UserAvatar from "./UserAvatar";
+import { axiosInstance } from "../utils/axiosHandler";
 
 export default function OneLink({
   job,
@@ -133,7 +134,7 @@ export default function OneLink({
 
   const handleLikeClick = async () => {
     user_id_JSON
-      ? axios
+      ? axiosInstance
           .post(`${baseUrl}/jobLike`, {
             job_id: job.id,
             user_id: user_id_JSON,
@@ -147,7 +148,7 @@ export default function OneLink({
       : alert("Please login to like this Link.");
   };
   const handleUnlikeClick = async () => {
-    axios
+    axiosInstance
       .delete(`${baseUrl}/jobLike/${job.id}/${user_id_JSON}`)
       .then((response) => {
         console.log("Unliked");

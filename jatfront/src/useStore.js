@@ -5,6 +5,7 @@ import { StateStorage } from "zustand/middleware";
 import axios from "axios";
 import { use } from "react";
 import { baseUrl } from "./App";
+import { axiosInstance } from "./utils/axiosHandler";
 
 const useJLStore = create(
   persist(
@@ -126,7 +127,8 @@ const useJLStore = create(
       },
       toggleJobdLink: async (jobId) => {
         try {
-          const response = await axios.put(`${baseUrl}/jobs/toggle/${jobId}`);
+          await axiosInstance.put(`${baseUrl}/jobs/toggle/${jobId}`);
+
           get().setZJobs();
           get().setLocalUserJobs();
         } catch (error) {
@@ -136,11 +138,9 @@ const useJLStore = create(
       activeProfile: {},
       setActiveProfile: async (user_id) => {
         try {
-          const response = await axios.get(`${baseUrl}/profile/${user_id}`, {
-            headers: {
-              Authorization: "Bearer " + get().zUser.token,
-            },
-          });
+          const response = await axiosInstance.get(
+            `${baseUrl}/profile/${user_id}`
+          );
           set({ activeProfile: response.data });
         } catch (error) {
           console.error("Error fetching profile:", error);
@@ -148,9 +148,7 @@ const useJLStore = create(
       },
       toggleProfilePartial: async (user_id) => {
         try {
-          const response = await axios.put(
-            `${baseUrl}/profile/toggle/${user_id}`
-          );
+          await axios.put(`${baseUrl}/profile/toggle/${user_id}`);
           get().setZProfile(user_id);
         } catch (error) {
           console.error("Error toggling profile:", error);

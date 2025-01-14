@@ -16,6 +16,7 @@ import CreateJobComp from "./Components/CreateJobComp";
 import EditJobComp from "./Components/EditJobComp";
 import TailorCV from "./Components/TailorCV";
 import AiPlayground from "./Components/AiPlayground";
+import useJLStore from "./useStore";
 
 export const baseUrl =
   process.env.REACT_APP_NODE_ENV === "development"

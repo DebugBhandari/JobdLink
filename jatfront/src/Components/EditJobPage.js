@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../App";
+import { axiosInstance } from "../utils/axiosHandler";
 
 export const EditJobPage = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export const EditJobPage = () => {
   useEffect(() => {
     const fetchJobById = async (id) => {
       try {
-        const response = await axios.get(`${baseUrl}/jobs/${id}`);
+        const response = await axiosInstance.get(`${baseUrl}/jobs/${id}`);
         setJob(response.data);
       } catch (error) {
         console.error("Error fetching job:", error);

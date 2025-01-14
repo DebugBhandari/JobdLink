@@ -8,9 +8,9 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
 import { Select, MenuItem, Box } from "@mui/material";
 import { baseUrl } from "../App";
+import { axiosInstance } from "../utils/axiosHandler";
 
 const EditJob = ({ job, setIsEditing, setJobsRefresh }) => {
   const jobId = job.id;
@@ -36,7 +36,7 @@ const EditJob = ({ job, setIsEditing, setJobsRefresh }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    axios
+    axiosInstance
       .put(`${baseUrl}/jobs/${jobId}`, {
         jobTitle: data.get("jobTitle"),
         company: data.get("company"),

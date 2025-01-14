@@ -17,10 +17,10 @@ import {
   FormLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import axios from "axios";
 import useJLStore from "../useStore";
 import { baseUrl } from "../App";
 import { useLocation, useNavigate } from "react-router-dom";
+import { axiosInstance } from "../utils/axiosHandler";
 
 const CardActionsStyled = styled(CardActions)({
   display: "flex",
@@ -54,7 +54,7 @@ const EditJobComp = () => {
 
   const fetchJobById = async (id) => {
     try {
-      const response = await axios.get(`${baseUrl}/jobs/${id}`);
+      const response = await axiosInstance.get(`${baseUrl}/jobs/${id}`);
       setJob(response.data);
       Object.entries(response.data).forEach(([key, value]) => {
         setValue(key, value);
@@ -65,7 +65,7 @@ const EditJobComp = () => {
   };
 
   const onSubmit = (data) => {
-    axios
+    axiosInstance
       .put(`${baseUrl}/jobs/${job.id}`, {
         ...data,
 
