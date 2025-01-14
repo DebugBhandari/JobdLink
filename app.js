@@ -31,7 +31,7 @@ import {
 } from "./utils/linkedinHelpers.js";
 import aiChat from "./utils/aichat.js";
 
-import passport from "passport";
+//import passport from "passport";
 //import session from "express-session";
 import { v4 as uuidv4 } from "uuid";
 // import passport.js
