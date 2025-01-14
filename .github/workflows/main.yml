@@ -69,4 +69,8 @@ jobs:
 
             # Start new containers with the updated images and pass environment variables
             LINKEDIN_CLIENT_ID=${{ secrets.LINKEDIN_CLIENT_ID }} LINKEDIN_CLIENT_SECRET=${{ secrets.LINKEDIN_CLIENT_SECRET }} docker-compose up -d --force-recreate
+
+            # Load ollama llama3.2:3b
+            curl -X POST http://localhost:11434/api/pull   -H "Content-Type: application/json"   -d '{"model": "llama3.2:3b"}'
+
           

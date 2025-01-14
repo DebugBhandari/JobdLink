@@ -49,6 +49,10 @@ const redirectUriConditional =
     ? "http://localhost:3001/auth/linkedin/callback"
     : "https://jobd.link/auth/linkedin/callback";
 
+export const dockerUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:11434/api/generate"
+    : "http://ollama:11434/api/generate";
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

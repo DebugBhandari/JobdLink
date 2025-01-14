@@ -21,8 +21,8 @@ const AiPlayground = () => {
     if (input.trim() === "") return;
 
     const userMessage = { sender: zUser.name, text: input };
-    setMessages((prevMessages) => [...prevMessages, userMessage]); // Ensure user message is set immediately
-    setInput(""); // Clear the input field
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setInput("");
     setLoading(true);
 
     try {
@@ -34,34 +34,51 @@ const AiPlayground = () => {
         body: JSON.stringify({ message: input }),
       });
 
-      const reader = response.body.getReader(); // Stream the response
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let result = "";
 
-      const botMessage = { sender: "bot", text: "" };
-      setMessages((prevMessages) => [...prevMessages, botMessage]); // Add an empty bot message placeholder
-      const botIndex = messages.length + 1; // Index for the new bot message
+      const botMessage = { sender: "bot", text: [] }; // Initialize text as an array
+      let botIndex;
+      setMessages((prevMessages) => {
+        botIndex = prevMessages.length;
+        return [...prevMessages, botMessage];
+      });
 
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        result += chunk;
+          const chunk = decoder.decode(value, { stream: true });
+          result += chunk;
 
-        // Update the bot's message incrementally
+          const paragraphs = result.split("\n\n"); // Split text into paragraphs
+          setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages];
+            updatedMessages[botIndex] = { ...botMessage, text: paragraphs };
+            return updatedMessages;
+          });
+        }
+      } catch (streamError) {
+        console.error("Error during stream:", streamError);
         setMessages((prevMessages) => {
           const updatedMessages = [...prevMessages];
-          updatedMessages[botIndex] = { ...botMessage, text: result };
+          updatedMessages[botIndex] = {
+            ...botMessage,
+            text: ["An error occurred while receiving the response."],
+          };
           return updatedMessages;
         });
       }
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching AI response:", error);
       setLoading(false);
     }
   };
+
   const chatboxRef = useRef(null);
   useEffect(() => {
     if (chatboxRef.current) {

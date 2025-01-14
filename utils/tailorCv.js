@@ -5,14 +5,11 @@ import pdfParse from "pdf-parse";
 import cvServices from "../services/cvServices.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { dockerUrl } from "../app.js";
 
 // Get the current directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-export const dockerUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:11434/api/generate"
-    : "http://ollama:11434/api/generate";
 
 const tailorCv = async (req, res) => {
   const { userId, jobDescription } = req.body;
@@ -46,13 +43,11 @@ const tailorCv = async (req, res) => {
     const fileBuffer = fs.readFileSync(cvFilePath);
     const pdfData = await pdfParse(fileBuffer);
     const cvText = pdfData.text;
-    console.log("Extracted CV Text:", cvText);
 
     if (!cvText || cvText.trim() === "") {
       return res.status(400).json({ error: "Failed to extract text from CV." });
     }
-
-    console.log("Extracted CV Text:", cvText); // Log extracted CV text for debugging
+    // Log extracted CV text for debugging
 
     // Step 3: Generate tailored CV using Llama2
     const prompt = `

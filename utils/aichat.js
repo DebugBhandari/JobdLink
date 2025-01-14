@@ -1,26 +1,28 @@
 import fs from "fs";
 import path from "path";
 import axios from "axios";
-import { dockerUrl } from "./tailorCv.js";
+import { dockerUrl } from "../app.js";
+
+
 const aichat = async (req, res) => {
   const { message } = req.body;
 
   try {
     // Make the API request to Llama2 with streaming response
+    console.log("Docker URL:", dockerUrl);
     const llamaResponse = await axios.post(
       dockerUrl, // Correct endpoint for your Llama2 API
       {
         model: "llama3.2:3b", // Adjust model if necessary
         prompt: message,
-        parameters: {
-            temperature: 0.7,
-            max_tokens: 1500,
-          },
+        // parameters: {
+        temperature: 0.7,
+        max_tokens: 1500,
+        // },
       },
       {
         headers: { "Content-Type": "application/json" },
         responseType: "stream", // Stream to get the response incrementally
-        timeout: 10000, 
       }
     );
 
