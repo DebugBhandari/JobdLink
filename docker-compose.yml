@@ -39,14 +39,15 @@ services:
     networks:
       - sharedDatabase
 
+  
   ollama:
     image: ollama/ollama
     container_name: ollama
     restart: always
     ports:
-      - "11434:11434" # Expose the port if you need external access
+      - "11434:11434"
     networks:
-      - sharedDatabase
+      - sharedDatabase 
 
 volumes:
   mysql_data:
