@@ -154,6 +154,7 @@ const AiPlayground = () => {
           padding: "6px",
           color: "white",
           marginTop: "20px",
+          marginBottom: "100px",
           "&:hover": {
             backgroundColor: "white",
             color: "#2a2e45",

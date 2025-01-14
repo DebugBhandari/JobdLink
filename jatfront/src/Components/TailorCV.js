@@ -121,7 +121,7 @@ const TailorCV = () => {
         {tailoredCV ||
           (loading
             ? "Generating tailored CV..."
-            : "Your tailored CV will appear here.")}
+            : "Upload a CV in your profile. Your tailored CV will appear here.")}
       </div>
     </div>
   );
