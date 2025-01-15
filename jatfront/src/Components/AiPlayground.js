@@ -150,6 +150,7 @@ const AiPlayground = () => {
           marginTop: "20px",
           borderRadius: 10,
           padding: "10px",
+          fontSize: "16px",
         }}
         onChange={(e) => setInput(e.target.value)}
         onKeyPress={handleKeyPress}
@@ -160,7 +161,7 @@ const AiPlayground = () => {
         disabled={loading}
         sx={{
           textDecoration: "none",
-          fontSize: 14,
+          fontSize: "16px",
           fontWeight: "bolder",
           backgroundColor: "#2a2e45",
           width: "160px",
