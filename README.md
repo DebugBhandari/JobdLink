@@ -23,16 +23,19 @@ MySql (for backend database)
 Installation
 Clone the repository:
 
-bash
+```
 git clone https://github.com/debugbhandari/jobdlink.git
 cd jobdlink
-Install dependencies:
+```
 
-bash
+Install dependencies:
+```
 npm install
+```
+
 Set up environment variables: Create a .env file in the root directory and add the following:
 
-env
+```
 SECRET_KEY=your_secret_key
 LINKEDIN_CLIENT_ID=get_it_from_linkedin
 LINKEDIN_CLIENT_SECRET=get_it_from_linkedin
@@ -45,17 +48,21 @@ MYSQL_USER=your_mysql_user
 MYSQL_PASSWORD=your_mysql_password
 MYSQL_HOST=your_mysql_host_localhost?
 LINKEDIN_REDIRECT_URI=http://localhost:3001/auth/linkedin/callback
+```
 
 Start the development server:
 
-bash
+```
 npm run watch-server
 cd jatfront
 npm run start
+```
+
 Run Docker for AI Services: Ensure Docker is running, and start the Llama3.2 container:
 
-bash
+```
 docker run -p 11434:11434 llama3.2:latest
+```
 Access the application: Open your browser and go to http://localhost:3000.
 
 ### 📚 Usage
