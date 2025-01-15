@@ -9,6 +9,7 @@ import LinkView from "./LinkView.js";
 import { loadLocal } from "./Job.js";
 import { baseUrl } from "../App";
 import { set } from "react-hook-form";
+import { axiosInstance } from "../utils/axiosHandler.js";
 
 const Links = () => {
   //const [jobs, setJobs] = useState([]);
@@ -59,6 +60,17 @@ const Links = () => {
     }
   };
 
+  const startLlama = async () => {
+    try {
+      const response = await axiosInstance.post(`${baseUrl}/ai-chat`, {
+        message: "Hi.",
+      });
+      console.log("Llama response:", response.data);
+    } catch (error) {
+      console.error("Error fetching llama:", error);
+    }
+  };
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
@@ -85,6 +97,7 @@ const Links = () => {
 
     setZJobs();
     getUsersLikes();
+    startLlama();
   }, [token, likeCommentRefresh]);
 
   const linkedJobs = zJobs.filter((job) => job.private === 0);
