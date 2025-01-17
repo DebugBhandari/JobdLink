@@ -3,13 +3,12 @@ import path from "path";
 import axios from "axios";
 import { dockerUrl } from "../app.js";
 
-
 const aichat = async (req, res) => {
   const { message } = req.body;
 
   try {
     // Make the API request to Llama2 with streaming response
-    console.log("Docker URL:", dockerUrl);
+
     const llamaResponse = await axios.post(
       dockerUrl, // Correct endpoint for your Llama2 API
       {

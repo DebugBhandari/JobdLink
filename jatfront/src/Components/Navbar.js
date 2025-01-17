@@ -73,6 +73,7 @@ export default function SearchAppBar() {
 
   const location = useLocation();
   const params = location.pathname;
+  const withSearch = ["", "JAT", "userProfile"].includes(params.split("/")[1]);
 
   const logoStyleJobd = {
     textDecoration: "none",
@@ -234,7 +235,13 @@ export default function SearchAppBar() {
                   }}
                 />
 
-                <div className="navDropDownContent">
+                <div
+                  className={
+                    withSearch
+                      ? "navDropDownContent"
+                      : "navDropDownContentNoSearch"
+                  }
+                >
                   <div className="navDropDownCard">
                     <div className="avatarDropDown">
                       <UserAvatar
@@ -407,34 +414,36 @@ export default function SearchAppBar() {
               </div>
             )}
           </IconButton>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-              onChange={(e) => {
-                e.stopPropagation();
-                updateJobSearchQuery(e.target.value);
-              }}
-              value={jobSearchQuery}
-              endAdornment={
-                !!jobSearchQuery && (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="clear search query"
-                      onClick={() => updateJobSearchQuery("")}
-                      edge="end"
-                      sx={{ mr: 0, color: "white" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }
-            />
-          </Search>
+          {withSearch ? (
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  updateJobSearchQuery(e.target.value);
+                }}
+                value={jobSearchQuery}
+                endAdornment={
+                  !!jobSearchQuery && (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="clear search query"
+                        onClick={() => updateJobSearchQuery("")}
+                        edge="end"
+                        sx={{ mr: 0, color: "white" }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }
+              />
+            </Search>
+          ) : null}
         </div>
       </div>
     </div>

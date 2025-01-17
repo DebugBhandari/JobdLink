@@ -90,11 +90,26 @@ code {
   text-decoration: none;
   border-radius: 12px;
 }
+.navDropDownContentNoSearch {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9ef;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 30px;
+  left: -220px;
+  flex-direction: column;
+  text-decoration: none;
+  border-radius: 12px;
+}
 
-.navDropDown:hover .navDropDownContent {
+.navDropDown:hover .navDropDownContent,
+.navDropDown:hover .navDropDownContentNoSearch {
   display: flex;
 }
-.navDropDownContent:hover .pulsatingLink {
+.navDropDownContent:hover .pulsatingLink,
+.navDropDownContentNoSearch:hover .pulsatingLink {
   animation: none;
 }
 .navDropDownCard {
