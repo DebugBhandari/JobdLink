@@ -65,7 +65,7 @@ docker run -p 11434:11434 llama3.2:latest
 ```
 Access the application: Open your browser and go to http://localhost:3000.
 
-### 📚 Usage
+### 📚 Usages
 Job Tracking
 Add jobs to your dashboard and update their statuses as you progress through applications.
 CV Management
